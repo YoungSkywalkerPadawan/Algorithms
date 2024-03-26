@@ -1,37 +1,37 @@
-class SegmentTree:
-    def __init__(self, n: int):
-        self.tree = [0] * (4 * n)
+from collections import defaultdict
+
+
+class DynamicSegmentTree:
+    def __init__(self):
+        self.tree = defaultdict()
 
     def update(self, o: int, l: int, r: int, i: int, val: int) -> None:
         if l == r:
-            self.tree[o] = val
+            if o not in self.tree.keys():
+                self.tree[o] = val
+            else:
+                self.tree[o] = max(self.tree[o], val)
             return
         m = (l + r) // 2
         if i <= m:
             self.update(o * 2, l, m, i, val)
         else:
             self.update(o * 2 + 1, m + 1, r, i, val)
+        if o * 2 not in self.tree.keys():
+            self.tree[o * 2] = -1
+        if o * 2 + 1 not in self.tree.keys():
+            self.tree[o * 2 + 1] = -1
         self.tree[o] = max(self.tree[o * 2], self.tree[o * 2 + 1])
 
     def query(self, o: int, l: int, r: int, L: int, R: int) -> int:
         if L <= l and r <= R:
+            if o not in self.tree.keys():
+                self.tree[o] = -1
             return self.tree[o]
-        res = 0
+        res = -1
         m = (l + r) // 2
         if L <= m:
             res = self.query(o * 2, l, m, L, R)
         if R > m:
             res = max(res, self.query(o * 2 + 1, m + 1, r, L, R))
         return res
-
-    def BinaryQuery(self, o: int, l: int, r: int, L: int, v: int) -> int:
-        if v >= self.tree[o]:
-            return 0
-        if l == r:
-            return l
-        m = (l + r) // 2
-        if L <= m:
-            res = self.query(o * 2, l, m, L, v)
-            if res > 0:
-                return res
-        return self.query(o * 2 + 1, m + 1, r, L, v)
