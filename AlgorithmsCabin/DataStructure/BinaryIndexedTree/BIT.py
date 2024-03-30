@@ -23,3 +23,16 @@ class BIT:
                 mx = max(mx, self.original[R])
                 R -= 1
         return mx
+
+    # 统计 <= R 的元素个数
+    def query(self, R: int) -> int:
+        res = 0
+        while R > 0:
+            res += self.tree[R]
+            R &= (R - 1)
+        return res
+
+    def add(self, i: int, val: int) -> None:
+        while i < len(self.tree):
+            self.tree[i] += val
+            i += i & -i
