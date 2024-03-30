@@ -2,6 +2,7 @@ class BIT:
     def __init__(self, n: int):
         self.tree = [0] * n  # 树状数组
         self.original = [0] * n  # 原数组
+        self.tr = [0] * n  # 权值和
 
     def update(self, i: int, val: int) -> None:
         self.original[i] = max(self.original[i], val)
@@ -36,3 +37,23 @@ class BIT:
         while i < len(self.tree):
             self.tree[i] += val
             i += i & -i
+
+    # 维护权值和
+    def addTr(self, i: int, val: int) -> None:
+        while i < len(self.tree):
+            self.tree[i] += 1
+            self.tr[i] += val
+            i += i & -i
+
+    # 统计 <= R 的元素个数
+    def askTr(self, R: int) -> int:
+        res = 0
+        while R > 0:
+            res += self.tr[R]
+            R &= (R - 1)
+        return res
+
+
+
+
+
