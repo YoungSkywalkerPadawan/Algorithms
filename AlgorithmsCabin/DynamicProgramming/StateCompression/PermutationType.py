@@ -38,3 +38,44 @@ def maximumANDSum(nums: List[int], numSlots: int) -> int:
 
     s = (1 << len(nums)) - 1
     return dfs(numSlots * 2, s)
+
+
+# lc1681 最小不兼容性
+def minimumIncompatibility(nums: List[int], k: int) -> int:
+    n = len(nums)
+    if n == k:
+        return 0
+    cnt = n // k
+    m = 1 << n
+    mx = [0] * m
+    mn = [16] * m
+    same = [0] * m
+    count = [0] * m
+    for index, x in enumerate(nums):
+        bit = 1 << index
+        val = 1 << x
+        for j in range(bit):
+            if (same[j] == -1) or ((same[j] | val) == same[j]):
+                same[bit | j] = -1
+            else:
+                same[bit | j] = same[j] | val
+            mx[bit | j] = mx[j] if mx[j] >= x else x
+            mn[bit | j] = mn[j] if mn[j] <= x else x
+            count[bit | j] = count[j] + 1
+
+    @cache
+    def dfs(i: int, mask: int) -> int:
+        if i == 0:
+            return -1 if same[j] == -1 else mx[j] - mn[j]
+        s = mask
+        res = inf
+        while s:
+            if count[s] == cnt and (same[s] != -1):
+                pre = dfs(i - 1, j ^ s)
+                if pre != -1:
+                    cur = mx[s] - mn[s] + pre
+                    res = res if res <= cur else cur
+            s = (s - 1) & j
+        return -1 if res == inf else res
+
+    return dfs(k - 1, m - 1)
