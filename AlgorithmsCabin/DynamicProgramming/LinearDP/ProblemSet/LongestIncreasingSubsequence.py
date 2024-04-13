@@ -4,12 +4,11 @@
 # 3.计算a和把a排序后的数组sortedA的最长公共子序列
 # 4.数据结构优化
 from typing import List
-
-# 最长递增子序列I
 from AlgorithmsCabin.DataStructure.BinaryIndexedTree.BIT import BIT
 from AlgorithmsCabin.DataStructure.SegmentTree.SegmentTree import SegmentTree
 
 
+# 最长递增子序列I
 def lengthOfLIS(nums: List[int]) -> int:
     n = len(nums)
     res = [0] * n
