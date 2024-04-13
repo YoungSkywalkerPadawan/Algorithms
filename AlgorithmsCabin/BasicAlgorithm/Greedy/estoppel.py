@@ -1,3 +1,4 @@
+import heapq
 from heapq import heappush, heappop
 
 
@@ -53,3 +54,38 @@ def cf730I():
     print(*res_a)
     print(*res_b)
     return
+
+
+def cf3D():
+    s = list(input())
+    h = []
+    cnt = ans = 0
+    for i, c in enumerate(s):
+        if c == '(':
+            cnt += 1
+            continue
+        if c == '?':
+            s[i] = ')'
+            l, r = map(int, input().split())
+            ans += r
+            heapq.heappush(h, (l - r, i))
+
+        if cnt > 0:
+            cnt -= 1
+            continue
+
+        if len(h) == 0:
+            print(-1)
+            return
+
+        # cnt < 0 反悔，选最小的
+        cnt += 1
+        v, index = heapq.heappop(h)
+        ans += v
+        s[index] = '('
+
+    if cnt > 0:
+        print(-1)
+        return
+    print(ans)
+    print("".join(s))
