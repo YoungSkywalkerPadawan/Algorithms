@@ -1,3 +1,6 @@
+# 容斥原理
+# ｜A1UA2U···UAm｜ = ∑（1<=i<=m）|Ai| - ∑（1<=i<j<=m）|Ai∩Aj| + ∑（1<=i<j<k<=m）|Ai∩Aj∩Ak|-···+(-1)^m|A1∩A2∩···∩Am|
+
 from math import lcm
 from typing import List
 

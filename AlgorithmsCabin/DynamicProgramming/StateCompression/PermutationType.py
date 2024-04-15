@@ -1,8 +1,11 @@
+import math
 from functools import cache
 from math import inf
 from typing import List
+from collections import Counter
 
 
+# 相邻无关
 # lc1879 两个数组的最小异或值和
 def minimumXORSum(nums1: List[int], nums2: List[int]) -> int:
     @cache  # 缓存装饰器，避免重复计算 dfs 的结果
@@ -40,42 +43,61 @@ def maximumANDSum(nums: List[int], numSlots: int) -> int:
     return dfs(numSlots * 2, s)
 
 
-# lc1681 最小不兼容性
-def minimumIncompatibility(nums: List[int], k: int) -> int:
+# 相邻相关
+# lc2741 特别的排列
+def specialPerm(nums: List[int]) -> int:
+    MOD = 10 ** 9 + 7
+
+    @cache  # 缓存装饰器，避免重复计算 dfs 的结果
+    def dfs(i: int, j: int, pre: int) -> int:
+        if i < 0:
+            return 1
+        res = 0
+        for x in range(j.bit_length()):
+            if (1 << x) & j > 0:
+                if pre < 0:
+                    res += dfs(i - 1, j ^ (1 << x), nums[x])
+                else:
+                    cur = nums[x]
+                    if cur % pre == 0 or pre % cur == 0:
+                        res += dfs(i - 1, j ^ (1 << x), nums[x])
+        return res % MOD
+
     n = len(nums)
-    if n == k:
-        return 0
-    cnt = n // k
-    m = 1 << n
-    mx = [0] * m
-    mn = [16] * m
-    same = [0] * m
-    count = [0] * m
-    for index, x in enumerate(nums):
-        bit = 1 << index
-        val = 1 << x
-        for j in range(bit):
-            if (same[j] == -1) or ((same[j] | val) == same[j]):
-                same[bit | j] = -1
-            else:
-                same[bit | j] = same[j] | val
-            mx[bit | j] = mx[j] if mx[j] >= x else x
-            mn[bit | j] = mn[j] if mn[j] <= x else x
-            count[bit | j] = count[j] + 1
+    s = (1 << n) - 1
+    return dfs(n - 1, s, -1)
 
-    @cache
-    def dfs(i: int, mask: int) -> int:
-        if i == 0:
-            return -1 if same[j] == -1 else mx[j] - mn[j]
-        s = mask
-        res = inf
-        while s:
-            if count[s] == cnt and (same[s] != -1):
-                pre = dfs(i - 1, j ^ s)
-                if pre != -1:
-                    cur = mx[s] - mn[s] + pre
-                    res = res if res <= cur else cur
-            s = (s - 1) & j
-        return -1 if res == inf else res
 
-    return dfs(k - 1, m - 1)
+# lc996 正方形数组的数目
+def numSquarefulPerms(nums: List[int]) -> int:
+    def is_perfect_square(el):
+        if el < 0:
+            return False
+        return math.sqrt(el) % 1 == 0
+
+    @cache  # 缓存装饰器，避免重复计算 dfs 的结果
+    def dfs(i: int, j: int, pre: int) -> int:
+        if i < 0:
+            return 1
+        res = 0
+        for x in range(j.bit_length()):
+            if (1 << x) & j > 0:
+                if pre < 0:
+                    res += dfs(i - 1, j ^ (1 << x), nums[x])
+                else:
+                    cur = nums[x] + pre
+                    if is_perfect_square(cur):
+                        res += dfs(i - 1, j ^ (1 << x), nums[x])
+        return res
+
+    n = len(nums)
+    s = (1 << len(nums)) - 1
+    counter = Counter(nums)
+    rep = 1
+    for k, v in counter.items():
+        while v:
+            rep *= v
+            v -= 1
+    return dfs(n - 1, s, -1) // rep
+
+
