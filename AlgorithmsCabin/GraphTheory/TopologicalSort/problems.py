@@ -74,3 +74,40 @@ def sortItems(n: int, m: int, group: List[int], beforeItems: List[List[int]]) ->
     if len(ans) != n:
         return []
     return ans
+
+
+# lc1857 有向图中最大颜色值
+def largestPathValue(colors: str, edges: List[List[int]]) -> int:
+    n = len(colors)
+    g = [[] for _ in range(n)]
+    size = [0] * n
+    cnt = [[0] * 26 for _ in range(n)]
+
+    for x, y in edges:
+        g[x].append(y)
+        size[y] += 1
+
+    cur = []
+    for i, x in enumerate(size):
+        if x == 0:
+            cur.append(i)
+
+    while cur:
+        pre = cur
+        cur = []
+        for x in pre:
+            v = ord(colors[x]) - ord('a')
+            cnt[x][v] += 1
+            for y in g[x]:
+                size[y] -= 1
+                if size[y] == 0:
+                    cur.append(y)
+
+                for i in range(26):
+                    cnt[y][i] = max(cnt[y][i], cnt[x][i])
+    if sum(size) > 0:
+        return -1
+    ans = 0
+    for i, row in enumerate(cnt):
+        ans = max(ans, max(row))
+    return ans
