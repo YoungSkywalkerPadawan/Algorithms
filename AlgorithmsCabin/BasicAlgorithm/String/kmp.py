@@ -1,3 +1,5 @@
+# 在字符串中查找子串：Knuth–Morris–Pratt 算法
+# 给定一个文本 t 和一个字符串 s，我们尝试找到并展示 s 在 t 中的所有出现
 from typing import List
 
 
