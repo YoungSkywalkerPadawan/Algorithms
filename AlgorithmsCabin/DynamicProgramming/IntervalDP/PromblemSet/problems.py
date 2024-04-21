@@ -49,3 +49,28 @@ def countPalindromicSubsequences(s: str) -> int:
     ans = dfs(0, len(s) - 1)
     dfs.cache_clear()
     return ans
+
+
+# lc1771 由子序列构造的最长回文串的长度
+def longestPalindrome(word1: str, word2: str) -> int:
+    s = word1 + word2
+    ans = 0
+
+    @cache
+    def dfs(x: int, y: int) -> int:
+        nonlocal ans
+        if x > y:
+            return 0
+        if x == y:
+            return 1
+        if s[x] == s[y]:
+            res = 2 + dfs(x + 1, y - 1)
+            if x < len(word1) <= y:
+                ans = max(ans, res)
+        else:
+            res = max(dfs(x + 1, y), dfs(x, y - 1))
+        return res
+
+    dfs(0, len(s) - 1)
+    dfs.cache_clear()
+    return ans
