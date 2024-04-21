@@ -101,3 +101,41 @@ def numSquarefulPerms(nums: List[int]) -> int:
     return dfs(n - 1, s, -1) // rep
 
 
+# lc1681 最小不兼容性
+def minimumIncompatibility(nums: List[int], k: int) -> int:
+    nums.sort()
+    n = len(nums)
+    if n == k:
+        return 0
+    cnt = n // k
+    m = 1 << n
+
+    @cache
+    def dp(i: int, j: int) -> int:
+        if i < 0:
+            return 0
+
+        # 对于每一组，先选最小值，排好序后最小的为lowbit，方便计算不兼容性
+        lb = j & -j
+        p = lb.bit_length() - 1
+
+        # 相邻相关，当前所选不能和上一次的值相同
+        def dfs(cur_s, pre, index):
+
+            if cur_s.bit_count() == cnt:
+                return dp(i - 1, j ^ cur_s) + nums[pre] - nums[p]
+
+            if index == n:
+                return inf
+            # 不选
+            res = dfs(cur_s, pre, index + 1)
+            # 相邻不相等才能选
+            if (1 << index) & j > 0 and nums[index] > nums[pre]:
+                res = min(res, dfs(cur_s | (1 << index), index, index + 1))
+            return res
+
+        return dfs(lb, p, p + 1)
+
+    ans = dp(k - 1, m - 1)
+    dp.cache_clear()
+    return ans if ans < inf else -1
