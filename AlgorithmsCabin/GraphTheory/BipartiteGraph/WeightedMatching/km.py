@@ -34,50 +34,104 @@ class Hungarian:
         self.vx = [False] * n
         self.vy = [False] * n  # 访问标记，是否在交错树中
         self.upd = [inf] * n
-        self.match = [-1] * n  # 右部点匹配了哪个左部点
+        self.match = [0] * n  # 右部点匹配了哪个左部点
+        self.last = [0] * n  # 每一个右部点在交错树点上一个右部点
         self.w = w  # 边权
         self.ans = 0
-        for i in range(n):
-            for j in range(n):
-                self.lx[i] = max(self.lx[i], w[i][j])
+        for i in range(1, n):
+            for j in range(1, n):
+                self.lx[i] = max(self.lx[i], w[i - 1][j - 1])
 
     def dfs(self, x: int) -> bool:
         self.vx[x] = True
-        for y in range(self.n):
+        for y in range(1, self.n):
             if self.vy[y]:
                 continue
-            delta = self.lx[x] + self.ly[y] - self.w[x][y]
+            delta = self.lx[x] + self.ly[y] - self.w[x - 1][y - 1]
             if delta == 0:
                 self.vy[y] = True
-                if self.match[y] == -1 or self.dfs(self.match[y]):
+                if self.match[y] == 0 or self.dfs(self.match[y]):
                     self.match[y] = x
                     return True
             else:
                 self.upd[y] = min(self.upd[y], delta)
         return False
 
+    def dfs2(self, x: int, fa: int) -> bool:
+        self.vx[x] = True
+        for y in range(1, self.n):
+            if self.vy[y]:
+                continue
+            delta = self.lx[x] + self.ly[y] - self.w[x - 1][y - 1]
+            if delta == 0:
+                self.vy[y] = True
+                self.last[y] = fa
+                if self.match[y] == 0 or self.dfs2(self.match[y], y):
+                    self.match[y] = x
+                    return True
+            elif self.upd[y] > delta:
+                self.upd[y] = delta
+                self.last[y] = fa
+        return False
+
     def updateLabels(self) -> None:
         delta = inf
-        for y in range(self.n):
+        for y in range(1, self.n):
             if not self.vy[y]:
                 delta = min(delta, self.upd[y])
 
-        for i in range(self.n):
+        for i in range(1, self.n):
             if self.vx[i]:
                 self.lx[i] -= delta
             if self.vy[i]:
                 self.ly[i] += delta
 
     def solve(self) -> int:
-        for i in range(self.n):
-            self.upd = [inf] * self.n
+        for i in range(1, self.n):
             while True:
+                self.upd = [inf] * self.n
                 self.vx = [False] * self.n
                 self.vy = [False] * self.n
                 if self.dfs(i):
                     break
                 self.updateLabels()
 
-        for y in range(self.n):
+        for y in range(1, self.n):
+            self.ans += self.lx[self.match[y]] + self.ly[y]
+        return self.ans
+
+    def solve2(self) -> int:
+        for i in range(self.n):
+            self.last = [0] * self.n
+            self.upd = [inf] * self.n
+            self.vx = [False] * self.n
+            self.vy = [False] * self.n
+            # 从右部点st匹配的左部点开始dfs，一开始假设有一条0-i的匹配
+            st = 0
+            self.match[0] = i
+            while self.match[st]:  # 到达一个非匹配点st结束
+                if self.dfs2(self.match[st], st):
+                    break
+                delta = inf
+                for j in range(1, self.n):
+                    if not self.vy[j] and self.upd[j] < delta:
+                        delta = self.upd[j]
+                        st = j  # 下一次直接从最小边开始dfs
+                # 修改顶标
+                for j in range(1, self.n):
+                    if self.vx[j]:
+                        self.lx[j] -= delta
+                    if self.vy[j]:
+                        self.ly[j] += delta
+                    else:
+                        self.upd[j] -= delta
+                self.vy[st] = 1
+                # cur = self.match[st]
+
+            while st:
+                self.match[st] = self.match[self.last[st]]
+                st = self.last[st]
+
+        for y in range(1, self.n):
             self.ans += self.lx[self.match[y]] + self.ly[y]
         return self.ans
