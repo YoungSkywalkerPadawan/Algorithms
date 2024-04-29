@@ -30,7 +30,7 @@ def minimumTimeToInitialState(s: str, k: int) -> int:
     l = r = 0
     for i in range(1, n):
         if i <= r:
-            z[i] = min(z[i - l], r - i + 1) # z函数的核心思想
+            z[i] = min(z[i - l], r - i + 1)  # z函数的核心思想
         while i + z[i] < n and s[z[i]] == s[i + z[i]]:
             l, r = i, i + z[i]
             z[i] += 1
