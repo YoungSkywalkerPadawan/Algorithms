@@ -36,3 +36,18 @@ def findAnswer(n: int, edges: List[List[int]]) -> List[bool]:
         if dis_start[n-1] == dis_start[x] + dis_end[y] + wt or dis_start[n-1] == dis_start[y] + dis_end[x] + wt:
             ans[i] = True
     return ans
+
+
+def cf938D():
+    n, m = map(int, input().split())
+    edges = []
+    for _ in range(m):
+        x, y, z = map(int, input().split())
+        edges.append([x, y, 2 * z])
+
+    a = list(map(int, input().split()))
+    for i, x in enumerate(a, 1):
+        edges.append([0, i, x])
+
+    dist = dijstra(n + 1, edges, 0)
+    print(*dist[1:])
