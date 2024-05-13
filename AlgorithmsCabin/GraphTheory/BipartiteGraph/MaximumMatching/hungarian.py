@@ -20,6 +20,7 @@
 from typing import List
 
 
+# LCP04 覆盖
 def domino(n: int, m: int, broken: List[List[int]]) -> int:
     # 相邻坐标（x,y）的和，奇偶性不同。 所以转化为二部图最大匹配
     match = [[(-1, -1)] * m for _ in range(n)]

@@ -1,9 +1,8 @@
 from typing import List
-
-# lc1489 找到最小生产树里的关键边和伪关键边
 from AlgorithmsCabin.GraphTheory.MinimumSpanningTree.kruskal import kruskal
 
 
+# lc1489 找到最小生产树里的关键边和伪关键边
 def findCriticalAndPseudoCriticalEdges(n: int, p: List[List[int]]) -> List[List[int]]:
     # 先跑一次Kruskal 得到最小生成树的价值，然后依次去除每一条边，看最小值是否变化
     # 变化 -> 关建边， 不变化->非关键边

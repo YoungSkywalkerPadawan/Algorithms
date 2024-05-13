@@ -20,6 +20,7 @@ from collections import defaultdict, Counter
 from typing import List
 
 
+# lc2097 合法重新排列数对
 def validArrangement(pairs: List[List[int]]) -> List[List[int]]:
     # Kruskal算法出度 - 入度大于0的点存在，则该点为起点，反之随便哪个点作为起点。
     g = defaultdict(list)
