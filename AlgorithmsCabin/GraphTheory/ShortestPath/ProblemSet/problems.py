@@ -75,3 +75,20 @@ def cf1209F():
 
     dis = dijstraForDic(n, g)
     print(*dis[1:n0])
+
+
+# lc2203 得到要求路径的最小带权子图
+def minimumWeight(n: int, edges: List[List[int]], src1: int, src2: int, dest: int) -> int:
+    g = [[] for _ in range(n)]  # 稀疏图用邻接表
+    f = [[] for _ in range(n)]  # 稀疏图用邻接表,反图
+    for x, y, wt in edges:
+        g[x].append((y, wt))
+        f[y].append((x, wt))
+    dis1 = dijstra(n, g, src1)
+    dis2 = dijstra(n, g, src2)
+    dis3 = dijstra(n, f, dest)
+    ans = inf
+    for i in range(n):
+        ans = min(ans, dis2[i] + dis1[i] + dis3[i])
+
+    return ans if ans < inf else -1
