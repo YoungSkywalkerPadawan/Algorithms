@@ -2,8 +2,10 @@ from heapq import heappush, heappop
 from typing import List
 from AlgorithmsCabin.DataStructure.UnionFind.OceanUnionFind import OceanUnionFind
 
-
 # lc417 太平洋大西洋水流问题
+from AlgorithmsCabin.DataStructure.UnionFind.UnionFind import UnionFind
+
+
 def pacificAtlantic(heights: List[List[int]]) -> List[List[int]]:
     # 并查集
     # 从小到大构建连通块(fa记录当前连通块能达到最左，上，右，下的位置)
@@ -31,4 +33,23 @@ def pacificAtlantic(heights: List[List[int]]) -> List[List[int]]:
         for j in range(n):
             if UF.check(i * n + j):
                 ans.append([i, j])
+    return ans
+
+
+# lc765 情侣牵手
+def minSwapsCouples(row: List[int]) -> int:
+    n = len(row)
+    uf = UnionFind(n)
+    i = 0
+    while i < n:
+        uf.unite(i, i + 1)
+        x = row[i]
+        y = row[i + 1]
+        uf.unite(x, y)
+        i += 2
+
+    ans = 0
+    part = uf.get_root_size()
+    for v in part.values():
+        ans += v // 2 - 1
     return ans
