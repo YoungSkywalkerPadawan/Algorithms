@@ -53,3 +53,65 @@ def minSwapsCouples(row: List[int]) -> int:
     for v in part.values():
         ans += v // 2 - 1
     return ans
+
+
+# lc1970 你能穿过矩阵的最后一天
+def latestDayToCross(row: int, col: int, cells: List[List[int]]) -> int:
+    m = row * col
+    n = m + 2
+    # 0, n-1分别为超级源点和超级汇点
+    uf = UnionFind(n)
+    # 倒序枚举cell,直到超级源点和超级汇点连通，一开始图上都是1
+    g = [[1] * col for _ in range(row)]
+
+    for i in range(m - 1, -1, -1):
+        x, y = cells[i]
+        x -= 1
+        y -= 1
+        g[x][y] = 0
+        for x1, y1 in (x - 1, y), (x + 1, y), (x, y + 1), (x, y - 1):
+            if 0 <= x1 < row and 0 <= y1 < col and g[x1][y1] == 0:
+                uf.unite(col * x + y + 1, col * x1 + y1 + 1)
+        if x == 0:
+            uf.unite(0, y + 1)
+        if x == row - 1:
+            uf.unite(col * x + y + 1, n - 1)
+        if uf.connected(0, n - 1):
+            return i
+
+
+# lc1579 保证图可完全遍历
+def maxNumEdgesToRemove(n: int, edges: List[List[int]]) -> int:
+    g = [[] for _ in range(3)]
+    for z, x, y in edges:
+        z -= 1
+        x -= 1
+        y -= 1
+        g[z].append((x, y))
+    ans = 0
+    # 先选共同边
+    uf1 = UnionFind(n)
+    uf2 = UnionFind(n)
+    for x, y in g[2]:
+        if uf1.connected(x, y):
+            ans += 1
+        else:
+            uf1.unite(x, y)
+            uf2.unite(x, y)
+
+    for x, y in g[0]:
+        if uf1.connected(x, y):
+            ans += 1
+        else:
+            uf1.unite(x, y)
+    if uf1.setCount > 1:
+        return -1
+
+    for x, y in g[1]:
+        if uf2.connected(x, y):
+            ans += 1
+        else:
+            uf2.unite(x, y)
+    if uf2.setCount > 1:
+        return -1
+    return ans
