@@ -1,10 +1,9 @@
 from math import inf
 from typing import List
-
-# lc2662 前往目标的最小代价
 from AlgorithmsCabin.GraphTheory.ShortestPath.Dijstra2 import dijstra, dijstraForDic
 
 
+# lc2662 前往目标的最小代价
 def minimumCost(source: str, target: str, original: List[str], changed: List[str], cost: List[int]) -> int:
     dis = [[inf] * 26 for _ in range(26)]
     for i in range(26):
@@ -26,8 +25,12 @@ def minimumCost(source: str, target: str, original: List[str], changed: List[str
 
 # lc394周赛T4 最短路径中的边
 def findAnswer(n: int, edges: List[List[int]]) -> List[bool]:
-    dis_start = dijstra(n, edges, 0)
-    dis_end = dijstra(n, edges, n - 1)
+    g = [[] for _ in range(n)]  # 稀疏图用邻接表
+    for i, (x, y, wt) in enumerate(edges):
+        g[x].append((y, wt))
+        g[y].append((x, wt))
+    dis_start = dijstra(n, g, 0)
+    dis_end = dijstra(n, g, n - 1)
     ans = [False] * len(edges)
     if dis_start[n - 1] == inf:
         return ans
@@ -47,8 +50,11 @@ def cf938D():
     a = list(map(int, input().split()))
     for i, x in enumerate(a, 1):
         edges.append([0, i, x])
-
-    dist = dijstra(n + 1, edges, 0)
+    g = [[] for _ in range(n)]  # 稀疏图用邻接表
+    for i, (x, y, wt) in enumerate(edges):
+        g[x].append((y, wt))
+        g[y].append((x, wt))
+    dist = dijstra(n + 1, g, 0)
     print(*dist[1:])
 
 

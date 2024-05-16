@@ -6,11 +6,7 @@ from typing import List
 MOD = 10 ** 9 + 7
 
 
-def dijstra(n: int, edges: List[List[int]], start: int) -> List[int]:
-    g = [[] for _ in range(n)]  # 稀疏图用邻接表
-    for i, (x, y, wt) in enumerate(edges):
-        g[x].append((y, wt))
-        g[y].append((x, wt))
+def dijstra(n: int, g: List[List[int]], start: int) -> List[int]:
     dis = [inf] * n
     dis[start] = 0
     h = [(0, start)]
