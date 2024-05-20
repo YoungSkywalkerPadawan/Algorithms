@@ -14,7 +14,7 @@ class UnionFind:
             self.parent[x] = self.find(self.parent[x])
         return self.parent[x]
 
-    def unite(self, x: int, y: int) -> bool:
+    def union(self, x: int, y: int) -> bool:
         x, y = self.find(x), self.find(y)
         if x == y:
             return False

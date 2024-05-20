@@ -21,7 +21,7 @@ class OceanUnionFind:
             self.fa[x] = self.find(self.fa[x])
         return self.fa[x]
 
-    def unite(self, x: int, y: int) -> None:
+    def union(self, x: int, y: int) -> None:
         fx = self.find(x)
         fy = self.find(y)
         if self.val[fy] > self.val[fx] or fy == fx:

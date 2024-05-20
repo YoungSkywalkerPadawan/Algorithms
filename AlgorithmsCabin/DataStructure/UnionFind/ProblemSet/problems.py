@@ -1,11 +1,10 @@
 from heapq import heappush, heappop
 from typing import List
 from AlgorithmsCabin.DataStructure.UnionFind.OceanUnionFind import OceanUnionFind
-
-# lc417 太平洋大西洋水流问题
 from AlgorithmsCabin.DataStructure.UnionFind.UnionFind import UnionFind
 
 
+# lc417 太平洋大西洋水流问题
 def pacificAtlantic(heights: List[List[int]]) -> List[List[int]]:
     # 并查集
     # 从小到大构建连通块(fa记录当前连通块能达到最左，上，右，下的位置)
@@ -26,7 +25,7 @@ def pacificAtlantic(heights: List[List[int]]) -> List[List[int]]:
             if 0 <= x2 < m and 0 <= y2 < n:
                 y = x2 * n + y2
                 # 对该点上下左右方向进行连通操作
-                UF.unite(x, y)
+                UF.union(x, y)
     ans = []
     # 完成连通图构建，开始对每个点进行确认
     for i in range(m):
@@ -42,10 +41,10 @@ def minSwapsCouples(row: List[int]) -> int:
     uf = UnionFind(n)
     i = 0
     while i < n:
-        uf.unite(i, i + 1)
+        uf.union(i, i + 1)
         x = row[i]
         y = row[i + 1]
-        uf.unite(x, y)
+        uf.union(x, y)
         i += 2
 
     ans = 0
@@ -71,11 +70,11 @@ def latestDayToCross(row: int, col: int, cells: List[List[int]]) -> int:
         g[x][y] = 0
         for x1, y1 in (x - 1, y), (x + 1, y), (x, y + 1), (x, y - 1):
             if 0 <= x1 < row and 0 <= y1 < col and g[x1][y1] == 0:
-                uf.unite(col * x + y + 1, col * x1 + y1 + 1)
+                uf.union(col * x + y + 1, col * x1 + y1 + 1)
         if x == 0:
-            uf.unite(0, y + 1)
+            uf.union(0, y + 1)
         if x == row - 1:
-            uf.unite(col * x + y + 1, n - 1)
+            uf.union(col * x + y + 1, n - 1)
         if uf.connected(0, n - 1):
             return i
 
@@ -96,14 +95,14 @@ def maxNumEdgesToRemove(n: int, edges: List[List[int]]) -> int:
         if uf1.connected(x, y):
             ans += 1
         else:
-            uf1.unite(x, y)
-            uf2.unite(x, y)
+            uf1.union(x, y)
+            uf2.union(x, y)
 
     for x, y in g[0]:
         if uf1.connected(x, y):
             ans += 1
         else:
-            uf1.unite(x, y)
+            uf1.union(x, y)
     if uf1.setCount > 1:
         return -1
 
@@ -111,7 +110,7 @@ def maxNumEdgesToRemove(n: int, edges: List[List[int]]) -> int:
         if uf2.connected(x, y):
             ans += 1
         else:
-            uf2.unite(x, y)
+            uf2.union(x, y)
     if uf2.setCount > 1:
         return -1
     return ans
