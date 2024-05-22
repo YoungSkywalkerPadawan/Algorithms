@@ -48,3 +48,35 @@ def ways(pizza: List[str], k: int) -> int:
     ans = dfs(0, 0, k - 1)
     dfs.cache_clear()
     return ans % MOD
+
+
+# lc887 鸡蛋掉落
+def superEggDrop(k: int, n: int) -> int:
+
+    @cache
+    def dfs(x: int, y: int) -> int:
+        if y == 0:
+            return 0
+        if x == 1:
+            return y
+
+        def check(v: int) -> bool:
+            res1 = dfs(x - 1, v - 1)
+            res2 = dfs(x, y - v)
+            return res1 < res2
+
+        l, r = 1, y
+        while l + 1 < r:
+            mid = (l + r) // 2
+            if check(mid):
+                l = mid
+            else:
+                r = mid
+        r = l if l == y else l + 1
+        ans1 = 1 + max(dfs(x - 1, l - 1), dfs(x, y - l))
+        ans2 = 1 + max(dfs(x - 1, r - 1), dfs(x, y - r))
+        return min(ans1, ans2)
+
+    ans = dfs(k, n)
+    dfs.cache_clear()
+    return ans

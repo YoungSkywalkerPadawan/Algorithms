@@ -3,6 +3,9 @@
 from _bisect import bisect_left
 from collections import defaultdict
 from functools import cache
+from itertools import accumulate
+from math import inf
+from typing import List
 
 
 # lc730 统计不同回文子序列
@@ -74,3 +77,29 @@ def longestPalindrome(word1: str, word2: str) -> int:
     dfs(0, len(s) - 1)
     dfs.cache_clear()
     return ans
+
+
+# lc1000 合并石头的最低成本
+def mergeStones(stones: List[int], k: int) -> int:
+    n = len(stones)
+    if (n - 1) % (k - 1):
+        return -1
+
+    pre = list(accumulate(stones, initial=0))
+
+    @cache
+    def dfs(x: int, y: int) -> int:
+        if x == y:
+            return 0
+
+        res = inf
+        for i in range(x, y, k - 1):
+            cur = dfs(x, i) + dfs(i + 1, y)
+            if cur < res:
+                res = cur
+
+        if (y - x) % (k - 1) == 0:
+            res += pre[y + 1] - pre[x]
+        return res
+
+    return dfs(0, n - 1)
