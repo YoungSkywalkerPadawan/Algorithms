@@ -4,7 +4,7 @@ from typing import List
 
 
 # core(n) 为 n 除去完全平方因子后的剩余结果
-# 计算方式同质因数分解，把 nnn 的所有出现次数为奇数的质因子相乘，即为core(n)
+# 计算方式同质因数分解，把 n 的所有出现次数为奇数的质因子相乘，即为core(n)
 def core(n: int) -> int:
     res = 1
     for i in range(2, isqrt(n) + 1):
