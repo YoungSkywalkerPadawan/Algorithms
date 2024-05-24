@@ -7,6 +7,9 @@ from sortedcontainers import SortedList
 
 
 # lc1847 最近的房间
+from AlgorithmsCabin.DataStructure.UnionFind.UnionFind import UnionFind
+
+
 def closestRoom(rooms: List[List[int]], queries: List[List[int]]) -> List[int]:
     # 离线查询
     n = len(rooms)
@@ -47,4 +50,21 @@ def minInterval(intervals: List[List[int]], queries: List[int]) -> List[int]:
             heappop(h)
         if h:
             ans[i] = h[0][0]
+    return ans
+
+
+# lc1697 检查边长度限制的路径是否存在
+def distanceLimitedPathsExist(n: int, edgeList: List[List[int]], queries: List[List[int]]) -> List[bool]:
+    m = len(edgeList)
+    edgeList.sort(key=lambda p: p[2])
+    ans = [False] * len(queries)
+    j = 0
+    uf = UnionFind(n)
+    for i, (x, y, z) in sorted(enumerate(queries), key=lambda p: p[1][2]):
+        while j < m and edgeList[j][-1] < z:
+            uf.union(edgeList[j][0], edgeList[j][1])
+            j += 1
+
+        if uf.connected(x, y):
+            ans[i] = True
     return ans
