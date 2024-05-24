@@ -7,7 +7,7 @@ from sortedcontainers import SortedList
 
 # lc1847 最近的房间
 def closestRoom(rooms: List[List[int]], queries: List[List[int]]) -> List[int]:
-    # 维护当前房间号的最大值和最小值，离线查询
+    # 离线查询
     n = len(rooms)
     rooms.sort(key=lambda v: -v[1])
     m = len(queries)
