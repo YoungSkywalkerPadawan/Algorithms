@@ -7,7 +7,6 @@ from typing import List
 # lc1815 得到新鲜甜甜圈的最多组数
 # 状态压缩，相同余数的一起考虑
 def maxHappyGroups(batchSize: int, groups: List[int]) -> int:
-
     @cache
     def dfs(x: int, y: int) -> int:
         if x == 0:
@@ -36,7 +35,6 @@ def maxHappyGroups(batchSize: int, groups: List[int]) -> int:
 # lc691 贴纸拼词
 # 反复使用某个对象
 def minStickers(stickers: List[str], target: str) -> int:
-
     n = len(target)
     m = len(stickers)
     t = Counter(target)
@@ -97,3 +95,44 @@ def numberWays(hats: List[List[int]]) -> int:
     ans = dfs(0, (1 << n) - 1)
     dfs.cache_clear()
     return ans % MOD
+
+
+# luoguP5369
+# 枚举该序列中一些元素构成的集合S
+# S 的最大前缀和为 sum(S)， all−S 所有的前缀和都得小于0
+# 记 S 构成的序列中有𝑓(𝑆)，f(S) 个序列满足最大前缀和为 sum(S)，g(S) 个序列满足所有前缀和小于0
+# ans = ∑ f(S)g(all−S)sum(S)
+def P5369():
+    n = int(input())
+    a = list(map(int, input().split()))
+
+    MOD = 998244353
+
+    N = (1 << n)
+    s = [0] * N
+    g = [0] * N
+    f = [0] * N
+    g[0] = 1
+    for i in range(n):
+        s[1 << i] = a[i]
+        f[1 << i] = 1
+
+    # 利用lowbit计算各个状态的和（动态规划）
+    for i in range(N):
+        s[i] = s[i & -i] + s[i ^ (i & -i)]
+
+    for i in range(N):
+        if s[i] < 0:
+            for j in range(n):
+                if (1 << j) & i:
+                    g[i] = (g[i] + g[i ^ (1 << j)]) % MOD
+        else:
+            for j in range(n):
+                if (1 << j) & i == 0:
+                    f[i | (1 << j)] = (f[i | (1 << j)] + f[i]) % MOD
+
+    ans = 0
+    for i in range(1, N):
+        ans = (ans + s[i] * f[i] * g[(N - 1) ^ i]) % MOD
+    print(ans % MOD)
+    return
