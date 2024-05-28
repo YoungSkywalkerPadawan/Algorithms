@@ -31,7 +31,7 @@ class SegmentTree:
             return l
         m = (l + r) // 2
         if L <= m:
-            res = self.query(o * 2, l, m, L, v)
+            res = self.BinaryQuery(o * 2, l, m, L, v)
             if res > 0:
                 return res
-        return self.query(o * 2 + 1, m + 1, r, L, v)
+        return self.BinaryQuery(o * 2 + 1, m + 1, r, L, v)

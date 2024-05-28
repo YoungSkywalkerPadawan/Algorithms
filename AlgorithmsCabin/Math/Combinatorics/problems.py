@@ -1,6 +1,8 @@
 from collections import Counter
+from functools import cache
 
-from AlgorithmsCabin.Math.Util.utils import fac, ifac
+from AlgorithmsCabin.Math.Util.utils import fac, ifac, comb
+
 MOD = 10 ** 9 + 7
 
 
@@ -26,3 +28,41 @@ def makeStringSorted(s: str) -> int:
         cnt[ch] -= 1
         n -= 1
     return ans % MOD
+
+
+# LCP25 古董键盘
+def keyboard(k: int, n: int) -> int:
+    @cache
+    def dfs(x: int, y: int) -> int:
+        if y * k < x:
+            return 0
+        if x == 0:
+            return 1
+        if y == 0:
+            return 0
+
+        res = 0
+        for i in range(k + 1):
+            res += comb(x, i) * dfs(x - i, y - 1)
+            res %= MOD
+        return res
+
+    ans = dfs(n, 26)
+    dfs.cache_clear()
+    return ans % MOD
+
+
+# lc920 播放列表的数量
+def numMusicPlaylists(n: int, goal: int, k: int) -> int:
+
+    @cache
+    def dfs(x: int, y: int):
+        if x == 0:
+            return 1 if y == 0 else 0
+
+        res = dfs(x - 1, y - 1) * y % MOD
+        if n - y > k:
+            res = (res + dfs(x - 1, y) * (n - y - k)) % MOD
+        return res % MOD
+
+    return dfs(goal, n)
