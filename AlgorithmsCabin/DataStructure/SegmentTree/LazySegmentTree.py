@@ -50,8 +50,9 @@ class LazySegmentTree:
             return self.cnt[o]
         self.spread(o, l, r)
         m = (l + r) // 2
-        if m >= L:
-            return self.query(o * 2, l, m, L, R)
+        res = 0
+        if L <= m:
+            res = self.query(o * 2, l, m, L, R)
         if m < R:
-            return self.query(o * 2 + 1, m + 1, r, L, R)
-        return self.query(o * 2, l, m, L, R) + self.query(o * 2 + 1, m + 1, r, L, R)
+            res = max(res, self.query(o * 2 + 1, m + 1, r, L, R))
+        return res
