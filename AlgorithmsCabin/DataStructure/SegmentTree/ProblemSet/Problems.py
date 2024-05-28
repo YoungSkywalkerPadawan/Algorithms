@@ -49,3 +49,23 @@ def getResults(queries: List[List[int]]) -> List[bool]:
             ans.append(cur >= row[2])
 
     return ans
+
+
+# lc2940 找到Alice和Bob可以相遇的建筑
+def leftmostBuildingQueries(heights: List[int], queries: List[List[int]]) -> List[int]:
+    # 在线方式 线段树二分
+    mx = len(heights)
+    t = SegmentTree(mx)
+    n = len(heights)
+    for i in range(n):
+        t.update(1, 1, mx, i + 1, heights[i])
+    ans = []
+    for i, j in queries:
+        if i > j:
+            i, j = j, i
+        if i == j or heights[i] < heights[j]:
+            ans.append(j)
+        else:
+            pos = t.BinaryQuery(1, 1, n, j + 1, heights[i])
+            ans.append(pos - 1)  # 不存在时刚好得到 -1
+    return ans
