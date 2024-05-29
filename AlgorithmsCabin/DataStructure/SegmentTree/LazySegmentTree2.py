@@ -21,7 +21,7 @@ class DynamicSegmentTree:
             self.do(o * 2 + 1, v)
             self.todo[o] = 0
 
-    # 区间 [L,R] 内的数都加上 v   o,l,r=1,1,n
+    # 区间 [L,R] 内的数都更新为val   o,l,r=1,1,n
     def update(self, o: int, l: int, r: int, L: int, R: int, val: int) -> None:
         if L <= l and r <= R:
             self.do(o, val)
