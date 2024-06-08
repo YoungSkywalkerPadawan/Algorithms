@@ -10,6 +10,13 @@ class BIT:
             self.tree[i] = max(self.tree[i], val)
             i += i & -i
 
+    def pre_max(self, i: int) -> int:
+        mx = 0
+        while i > 0:
+            mx = max(mx, self.tree[i])
+            i &= i - 1
+        return mx
+
     def query_max(self, L: int, R: int) -> int:
         mx = 0
         while R >= L:
@@ -52,8 +59,3 @@ class BIT:
             res += self.tr[R]
             R &= (R - 1)
         return res
-
-
-
-
-

@@ -3,6 +3,8 @@
 # 2.二分贪心
 # 3.计算a和把a排序后的数组sortedA的最长公共子序列
 # 4.数据结构优化
+from bisect import bisect_left
+from collections import Counter
 from typing import List
 from AlgorithmsCabin.DataStructure.BinaryIndexedTree.BIT import BIT
 from AlgorithmsCabin.DataStructure.SegmentTree.SegmentTree import SegmentTree
@@ -75,5 +77,119 @@ def lengthOfLIS_ST(nums: List[int], k: int) -> int:
             t.update(1, 1, mx, x, f)
     return t.query(1, 1, mx, 1, mx)
 
+
 # 线段树的特性直接能查询区间内的最大值，不需要进行特殊判断，相比树状数组更简单。
 # 树状数组能做的题目，基本都能用线段树进行优化。但线段树涉及的变量更多，树状数组相对更简洁。
+
+
+# 前后缀分解，分布统计a[i]结尾和a[i]开始的最长递增子序列
+# 如果pre[i] + suf[i] - 1 = 原最长递增子序列的长度，则有可能是必须
+# 统计pre[i]各value出现的次数，如果出现次数大于1，则为非必须，剩下的是必须
+def cf486E():
+    n = int(input())
+    a = list(map(int, input().split()))
+    b = sorted(set(a))  # 离散化
+    t = BIT(len(b) + 1)
+    suf = [0] * len(a)
+    mx = 0
+    for i in range(n - 1, -1, -1):
+        x = a[i]
+        j = len(b) - bisect_left(b, x)  # 离散化后的值（从 1 开始）
+        f = t.pre_max(j - 1) + 1
+        suf[i] = f
+        mx = max(mx, f)
+        t.update(j, f)
+    ans = ['1'] * n
+    pres = [0] * n
+    t2 = BIT(len(b) + 1)
+    cnt = Counter()
+    for i, x in enumerate(a):
+        j = bisect_left(b, x) + 1  # 离散化后的值（从 1 开始）
+        f = t2.pre_max(j - 1) + 1
+        pre = f
+        pres[i] = pre
+        if suf[i] + pre - 1 == mx:
+            ans[i] = '3'
+            cnt[pre] += 1
+        t2.update(j, f)
+
+    for i, v in enumerate(pres):
+        if cnt[v] > 1 and ans[i] == '3':
+            ans[i] = '2'
+    print("".join(ans))
+
+    return
+
+
+# 离线查询
+# 统计a[i]所对应的修改的值，两种情况。
+# 1.最长递增子序列带这个值，则用之前前后缀分解的时候同时计算
+# 2.不带这个值，则考虑原序列这个值是否必须
+# 必须则原最长递增序列长度-1，反之为原最长递增子序列长度
+def cf650D():
+    n, q = map(int, input().split())
+    a = list(map(int, input().split()))
+    st = set(a)
+    queries = [[] for _ in range(n)]
+    for i in range(q):
+        idx, val = map(int, input().split())
+        queries[idx - 1].append(val * q + i)
+
+    ans = [0] * q
+    b = sorted(st)  # 离散化
+    t = BIT(len(b) + 1)
+    suf = [0] * len(a)
+    mx = 0
+    for i in range(n - 1, -1, -1):
+        for v in queries[i]:
+            val, q_idx = divmod(v, q)
+            i_v = bisect_left(b, val)
+            ans_j = len(b) - i_v  # 离散化后的值（从 1 开始）
+            ans_j = ans_j - 1 if i_v < len(b) and val == b[i_v] else ans_j
+            ans[q_idx] += t.pre_max(ans_j) + 1
+
+        x = a[i]
+        j = len(b) - bisect_left(b, x)  # 离散化后的值（从 1 开始）
+        f = t.pre_max(j - 1) + 1
+        suf[i] = f
+        if f > mx:
+            mx = f
+        t.update(j, f)
+
+    res = ['1'] * n
+    pres = [0] * n
+    t2 = BIT(len(b) + 1)
+    cnt = Counter()
+    for i, x in enumerate(a):
+        for v in queries[i]:
+            val, q_idx = divmod(v, q)
+            ans_j = bisect_left(b, val) + 1  # 离散化后的值（从 1 开始）
+            ans[q_idx] += t2.pre_max(ans_j - 1)
+
+        j = bisect_left(b, x) + 1  # 离散化后的值（从 1 开始）
+        f = t2.pre_max(j - 1) + 1
+        pre = f
+        pres[i] = pre
+        if suf[i] + pre - 1 == mx:
+            res[i] = '3'
+            cnt[pre] += 1
+        t2.update(j, f)
+
+    for i, v in enumerate(pres):
+        if cnt[v] > 1 and res[i] == '3':
+            res[i] = '2'
+
+    for i in range(n):
+        if res[i] == '3':
+            for v in queries[i]:
+                q_idx = v % q
+                if mx - 1 > ans[q_idx]:
+                    ans[q_idx] = mx - 1
+        else:
+            for v in queries[i]:
+                q_idx = v % q
+                if mx > ans[q_idx]:
+                    ans[q_idx] = mx
+
+    print('\n'.join(map(str, ans)))
+    return
