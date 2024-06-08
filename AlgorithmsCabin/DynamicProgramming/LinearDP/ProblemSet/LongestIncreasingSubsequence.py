@@ -64,7 +64,7 @@ def lengthOfLIS_BIT(nums: List[int], k: int) -> int:
     return t.query_max(1, mx)
 
 
-# 时间复杂度:O(n^2), 空间复杂度:O(n)
+# 时间复杂度:O(nlogn), 空间复杂度:O(n)
 def lengthOfLIS_ST(nums: List[int], k: int) -> int:
     # 线段树优化
     mx = max(nums)
