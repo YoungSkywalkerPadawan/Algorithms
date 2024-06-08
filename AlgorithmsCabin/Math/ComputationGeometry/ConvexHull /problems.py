@@ -39,3 +39,39 @@ def outerTrees(trees: List[List[int]]) -> List[List[int]]:
             used[i] = True
     dq.pop()
     return [trees[i] for i in dq]
+
+
+# LCP15 游乐园的迷宫
+def visitOrder(points: List[List[int]], direction: str) -> List[int]:
+    def cross(p: List[int], q: List[int], r: List[int]) -> int:
+        return (q[0] - p[0]) * (r[1] - q[1]) - (q[1] - p[1]) * (r[0] - q[0])
+
+    n = len(points)
+    m = 0
+    for i in range(1, n):
+        if points[i][0] < points[m][0]:
+            m = i
+    dq = deque([m])
+    vis = [0] * n
+    vis[m] = 1
+
+    for i in range(n - 2):
+        q_ = -1
+        for j in range(n):
+            if vis[j]:
+                continue
+            if q_ == -1:
+                q_ = j
+            else:
+                if direction[i] == 'L':
+                    if cross(points[dq[-1]], points[q_], points[j]) < 0:
+                        q_ = j
+                else:
+                    if cross(points[dq[-1]], points[q_], points[j]) > 0:
+                        q_ = j
+        vis[q_] = 1
+        dq.append(q_)
+    for i in range(n):
+        if not vis[i]:
+            dq.append(i)
+    return list(dq)
