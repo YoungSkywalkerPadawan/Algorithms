@@ -17,3 +17,28 @@ def uniqueLetterString(s: str) -> int:
         if x >= 0:
             ans += cnt[i] * (len(s) - x)
     return ans
+
+
+# 前缀异或和
+# s[r] ^ s[l] = k 的所有r - l 之和
+# 枚举r, 若有三个l满足s[r] ^ s[l] = k
+# 则r - l 之和为（r-l1）+（r-l2）+（r-l3）= 3 * r - (l1 + l2 + l3)
+def cf1879D():
+    mod = 998244353
+    n = int(input())
+    a = list(map(int, input().split()))
+    cnt = [[0] * 2 for _ in range(30)]
+    for i in range(30):
+        cnt[i][0] = 1
+    sm = [[0] * 2 for _ in range(30)]
+    ans = xor = 0
+    for i in range(1, n + 1):
+        xor ^= a[i - 1]
+        for j in range(30):
+            b = (xor >> j) & 1
+            ans = (ans + ((i * cnt[j][b ^ 1] - sm[j][b ^ 1]) % mod) * (1 << j)) % mod
+            cnt[j][b] += 1
+            sm[j][b] += i
+    print(ans)
+
+    return
