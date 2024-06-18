@@ -82,3 +82,73 @@ def hitBricks(grid: List[List[int]], hits: List[List[int]]) -> List[int]:
         ans[i] = max(0, cur - pre - 1)
         grid[x][y] = 1
     return ans
+
+
+def cf1985H1():
+    n, m = map(int, input().split())
+    g = []
+    for _ in range(n):
+        g.append(input())
+
+    rcnt = [0] * n
+    ccnt = [0] * m
+    uf = UnionFind(m * n + 1)
+    for i, row in enumerate(g):
+        for j, c in enumerate(row):
+            if c == '.':
+                continue
+            rcnt[i] += 1
+            ccnt[j] += 1
+            u = i * m + j
+            if i and g[i - 1][j] == '#':
+                v = (i - 1) * m + j
+                uf.union(u, v)
+            if j and g[i][j - 1] == '#':
+                v = i * m + j - 1
+                uf.union(u, v)
+
+    ans = 0
+    for i in range(n):
+        res = m - rcnt[i]
+        s = set()
+        for j in range(m):
+            if g[i][j] == '#':
+                u = uf.find(i * m + j)
+                if u not in s:
+                    s.add(u)
+                    res += uf.size[u]
+            else:
+                if i and g[i - 1][j] == '#':
+                    u = uf.find((i - 1) * m + j)
+                    if u not in s:
+                        s.add(u)
+                        res += uf.size[u]
+                if i < n - 1 and g[i + 1][j] == '#':
+                    u = uf.find((i + 1) * m + j)
+                    if u not in s:
+                        s.add(u)
+                        res += uf.size[u]
+        ans = max(ans, res)
+    for j in range(m):
+        res = n - ccnt[j]
+        s = set()
+        for i in range(n):
+            if g[i][j] == '#':
+                u = uf.find(i * m + j)
+                if u not in s:
+                    s.add(u)
+                    res += uf.size[u]
+            else:
+                if j and g[i][j - 1] == '#':
+                    u = uf.find(i * m + j - 1)
+                    if u not in s:
+                        s.add(u)
+                        res += uf.size[u]
+                if j < m - 1 and g[i][j + 1] == '#':
+                    u = uf.find(i * m + j + 1)
+                    if u not in s:
+                        s.add(u)
+                        res += uf.size[u]
+        ans = max(ans, res)
+    print(ans)
+    return
