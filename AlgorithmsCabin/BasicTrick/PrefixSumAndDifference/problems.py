@@ -1,9 +1,9 @@
 from typing import List
 
-# lc2132 用邮票贴满网格图
 from AlgorithmsCabin.DataStructure.UnionFind.UnionFind import UnionFind
 
 
+# lc2132 用邮票贴满网格图
 def possibleToStamp(grid: List[List[int]], stampHeight: int, stampWidth: int) -> bool:
     m, n = len(grid), len(grid[0])
     psum = [[0] * (n + 2) for _ in range(m + 2)]
