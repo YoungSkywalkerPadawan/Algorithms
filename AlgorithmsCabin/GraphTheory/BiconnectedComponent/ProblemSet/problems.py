@@ -1,3 +1,4 @@
+from math import inf
 from typing import List
 
 from AlgorithmsCabin.GraphTheory.BiconnectedComponent.tarjan import TARJAN
@@ -106,3 +107,38 @@ def minimumCost(cost: List[int], roads: List[List[int]]) -> int:
             if len(cv) < 2:
                 ans.append(res)
     return ans[0] if len(ans) == 1 else sum(ans) - max(ans)
+
+
+def cf1986F():
+    n, m = map(int, input().split())
+    g = [[] for _ in range(n)]
+    for _ in range(m):
+        x, y = map(int, input().split())
+        x -= 1
+        y -= 1
+        g[x].append(y)
+        g[y].append(x)
+    t = TARJAN(n, g)
+    t.tarjan(0, -1, 0)
+    if not t.bridge:
+        print(n * (n - 1) // 2)
+        return
+
+    # 先求每个节点的子树的大小
+    size = [1] * n
+    vis = [0] * n
+
+    def dfs(o: int, f: int) -> None:
+        vis[o] = 1
+        for child in g[o]:
+            if child != f and vis[child] == 0:
+                dfs(child, o)
+                size[o] += size[child]
+
+    dfs(0, -1)
+    ans = inf
+    for x, y in t.bridge:
+        sz = min(size[x], size[y])
+        ans = min(ans, sz * (sz - 1) // 2 + (n - sz) * (n - sz - 1) // 2)
+    print(ans)
+    return

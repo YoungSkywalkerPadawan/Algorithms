@@ -22,6 +22,30 @@
 # case2. root节点 && 有大于等于2个儿子
 # x - y 是桥：low(x的儿子) > dfn(x)
 from typing import List
+from types import GeneratorType
+
+
+def bootstrap(f, stack=None):
+    if stack is None:
+        stack = []
+
+    def wrappedfunc(*args, **kwargs):
+        if stack:
+            return f(*args, **kwargs)
+        else:
+            to = f(*args, **kwargs)
+            while True:
+                if type(to) is GeneratorType:
+                    stack.append(to)
+                    to = next(to)
+                else:
+                    stack.pop()
+                    if not stack:
+                        break
+                    to = stack[-1].send(to)
+            return to
+
+    return wrappedfunc
 
 
 class TARJAN:
@@ -33,6 +57,7 @@ class TARJAN:
         self.flag = [False] * n  # 是否是割点
         self.g = g
 
+    @bootstrap
     def tarjan(self, o: int, f: int, t: int) -> None:
         self.dfn[o] = t
         self.low[o] = t
@@ -41,7 +66,7 @@ class TARJAN:
             if child != f:
                 if self.dfn[child] == -1:
                     c += 1
-                    self.tarjan(child, o, t + 1)
+                    yield self.tarjan(child, o, t + 1)
                     self.low[o] = min(self.low[o], self.low[child])
                     # 找到割点, 非root,有儿子
                     if self.dfn[o] <= self.low[child] and f != -1 and not self.flag[o]:
@@ -54,3 +79,4 @@ class TARJAN:
         # root点 儿子数大于等于2
         if f == -1 and c >= 2 and not self.flag[o]:
             self.flag[o] = True
+        yield
