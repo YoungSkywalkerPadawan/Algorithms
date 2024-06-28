@@ -1,5 +1,6 @@
 from typing import List
 
+from AlgorithmsCabin.DataStructure.SegmentTree.BinarySegmentTree import BinarySegmentTree
 from AlgorithmsCabin.DataStructure.SegmentTree.LazySegmentTree2 import DynamicSegmentTree
 from AlgorithmsCabin.DataStructure.SegmentTree.LazySegmentTree3 import LazySegmentTree
 from AlgorithmsCabin.DataStructure.SegmentTree.SegmentTree2 import SegmentTree
@@ -68,3 +69,68 @@ def bonus(n: int, leadership: List[List[int]], operations: List[List[int]]) -> L
         else:
             ans.append(st.query(1, 0, n, l, r))
     return ans
+
+
+def cf1982F():
+    n = int(input())
+    a = list(map(int, input().split()))
+    res = [0] * n
+    for i in range(n - 1):
+        if a[i] > a[i + 1]:
+            res[i] = 1
+
+    # 构建线段树
+    # 一棵01线段树，用于确定暂时要修改的下标[l1,r1]
+    #  一棵数值线段树， 用于对[l1,r1]的最大值和最小值进行左右二分查找，确定最终的下标[L, R]
+    st1 = BinarySegmentTree(n, res)
+    st1.build(1, 1, n)
+
+    st2 = BinarySegmentTree(n, a)
+    st2.build(1, 1, n)
+
+    l1 = st1.BinaryQuery2(1, 1, n, n, 1)
+    if l1 < 0:
+        ans = [-1, -1]
+        print(*ans)
+    else:
+        r1 = st1.BinaryQuery(1, 1, n, 1, 1) + 1
+        curMax = st2.queryMx(1, 1, n, l1, r1)
+        curMin = st2.queryMn(1, 1, n, l1, r1)
+        # 去 l1 左边找最小的curMin
+        # 去 r1 右边找最大的curMax
+        L = st2.BinaryQueryMn(1, 1, n, l1, curMin + 1)
+        R = st2.BinaryQueryMx(1, 1, n, r1, curMax)
+        ans = [L, R]
+        print(*ans)
+    q = int(input())
+    for _ in range(q):
+        p, v = map(int, input().split())
+        a[p - 1] = v
+        st2.update(1, 1, n, p, v)
+        if p - 2 >= 0:
+            if a[p - 2] > v:
+                st1.update(1, 1, n, p - 1, 1)
+            else:
+                st1.update(1, 1, n, p - 1, 0)
+        if p < n:
+            if v > a[p]:
+                st1.update(1, 1, n, p, 1)
+            else:
+                st1.update(1, 1, n, p, 0)
+
+        l1 = st1.BinaryQuery2(1, 1, n, n, 1)
+        if l1 < 0:
+            ans = [-1, -1]
+            print(*ans)
+        else:
+            r1 = st1.BinaryQuery(1, 1, n, 1, 1) + 1
+            curMax = st2.queryMx(1, 1, n, l1, r1)
+            curMin = st2.queryMn(1, 1, n, l1, r1)
+            # 去 l1 左边找最小的curMin
+            # 去 r1 右边找最大的curMax
+            L = st2.BinaryQueryMn(1, 1, n, l1, curMin + 1)
+            R = st2.BinaryQueryMx(1, 1, n, r1, curMax)
+            ans = [L, R]
+            print(*ans)
+
+    return
