@@ -47,3 +47,36 @@ def boxDelivering(boxes: List[List[int]], maxBoxes: int, maxWeight: int) -> int:
             q.appendleft((i, f[i] - cs[i]))  # 左边进入窗口
 
     return f[n]
+
+
+def cf797F():
+    n, m = map(int, input().split())
+    a = list(map(int, input().split()))
+    a.sort()
+    h = [list(map(int, input().split())) for _ in range(m)]
+    h.sort()
+    dp = [inf] * (n + 1)
+
+    dp[0] = 0
+    s = [0] * (n + 1)
+    for i, (x, c) in enumerate(h, 1):
+        q = [(0, 0)]
+        l = 0
+        r = 1
+        for j, y in enumerate(a, 1):
+            s[j] = s[j - 1] + abs(x - y)
+            cur = dp[j] - s[j]
+            # 右边更大的先弹出
+            while r - l > 0 and q[-1][0] >= cur:
+                q.pop()
+                r -= 1
+            q.append((cur, j))
+            r += 1
+            # 左边超出范围的也弹出
+            while q[l][1] < j - c:
+                l += 1
+            dp[j] = q[l][0] + s[j]
+
+    ans = dp[-1] if dp[-1] < inf else -1
+    print(ans)
+    return
