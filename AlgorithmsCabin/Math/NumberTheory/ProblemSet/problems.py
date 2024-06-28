@@ -45,3 +45,49 @@ def smallestRepunitDivByK(k: int) -> int:
         if m % i == 0 and pow(10, m // i, k * 9) == 1:
             return m // i
         i -= 1
+
+
+def cf1982D():
+    n, m, k = map(int, input().split())
+    a = []
+    for _ in range(n):
+        a.append(list(map(int, input().split())))
+    # 裴蜀定理
+    res = []
+    for _ in range(n):
+        res.append(input())
+    num = 0
+    for i, row in enumerate(a):
+        for j, x in enumerate(row):
+            if res[i][j] == '1':
+                num += x
+            else:
+                num -= x
+    num = abs(num)
+    if num == 0:
+        print("YES")
+        return
+    # 二维前缀和
+    pre = [[0] * (m + 1) for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            pre[i][j] = pre[i][j - 1] + pre[i - 1][j] - pre[i - 1][j - 1] + int(res[i - 1][j - 1])
+
+    res = []
+    for i in range(k, n + 1):
+        for j in range(k, m + 1):
+            cur = pre[i][j] - pre[i][j - k] - pre[i - k][j] + pre[i - k][j - k]
+            cur = abs(k * k - 2 * cur)
+            if cur > 0:
+                res.append(cur)
+    if not res:
+        print("NO")
+        return
+    gd = res[0]
+    for x in res:
+        gd = math.gcd(gd, x)
+    if num % gd == 0:
+        print("YES")
+        return
+    print("NO")
+    return
