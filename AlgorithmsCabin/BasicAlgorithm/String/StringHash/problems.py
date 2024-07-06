@@ -2,8 +2,10 @@
 # 这个函数 f 可以方便地帮我们判断两个字符串是否相等。
 import random
 
-
 # lc3031 将单词恢复初始状态所需的最短时间II
+from collections import defaultdict
+
+
 def minimumTimeToInitialState(word: str, k: int) -> int:
     n = len(word)
     # 字符串哈希模板
@@ -29,3 +31,35 @@ def minimumTimeToInitialState(word: str, k: int) -> int:
             if calc(1, m) == calc(i + k + 1, n):
                 break  # 前后缀相等
     return res
+
+
+def cf1977D():
+    n, m = map(int, input().split())
+    g = [input() for _ in range(n)]
+    rands = [random.getrandbits(64) for _ in range(n)]
+    dt = defaultdict(int)
+    # 遍历每一列, 统计每一列的0,1的位置,并改变其中一个0,1的值(这样xor后值为1)后的所有0,1的位置的哈希值的个数,最大值极为答案
+    # 记录当前位置(i，j),xor序列中只要和改列异或只有1个1 就行,其中这个1就是第i行
+    ind = [-1, -1]
+    res = 0
+    for j in range(m):
+        sm = 0
+        for i in range(n):
+            if g[i][j] == '1':
+                sm ^= rands[i]
+
+        for i in range(n):
+            dt[sm ^ rands[i]] += 1
+            if dt[sm ^ rands[i]] > res:
+                res = dt[sm ^ rands[i]]
+                ind = [i, j]
+    print(res)
+    ans = ['0'] * n
+    j = ind[1]
+    for i in range(n):
+        if i != ind[0] and g[i][j] == '1':
+            ans[i] = '1'
+        if i == ind[0] and g[i][j] == '0':
+            ans[i] = '1'
+    print("".join(ans))
+    return
