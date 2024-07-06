@@ -1,3 +1,4 @@
+from collections import Counter
 from functools import cache
 from itertools import accumulate
 from math import inf
@@ -42,3 +43,36 @@ def stoneGameVIII(piles: List[int]) -> int:
     ans = dfs(1)
     dfs.cache_clear()  # 防止爆内存
     return ans
+
+
+def cf1987B():
+    int(input())
+    a = list(map(int, input().split()))
+    cnt = Counter(a)
+    a = list(set(a))
+    a.sort()
+    m = len(a)
+    # 尽可能大的选择
+    # @cache
+    # def dfs(x: int, y: int) -> int:
+    #     if x == m:
+    #         return 0
+    #     res = dfs(x+1, y + 1)
+    #     # 可选
+    #     if cnt[a[x]] <= y:
+    #         res2 = dfs(x+1, y - cnt[a[x]]) + 1
+    #         if res2 > res:
+    #             res = res2
+    #     return res
+    #
+    # cur = dfs(0,0)
+    # dfs.cache_clear()
+    dp = [[0] * (m + 1) for _ in range(m + 1)]
+    for i in range(m - 1, -1, -1):
+        for j in range(i + 1):
+            dp[i][j] = dp[i + 1][j + 1]
+            if cnt[a[i]] <= j:
+                dp[i][j] = max(dp[i][j], dp[i + 1][j - cnt[a[i]]] + 1)
+
+    print(len(a) - dp[0][0])
+    return
