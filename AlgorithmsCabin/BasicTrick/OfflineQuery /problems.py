@@ -66,3 +66,48 @@ def distanceLimitedPathsExist(n: int, edgeList: List[List[int]], queries: List[L
         if uf.connected(x, y):
             ans[i] = True
     return ans
+
+
+def cf1985E():
+    n, m = map(int, input().split())
+    h = list(map(int, input().split()))
+    g = [[] for _ in range(n)]
+    for _ in range(m):
+        u, v = map(int, input().split())
+        u -= 1
+        v -= 1
+        if h[u] >= h[v]:
+            g[u].append(v)
+        if h[v] >= h[u]:
+            g[v].append(u)
+
+    q = int(input())
+    queries = []
+    for _ in range(q):
+        a, b, e = map(int, input().split())
+        a -= 1
+        b -= 1
+        queries.append([a, b, e])
+    uf = UnionFind(n)
+    ans = [False] * len(queries)
+    h_index = []
+    for i, x in sorted(enumerate(h), key=lambda p: p[1]):
+        h_index.append([i, x])
+    j = 0
+    for i, (x, y, z) in sorted(enumerate(queries), key=lambda p: p[1][2] + h[p[1][0]]):
+        cur = h[x] + z
+        while j < n and h_index[j][1] <= cur:
+            pre = h_index[j][0]
+            for child in g[pre]:
+                uf.union(pre, child)
+            j += 1
+
+        if uf.connected(x, y):
+            ans[i] = True
+    for x in ans:
+        if x:
+            print("YES")
+        else:
+            print("NO")
+
+    return
