@@ -54,7 +54,6 @@ def keyboard(k: int, n: int) -> int:
 
 # lc920 播放列表的数量
 def numMusicPlaylists(n: int, goal: int, k: int) -> int:
-
     @cache
     def dfs(x: int, y: int):
         if x == 0:
@@ -66,3 +65,33 @@ def numMusicPlaylists(n: int, goal: int, k: int) -> int:
         return res % MOD
 
     return dfs(goal, n)
+
+
+def cf1992G():
+    n = int(input())
+    ans = 0
+    for i in range(n + 1):
+        if i == 0:
+            ans += 1
+            continue
+
+        mx = i * 2 + 1
+        mn = i + 1
+        for j in range(mn, mx + 1):
+            pre = min(j - 1, n)
+            # 小于j的选j-mn个,大于j的选剩下的
+            # if j - mn <= i:
+            if j == mx:
+                ans += mx * comb(pre, mx - mn)
+                ans %= MOD
+                continue
+            if n >= j:
+                ans += j * comb(pre, j - mn) * comb(n - j, i - j + mn)
+                ans %= MOD
+            # else:
+            #     if i - j + mn == 0 and j - mn == i:
+            #         ans += j * comb(pre, j - mn)
+            #         ans %= MOD
+
+    print(ans)
+    return
