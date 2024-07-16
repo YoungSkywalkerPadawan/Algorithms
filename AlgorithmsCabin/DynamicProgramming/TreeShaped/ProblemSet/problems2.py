@@ -1,5 +1,5 @@
 from collections import deque
-from math import inf
+from math import inf, gcd
 from types import GeneratorType
 
 
@@ -225,4 +225,85 @@ def cf1988D2():
 
     ans = dfs(0, -1)
     print(min(ans[1], ans[3]))
+    return
+
+
+def cf1778F():
+    mx = 1000
+    divisors = [[] for _ in range(mx + 1)]
+    for i in range(mx, 0, -1):
+        for j in range(i, mx + 1, i):
+            divisors[j].append(i)
+
+    # ceilSqrt[i]^2 是 i 的倍数
+    # 质因数分解,偶数个数减半
+    ceilSqrt = [0] * (mx + 1)
+    for i in range(1, mx + 1):
+        ceilSqrt[i] = 1
+        x = i
+        p = 2
+        while p * p <= x:
+            p2 = p * p
+            while x % p2 == 0:
+                ceilSqrt[i] *= p
+                x //= p2
+            if x % p == 0:
+                ceilSqrt[i] *= p
+                x //= p
+            p += 1
+        if x > 1:
+            ceilSqrt[i] *= x
+
+    n, k = mint()
+    a = ints()
+    g = [[] for _ in range(n)]
+    for _ in range(n - 1):
+        x_, y_ = mint()
+        x_ -= 1
+        y_ -= 1
+        g[x_].append(y_)
+        g[y_].append(x_)
+    if k == 0:
+        print(a[0])
+        return
+
+    subGcd = [0] * n
+
+    @bootstrap
+    def dfs0(ch: int, f: int) -> None:
+        subGcd[ch] = a[ch]
+        for y in g[ch]:
+            if y != f:
+                yield dfs0(y, ch)
+                subGcd[ch] = gcd(subGcd[ch], subGcd[y])
+        yield
+
+    dfs0(0, -1)
+
+    cnt = 0
+
+    @bootstrap
+    def dfs(ch: int, f: int, d: int) -> None:
+        nonlocal cnt
+        if subGcd[ch] % d == 0:
+            yield
+        if subGcd[ch] * subGcd[ch] % d == 0:
+            cnt += 1
+            yield
+        if len(g[ch]) == 1 or a[ch] * a[ch] % d > 0:
+            cnt = 10 ** 5 + 1
+            yield
+        for y in g[ch]:
+            if y != f:
+                yield dfs(y, ch, ceilSqrt[d])
+        cnt += 1
+        yield
+
+    for d_ in divisors[a[0]]:
+        cnt = 0
+        for x_ in g[0]:
+            dfs(x_, 0, d_)
+        if cnt < k:
+            print(a[0] * d_)
+            break
     return
