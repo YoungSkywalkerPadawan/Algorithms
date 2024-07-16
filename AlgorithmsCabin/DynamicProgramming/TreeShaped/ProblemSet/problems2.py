@@ -131,3 +131,98 @@ def cf1987E():
     ans = ops[0]
     print(ans)
     return
+
+
+def cf1988D():
+    n = sint()
+    a = ints()
+    g = [[] for _ in range(n)]
+    for _ in range(n - 1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    dp = [[inf] * 24 for _ in range(n)]
+    smn = [inf] * 24
+
+    @bootstrap
+    def dfs(x: int, fa: int) -> None:
+        for i in range(1, 23):
+            dp[x][i] = i * a[x]
+
+        for y in g[x]:
+            if y == fa:
+                continue
+
+            yield dfs(y, x)
+            cur = inf
+            # 记录dp[y]后缀的最小值
+            smn[-1] = inf
+            for i in range(22, 0, -1):
+                smn[i] = min(smn[i + 1], dp[y][i])
+
+            # 注意x, y不能在同一次操作,y后操作或者y前操作(前后缀分解)
+            for i in range(1, 23):
+                dp[x][i] += min(cur, smn[i + 1])
+                cur = min(cur, dp[y][i])
+        yield
+
+    dfs(0, -1)
+    print(min(dp[0]))
+    return
+
+
+def cf1988D2():
+    n = sint()
+    a = ints()
+    g = [[] for _ in range(n)]
+    for _ in range(n - 1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    @bootstrap
+    def dfs(x: int, fa: int) -> tuple:
+        cost = [a[x]] * (len(g[x]) + 2)
+        cost[0] = 0
+        for y in g[x]:
+            if y == fa:
+                continue
+            tmp = yield dfs(y, x)
+            # 子节点第一小的操作时间,操作值,第二小的操作时间,操作值
+            # 注意,除了和第一小的操作时间相同的i无法用第一小的值更新(相邻节点不能同时操作),其他时间点都可以
+            # 无法更新的i用第二小的操作值更新
+            if tmp[0] >= len(cost):
+                cost[1] += tmp[1]
+            else:
+                cost[1] += tmp[1]
+                cost[tmp[0]] -= tmp[1]
+                cost[tmp[0]] += tmp[3]
+
+                if tmp[0] + 1 < len(cost):
+                    cost[tmp[0] + 1] += tmp[1]
+                    cost[tmp[0] + 1] -= tmp[3]
+
+        for i in range(2, len(cost)):
+            cost[i] += cost[i - 1]
+        mnTime1 = mnTime2 = -1
+        mnV1 = mnV2 = inf
+        for i in range(1, len(cost)):
+            if cost[i] < mnV1:
+                mnV2 = mnV1
+                mnTime2 = mnTime1
+                mnV1 = cost[i]
+                mnTime1 = i
+            elif cost[i] < mnV2:
+                mnV2 = cost[i]
+                mnTime2 = i
+        # 每次返回第一小的操作时间,操作值,第二小的操作时间,操作值
+        yield mnTime1, mnV1, mnTime2, mnV2
+
+    ans = dfs(0, -1)
+    print(min(ans[1], ans[3]))
+    return
