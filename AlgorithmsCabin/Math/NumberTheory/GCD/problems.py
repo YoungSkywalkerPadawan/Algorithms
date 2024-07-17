@@ -1,3 +1,4 @@
+import math
 from collections import defaultdict, Counter
 from functools import cache
 from math import gcd, sqrt
@@ -55,3 +56,25 @@ def splitArray(nums: List[int]) -> int:
             dp[i + 1] = dp[i + 1] if dp[i + 1] < dt[f] + 1 else dt[f] + 1
 
     return dp[n]
+
+
+def cf1972D():
+    n, m = map(int, input().split())
+    # a = k1 * c, b = k2 * c,k1, k2 互质, k2 * c = K * (k1 + k2) => (k1 + k2) | c
+    # k1 < a / k1, k2 < b / k2
+    k_a = math.isqrt(n) + 1
+    k_b = math.isqrt(m) + 1
+    f = [[0] * k_b for _ in range(k_a)]
+    for i in range(2, min(k_a, k_b)):
+        for a in range(i, k_a, i):
+            for b in range(i, k_b, i):
+                f[a][b] = 1
+
+    ans = 0
+    for a in range(1, k_a):
+        for b in range(1, k_b):
+            if f[a][b] == 0:
+                mx = min((n // a, m // b))
+                ans += mx // (a + b)
+    print(ans)
+    return
