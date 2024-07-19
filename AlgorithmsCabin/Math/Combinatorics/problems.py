@@ -1,5 +1,6 @@
-from collections import Counter
+from collections import Counter, defaultdict
 from functools import cache
+from random import getrandbits
 
 from AlgorithmsCabin.Math.Util.utils import fac, ifac, comb
 
@@ -93,5 +94,54 @@ def cf1992G():
             #         ans += j * comb(pre, j - mn)
             #         ans %= MOD
 
+    print(ans)
+    return
+
+
+def cf1167E():
+    n, v = map(int, input().split())
+    a = list(map(int, input().split()))
+    h = getrandbits(31)
+    dt_mx = defaultdict()
+    dt_mn = defaultdict()
+    for i, x in enumerate(a):
+        if x ^ h not in dt_mx.keys():
+            dt_mn[x ^ h] = i
+        dt_mx[x ^ h] = i
+
+    b = list(set(a))
+    b.sort()
+    l_m = 0
+    for i in range(1, len(b)):
+        cur = b[i]
+        pre = b[l_m]
+        if dt_mx[pre ^ h] < dt_mn[cur ^ h]:
+            l_m += 1
+        else:
+            break
+
+    r_m = len(b) - 1
+    for i in range(len(b) - 2, -1, -1):
+        cur = b[i]
+        pre = b[r_m]
+        if dt_mx[cur ^ h] < dt_mn[pre ^ h]:
+            r_m -= 1
+        else:
+            break
+
+    if r_m == 0:
+        print(v * (v + 1) // 2)
+        return
+
+    # 先考虑删后缀
+    ans = b[l_m + 1] * (v - b[-1] + 1)
+    # 考虑删除非后缀
+    for r in range(len(b) - 1, r_m - 1, -1):
+        while l_m >= 0 and dt_mx[b[l_m] ^ h] > dt_mn[b[r] ^ h]:
+            l_m -= 1
+        cur_l = b[l_m + 1]
+        cur_r = b[r - 1]
+        # cur_l = min(cur_l, cur_r)
+        ans += (cur_l * (b[r] - cur_r))
     print(ans)
     return
