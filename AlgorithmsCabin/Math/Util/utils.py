@@ -3,6 +3,19 @@ from functools import cache
 MOD = 10 ** 9 + 7
 
 
+# region fastio
+def sint():
+    return int(input())
+
+
+def mint():
+    return map(int, input().split())
+
+
+def ints():
+    return list(map(int, input().split()))
+
+
 # 计算阶乘
 @cache
 def fac(n: int) -> int:

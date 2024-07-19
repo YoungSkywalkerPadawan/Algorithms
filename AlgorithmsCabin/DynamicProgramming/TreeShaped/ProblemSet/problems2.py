@@ -2,6 +2,8 @@ from collections import deque
 from math import inf, gcd
 from types import GeneratorType
 
+from AlgorithmsCabin.Math.Util.utils import sint, ints, mint
+
 
 def bootstrap(f, stack=None):
     if stack is None:
@@ -24,19 +26,6 @@ def bootstrap(f, stack=None):
             return to
 
     return func
-
-
-# region fastio
-def sint():
-    return int(input())
-
-
-def mint():
-    return map(int, input().split())
-
-
-def ints():
-    return list(map(int, input().split()))
 
 
 # endregion fastio

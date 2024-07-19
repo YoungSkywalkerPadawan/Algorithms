@@ -1,5 +1,7 @@
 from types import GeneratorType
 
+from AlgorithmsCabin.Math.Util.utils import sint, ints, mint
+
 
 class Node:
     def __init__(self):
@@ -31,19 +33,6 @@ def bootstrap(f, stack=None):
             return to
 
     return func
-
-
-# region fastio
-def sint():
-    return int(input())
-
-
-def mint():
-    return map(int, input().split())
-
-
-def ints():
-    return list(map(int, input().split()))
 
 
 # endregion fastio
