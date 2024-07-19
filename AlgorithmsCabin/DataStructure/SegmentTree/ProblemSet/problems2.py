@@ -1,6 +1,7 @@
 from typing import List
 
 from AlgorithmsCabin.DataStructure.SegmentTree.BinarySegmentTree import BinarySegmentTree
+from AlgorithmsCabin.DataStructure.SegmentTree.ImprovedLazySegmentTree import ImprovedLazySegmentTree
 from AlgorithmsCabin.DataStructure.SegmentTree.LazySegmentTree2 import DynamicSegmentTree
 from AlgorithmsCabin.DataStructure.SegmentTree.LazySegmentTree3 import LazySegmentTree
 from AlgorithmsCabin.DataStructure.SegmentTree.SegmentTree2 import SegmentTree
@@ -133,4 +134,26 @@ def cf1982F():
             ans = [L, R]
             print(*ans)
 
+    return
+
+
+def cf1969E():
+    n = int(input())
+    a = list(map(int, input().split()))
+    st = ImprovedLazySegmentTree(n)
+    st.build([0] * n)
+    p = [-1] * (n + 1)
+    p_last = [-1] * (n + 1)
+    s = 0
+    ans = 0
+    for r, x in enumerate(a):
+        if p[x] >= s:
+            st.range_apply(max(s, p_last[x] + 1), p[x], -1)
+        st.range_apply(max(s, p[x] + 1), r, 1)
+        if st.calculate(s, r) == 0:
+            ans += 1
+            s = r + 1
+        p_last[x], p[x] = p[x], r
+
+    print(ans)
     return
