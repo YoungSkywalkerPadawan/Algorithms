@@ -76,3 +76,36 @@ def cf1987B():
 
     print(len(a) - dp[0][0])
     return
+
+
+def cf1966C():
+    # n = int(input())
+    a = list(map(int, input().split()))
+    # 注意每次的缓冲
+    cnt = Counter(a)
+    res = list(cnt.keys())
+    res.sort()
+    sub = [0] * (len(res))
+    if res[0] > 1:
+        sub[0] = 1
+    for i in range(1, len(res) - 1):
+        if res[i] - res[i - 1] > 1:
+            sub[i] = 1
+    n = len(sub)
+    dp = [[0] * 2 for _ in range(n)]
+    dp[-1][0] = dp[-1][1] = 1
+    for i in range(n - 2, -1, -1):
+        if sub[i] == 0:
+            dp[i][0] = 1 if dp[i + 1][1] == 0 else 0
+            dp[i][1] = 1 if dp[i + 1][0] == 0 else 0
+        else:
+            if dp[i + 1][0] == 1 or dp[i + 1][1] == 0:
+                dp[i][0] = 1
+            if dp[i + 1][1] == 1 or dp[i + 1][0] == 0:
+                dp[i][1] = 1
+
+    if dp[0][0] == 1:
+        print("Alice")
+    else:
+        print("Bob")
+    return
