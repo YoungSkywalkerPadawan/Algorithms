@@ -1,10 +1,14 @@
 from collections import defaultdict
+from itertools import accumulate
 from math import inf
+from operator import xor
 from random import getrandbits
 from typing import List
 
-
 # lc2552 统计上升四元组
+from AlgorithmsCabin.Math.Util.utils import sint, ints
+
+
 def countQuadruplets(nums: List[int]) -> int:
     n = len(nums)
     g = [[0] * (n + 1) for _ in range(n)]
@@ -81,4 +85,45 @@ def cf1986E():
             ans += res
 
     print(ans)
+    return
+
+
+def cf1957D():
+    n = sint()
+    a = ints()
+    # 主要在中间,如果两边同号则中间必须是0
+    # 如果两边不同,则中间必须,可0可1,但注意0是两者相等
+    # 前后缀分解,分别统计前缀各位1的个数和后缀各位是1的个数
+    s = list(accumulate(a, func=xor, initial=0))
+    res = 0
+    for j in range(30):
+        pre = 0
+        suf = sum(x >> j & 1 for x in s)
+        for i, x in enumerate(a):
+            suf -= (s[i] >> j & 1)
+            pre += (s[i] >> j & 1)
+            if j == x.bit_length() - 1:
+                res += pre * suf + (i + 1 - pre) * (n - i - suf)
+    print(res)
+    # for i in range(30):
+    #     suf[i][n][0] = suf[i][n][1] = 0
+    #
+    # for i in range(30):
+    #     for j in range(n):
+    #         t = 1 if (1 << i) & a[j] > 0 else 0
+    #         for k in range(2):
+    #             pre[i][j + 1][k] = (t == k) + pre[i][j][k ^ t]
+    #
+    # for i in range(30):
+    #     for j in range(n - 1, -1, -1):
+    #         t = 1 if (1 << i) & a[j] > 0 else 0
+    #         for k in range(2):
+    #             suf[i][j][k] = (t == k) + suf[i][j + 1][k ^ t]
+    #
+    # ans = 0
+    # for i in range(n):
+    #     j = a[i].bit_length() - 1
+    #     ans += pre[j][i][1] * (1 + suf[j][i + 1][0])
+    #     ans += (1 + pre[j][i][0]) * (suf[j][i + 1][1])
+    # print(ans)
     return
