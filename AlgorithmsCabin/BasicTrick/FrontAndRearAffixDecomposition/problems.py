@@ -127,3 +127,38 @@ def cf1957D():
     #     ans += (1 + pre[j][i][0]) * (suf[j][i + 1][1])
     # print(ans)
     return
+
+
+def cf1863F():
+    n = sint()
+    a = ints()
+    sm = [0] * (n + 1)
+    for i, x in enumerate(a):
+        sm[i + 1] = sm[i] ^ x
+
+    # 前后缀分解
+    # 对于每个区间[i,j]看能不能从前缀[L,j]或后缀[i,R]转移过来
+    # 设区间[i,j]异或和为s1,后缀[i,R]为s2,则s1 >= s1 ^ s2
+    # 转移的化需要 s1最高位为1，然后s2是1,或者s2 == 0
+    pre = [0] * n
+    ans = []
+    for i in range(n):
+        suf = 0
+        for j in range(n - 1, i - 1, -1):
+            cur = sm[j + 1] ^ sm[i]
+            flag = (i == 0 and j == n - 1) or suf < 0 or (suf & cur) != 0 or pre[j] < 0 or (pre[j] & cur) != 0
+            if flag:
+                if cur == 0:
+                    pre[j] = -1
+                    suf = -1
+                else:
+                    idx = cur.bit_length() - 1
+                    pre[j] |= (1 << idx)
+                    suf |= (1 << idx)
+            if i == j:
+                if flag:
+                    ans.append("1")
+                else:
+                    ans.append("0")
+    print("".join(ans))
+    return
