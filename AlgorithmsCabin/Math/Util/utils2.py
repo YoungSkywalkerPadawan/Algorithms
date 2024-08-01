@@ -11,6 +11,10 @@ for i in range(mx, 0, -1):
     ifac[i - 1] = ifac[i] * i % MOD
 
 
+def fac(x: int) -> int:
+    return fac[x]
+
+
 # 组合数
 def comb(n: int, m: int, mod=MOD) -> int:
     if m < 0 or m > n:
