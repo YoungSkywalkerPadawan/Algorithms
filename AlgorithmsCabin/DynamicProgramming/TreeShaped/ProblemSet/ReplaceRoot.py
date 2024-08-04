@@ -82,3 +82,57 @@ def rootCount(edges: List[List[int]], guesses: List[List[int]], k: int) -> int:
 
     reroot(0, -1)
     return sum(1 for x in res if x >= k)
+
+
+# lc双周赛136T4
+def timeTaken(edges: List[List[int]]) -> List[int]:
+    n = len(edges) + 1
+    g = [[] for _ in range(n)]
+    for i, j in edges:
+        g[i].append(j)
+        g[j].append(i)
+
+    # 第一次dfs 统计每个节点的前两大深度
+    dep = [[(0, -1)] * 2 for _ in range(n)]
+
+    def dfs(x: int, fa: int) -> None:
+        for y in g[x]:
+            if y != fa:
+                dfs(y, x)
+                pre = 2 if y % 2 == 0 else 1
+                cur = pre + dep[y][0][0]
+                if cur > dep[x][0][0]:
+                    dep[x][1] = dep[x][0]
+                    dep[x][0] = (cur, y)
+                elif cur > dep[x][1][0]:
+                    dep[x][1] = (cur, y)
+
+    dfs(0, -1)
+    # 第二次dfs 换根dp
+    ans = dep[0][0][0]
+    res = [ans] * n
+
+    # print(dep)
+    def reroot(x: int, fa: int) -> None:
+        pre = 2 if x % 2 == 0 else 1
+        for y in g[x]:
+            if y != fa:
+                # y在x的最长链
+                if dep[x][0][1] == y:
+                    # x次长链
+                    cur = dep[x][1][0] + pre
+                else:
+                    # x最长链
+                    cur = dep[x][0][0] + pre
+
+                # 更新y的两大链条
+                if cur > dep[y][0][0]:
+                    dep[y][1] = dep[y][0]
+                    dep[y][0] = (cur, x)
+                elif cur > dep[y][1][0]:
+                    dep[y][1] = (cur, x)
+                res[y] = dep[y][0][0]
+                reroot(y, x)
+
+    reroot(0, -1)
+    return res
