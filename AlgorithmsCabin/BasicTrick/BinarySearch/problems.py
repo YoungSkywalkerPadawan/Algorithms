@@ -40,3 +40,41 @@ def cf1996A():
     ans += (sum(res[:k - cnt]))
     print(ans)
     return
+
+
+def cf1993D():
+    n, k = map(int, input().split())
+    a = list(map(int, input().split()))
+    b = [0] * n
+    dp = [0] * n
+
+    # 剩下的数，相邻两个数mod k 余数是1
+    # 按下标分组，每组选一个，尽量选大的
+    def check(x: int) -> bool:
+        for i in range(n):
+            if a[i] >= x:
+                b[i] = 1
+            else:
+                b[i] = -1
+
+        dp[0] = b[0]
+        for i in range(1, n):
+            if i % k == 0:
+                dp[i] = max(dp[i - k], b[i])
+            else:
+                dp[i] = dp[i - 1] + b[i]
+                if i > k:
+                    dp[i] = max(dp[i - k], dp[i])
+        return dp[n - 1] > 0
+
+    l = 1
+    r = 10 ** 9
+    while l < r:
+        mid = (l + r) >> 1
+        if check(mid):
+            l = mid + 1
+        else:
+            r = mid - 1
+    ans = l if check(l) else l - 1
+    print(ans)
+    return
