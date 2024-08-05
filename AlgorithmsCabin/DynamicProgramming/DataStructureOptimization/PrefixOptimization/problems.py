@@ -58,3 +58,37 @@ def cf1969C():
                     dp[x+1][y] = res
     print(pre[-1] - dp[n][k])
     return
+
+
+def cf1944F():
+    n, k, mod = mint()
+    # a b c, b <= a + c  ==>  c >= b-a
+    dp = [[0] * (k + 1) for _ in range(k + 1)]
+    for i in range(k + 1):
+        dp[0][i] = 1
+
+    for _ in range(n - 1):
+        g = [[0] * (k + 1) for _ in range(k + 1)]
+
+        for b in range(k + 1):
+            for a in range(k + 1):
+                g[b][k] += dp[a][b]
+            g[b][k] %= mod
+
+        for c in range(k - 1, -1, -1):
+            for b in range(c + 1):
+                g[b][c] = g[b][k]
+
+            for b in range(c + 1, k + 1):
+                g[b][c] = g[b][c + 1] - dp[b - c - 1][b]
+                g[b][c] %= mod
+
+        dp = g
+
+    ans = 0
+    for i in range(k + 1):
+        for j in range(i+1):
+            ans += dp[i][j]
+            ans %= mod
+
+    return ans
