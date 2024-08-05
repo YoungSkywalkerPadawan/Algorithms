@@ -1,10 +1,11 @@
 import math
 
-
 # 费马平方和定理
 # 一个非负整数 ccc 如果能够表示为两个整数的平方和，当且仅当 ccc 的所有形如4k+3的质因子的幂均为偶数。
 # lc633 平方数之和
-from AlgorithmsCabin.Math.Util.utils import phi
+from collections import defaultdict
+
+from AlgorithmsCabin.Math.Util.utils import phi, mint
 
 
 def judgeSquareSum(c: int) -> bool:
@@ -29,7 +30,6 @@ def judgeSquareSum(c: int) -> bool:
 
 # lc1015 可被K整除的最小整数
 def smallestRepunitDivByK(k: int) -> int:
-
     if k % 2 == 0 or k % 5 == 0:
         return -1
     m = phi(k * 9)
@@ -90,4 +90,33 @@ def cf1982D():
         print("YES")
         return
     print("NO")
+    return
+
+
+def cf1993F():
+    n, k, w, h = mint()
+    s = input()
+    cnt = defaultdict(int)
+    x = y = 0
+    for i in range(n):
+        if s[i] == 'L':
+            x -= 1
+        if s[i] == 'R':
+            x += 1
+        if s[i] == 'D':
+            y -= 1
+        if s[i] == 'U':
+            y += 1
+        x = (x + 2 * w) % (2 * w)
+        y = (y + 2 * h) % (2 * h)
+        cnt[(x, y)] += 1
+
+    # 第一次后位于(xj, yj)
+    # i次后位于(i * x + xj, i * y + yj) => i * x ≡ xj mod(2 * W) and i * y ≡ yj mod(2 * H)
+    ans = 0
+    for i in range(k):
+        vx = (-i * x % (2 * w) + 2 * w) % (2 * w)
+        vy = (-i * y % (2 * h) + 2 * h) % (2 * h)
+        ans += cnt[(vx, vy)]
+    print(ans)
     return
