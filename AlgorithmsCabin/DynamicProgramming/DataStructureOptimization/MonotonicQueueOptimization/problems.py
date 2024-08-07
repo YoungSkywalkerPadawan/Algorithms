@@ -80,3 +80,25 @@ def cf797F():
     ans = dp[-1] if dp[-1] < inf else -1
     print(ans)
     return
+
+
+def cf1941E():
+    n, m, k, d = map(int, input().split())
+    # 单调队列优化DP
+    cost = [0] * (n + 1)
+    ans = inf
+    for i in range(1, n + 1):
+        a = list(map(int, input().split()))
+        h = deque([(1, 0)])
+        for j in range(1, m):
+            while h and h[0][1] < j - d - 1:
+                h.popleft()
+            cur = h[0][0] + a[j] + 1
+            while h and h[-1][0] >= cur:
+                h.pop()
+            h.append((cur, j))
+        cost[i] = cost[i - 1] + h[-1][0]
+        if i >= k:
+            ans = min(ans, cost[i] - cost[i - k])
+    print(ans)
+    return
