@@ -114,5 +114,64 @@ def cf633F():
     return
 
 
-if __name__ == "__main__":
-    cf633F()
+def cf1822F():
+    n, k, c = mint()
+    g = [[] for _ in range(n)]
+    for _ in range(n-1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    # 第一次dfs 统计每个节点的前两大深度
+    dep = [[(0, -1)] * 2 for _ in range(n)]
+
+    @bootstrap
+    def dfs(x: int, fa: int, z: int) -> None:
+        d[x] = z
+        for y in g[x]:
+            if y != fa:
+                yield dfs(y, x, z+1)
+                cur = 1 + dep[y][0][0]
+                if cur > dep[x][0][0]:
+                    dep[x][1] = dep[x][0]
+                    dep[x][0] = (cur, y)
+                elif cur > dep[x][1][0]:
+                    dep[x][1] = (cur, y)
+        yield
+
+    d = [0] * n
+    dfs(0, -1, 0)
+    # 第二次dfs 换根dp
+    ans = dep[0][0][0] * k
+
+    # print(dep)
+    @bootstrap
+    def reroot(x: int, fa: int) -> None:
+        nonlocal ans
+        pre = 1
+        for y in g[x]:
+            if y != fa:
+                # y在x的最长链
+                if dep[x][0][1] == y:
+                    # x次长链
+                    cur = dep[x][1][0] + pre
+                else:
+                    # x最长链
+                    cur = dep[x][0][0] + pre
+
+                # 更新y的两大链条
+                if cur > dep[y][0][0]:
+                    dep[y][1] = dep[y][0]
+                    dep[y][0] = (cur, x)
+                elif cur > dep[y][1][0]:
+                    dep[y][1] = (cur, x)
+                cur = dep[y][0][0] * k - d[y] * c
+                ans = max(ans, cur)
+                yield reroot(y, x)
+        yield
+
+    reroot(0, -1)
+    print(ans)
+    return
