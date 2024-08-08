@@ -6,7 +6,7 @@ class BIT:
 
     def add(self, x: int, val: int) -> None:
         while x < self.n:
-            self.tree[x - 1] += val
+            self.tree[x] += val
             x |= x + 1
 
     # 维护权值和
