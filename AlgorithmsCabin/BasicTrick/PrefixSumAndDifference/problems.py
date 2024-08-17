@@ -1,9 +1,13 @@
+from collections import deque
 from typing import List
 
 from AlgorithmsCabin.DataStructure.UnionFind.UnionFind import UnionFind
 
 
 # lc2132 用邮票贴满网格图
+from AlgorithmsCabin.Math.Util.utils import mint
+
+
 def possibleToStamp(grid: List[List[int]], stampHeight: int, stampWidth: int) -> bool:
     m, n = len(grid), len(grid[0])
     psum = [[0] * (n + 2) for _ in range(m + 2)]
@@ -89,4 +93,49 @@ def cf1985H2():
             ans = max(ans, diff[i + 1][j + 1] + rcnt[i] + ccnt[j] - int(g[i][j] == '.'))
     print(ans)
 
+    return
+
+
+def cf1998D():
+    n, m = mint()
+    g = [[] for _ in range(n)]
+    for i in range(n-1):
+        g[i].append(i+1)
+
+    for _ in range(m):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+
+    dis = [-1] * n
+    dis[0] = 0
+    q = deque()
+    q.append(0)
+    while q:
+        x = q.popleft()
+        for y in g[x]:
+            if dis[y] == -1:
+                dis[y] = dis[x] + 1
+                q.append(y)
+
+    d = [0] * n
+    for x in range(n):
+        for y in g[x]:
+            l = x + 1
+            r = y - dis[x] - 1
+            if l < r:
+                d[l] += 1
+                d[r] -= 1
+
+    for i in range(1, n):
+        d[i] += d[i-1]
+
+    ans = []
+    for i in range(n-1):
+        if d[i] == 0:
+            ans.append('1')
+        else:
+            ans.append('0')
+    print("".join(ans))
     return
