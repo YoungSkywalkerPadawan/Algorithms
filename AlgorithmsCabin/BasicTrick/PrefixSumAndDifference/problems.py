@@ -3,7 +3,6 @@ from typing import List
 
 from AlgorithmsCabin.DataStructure.UnionFind.UnionFind import UnionFind
 
-
 # lc2132 用邮票贴满网格图
 from AlgorithmsCabin.Math.Util.utils import mint
 
@@ -99,8 +98,8 @@ def cf1985H2():
 def cf1998D():
     n, m = mint()
     g = [[] for _ in range(n)]
-    for i in range(n-1):
-        g[i].append(i+1)
+    for i in range(n - 1):
+        g[i].append(i + 1)
 
     for _ in range(m):
         u, v = mint()
@@ -129,13 +128,42 @@ def cf1998D():
                 d[r] -= 1
 
     for i in range(1, n):
-        d[i] += d[i-1]
+        d[i] += d[i - 1]
 
     ans = []
-    for i in range(n-1):
+    for i in range(n - 1):
         if d[i] == 0:
             ans.append('1')
         else:
             ans.append('0')
     print("".join(ans))
+    return
+
+
+def cf1592F():
+    n, m = map(int, input().split())
+    g = [input() for _ in range(n)]
+    a = [[0] * m for _ in range(n)]
+    for i in range(n):
+        for j in range(m):
+            a[i][j] = ord(g[i][j]) - ord('A') + 1
+    suf = [[0] * (m + 1) for _ in range(n + 1)]
+    ans = 0
+    # 二维异或后缀和
+    for i in range(n - 1, -1, -1):
+        for j in range(m - 1, -1, -1):
+            suf[i][j] = suf[i][j + 1] ^ suf[i + 1][j] ^ suf[i + 1][j + 1]
+            if suf[i][j] == a[i][j] & 1:
+                ans += 1
+                a[i][j] = 0
+                suf[i][j] ^= 1
+
+    if a[n - 1][m - 1] == 0:
+        for i in range(n - 1):
+            for j in range(m - 1):
+                x = a[i][j]
+                if x == 0 and a[i][m - 1] == 0 and a[n - 1][j] == 0:
+                    print(ans - 1)
+                    return
+    print(ans)
     return
