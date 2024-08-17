@@ -98,3 +98,29 @@ def minimumWeight(n: int, edges: List[List[int]], src1: int, src2: int, dest: in
         ans = min(ans, dis2[i] + dis1[i] + dis3[i])
 
     return ans if ans < inf else -1
+
+
+def cf1937E():
+    n, m = map(int, input().split())
+    c = list(map(int, input().split()))
+    a = [list(map(int, input().split())) for _ in range(n)]
+    g = [[] for _ in range(n * (m + 1))]
+    # 将每个属性看做一个点
+    for i in range(n):
+        for j in range(m):
+            cur = (j + 1) * n + i
+            g[i].append((cur, c[i]))
+            g[cur].append((i, 0))
+
+    idx = list(range(n))
+    for j in range(m):
+        idx.sort(key=lambda p: a[p][j])
+        for i in range(1, n):
+            x = (j + 1) * n + idx[i - 1]
+            y = (j + 1) * n + idx[i]
+            g[x].append((y, a[idx[i]][j] - a[idx[i - 1]][j]))
+            g[y].append((x, 0))
+
+    dis = dijstra(n * (m + 1), g, n - 1)
+    print(dis[0])
+    return
