@@ -1,4 +1,4 @@
-from collections import deque
+from collections import deque, Counter
 from math import inf, gcd
 from types import GeneratorType
 
@@ -295,4 +295,40 @@ def cf1778F():
         if cnt < k:
             print(a[0] * d_)
             break
+    return
+
+
+def cf1923E():
+    n = sint()
+    a = ints()
+    g = [[] for _ in range(n)]
+    for _ in range(n - 1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    ans = 0
+
+    @bootstrap
+    def dfs(x: int, f: int) -> Counter:
+        cnt_x = Counter()
+        nonlocal ans
+        for y in g[x]:
+            if y == f:
+                continue
+            cnt_y = yield dfs(y, x)
+            if len(cnt_y) > len(cnt_x):
+                cnt_x, cnt_y = cnt_y, cnt_x
+            for k, v_ in cnt_y.items():
+                if k != a[x]:
+                    ans += v_ * cnt_x[k]
+                cnt_x[k] += v_
+        ans += cnt_x[a[x]]
+        cnt_x[a[x]] = 1
+        yield cnt_x
+
+    dfs(0, -1)
+    print(ans)
     return
