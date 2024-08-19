@@ -1,4 +1,6 @@
-from AlgorithmsCabin.Math.Util.utils import ints
+from itertools import accumulate
+
+from AlgorithmsCabin.Math.Util.utils import ints, sint
 
 
 def cf1996A():
@@ -77,4 +79,73 @@ def cf1993D():
             r = mid - 1
     ans = l if check(l) else l - 1
     print(ans)
+    return
+
+
+def cf1923D():
+    n = sint()
+    a = ints()
+    # 找当前元素和它不相等的左右两边第一个元素的下标
+    pre = list(accumulate(a, initial=0))
+    left = [-1] * n
+    for i in range(1, n):
+        if a[i - 1] == a[i]:
+            left[i] = left[i - 1]
+        else:
+            left[i] = i - 1
+    right = [n] * n
+    for i in range(n - 2, -1, -1):
+        if a[i + 1] == a[i]:
+            right[i] = right[i + 1]
+        else:
+            right[i] = i + 1
+
+    def check(x_: int, y: int) -> bool:
+        return pre[y] - pre[x_] > a[y] and left[y-1] >= x_
+
+    def check2(x_: int, y: int) -> bool:
+        return pre[x_+1] - pre[y+1] > a[y] and right[y+1] <= x_
+
+    ans = [-1] * n
+    for i, x in enumerate(a):
+        if i > 0:
+            if a[i-1] > a[i]:
+                ans[i] = 1
+                continue
+            l = 0
+            r = i - 1
+            while l < r:
+                mid = (l + r) >> 1
+                if check(mid, i):
+                    l = mid + 1
+                else:
+                    r = mid - 1
+            res = l if check(l, i) else l - 1
+            if res >= 0 and check(res, i):
+                cur = i - res
+                if ans[i] == - 1:
+                    ans[i] = cur
+                else:
+                    ans[i] = min(ans[i], cur)
+        if i < n - 1:
+            if a[i+1] > a[i]:
+                ans[i] = 1
+                continue
+            l = i + 1
+            r = n - 1
+            while l < r:
+                mid = (l + r) >> 1
+                if check2(mid, i):
+                    r = mid - 1
+                else:
+                    l = mid + 1
+            res = l if check2(l, i) else l + 1
+            if res < n and check2(res, i):
+                cur = res - i
+                if ans[i] == - 1:
+                    ans[i] = cur
+                else:
+                    ans[i] = min(ans[i], cur)
+
+    print(*ans)
     return
