@@ -1,3 +1,5 @@
+from math import inf
+
 MOD = 998244353
 
 
@@ -53,7 +55,7 @@ def cf1989E():
 def cf1987F():
     n = int(input())
     a = list(map(int, input().split()))
-    inf = 10 ** 9
+    # inf = 10 ** 9
     # dp[l][r]移除子段al...ar而需要在l左边进行的最小操作数
     dp = [[inf] * (n + 2) for _ in range(n + 2)]
     for i in range(1, n + 2):
@@ -130,4 +132,47 @@ def cf1956D():
     print(max(dp[n]), len(ans))
     for x, y in ans:
         print(x, y)
+    return
+
+
+def cf1928E():
+    n, x, y, s = map(int, input().split())
+    # 计算通过若干段(0, 1, 2, ... ) 构成和k的最小数组长度
+    dp = [inf] * (s + 1)
+    p = [0] * (s + 1)
+    dp[0] = 0
+    for k in range(1, s + 1):
+        l, m = 2, 1
+        while m <= k:
+            if dp[k - m] + l < dp[k]:
+                dp[k] = dp[k - m] + l
+                p[k] = l
+            l += 1
+            m = l * (l - 1) // 2
+
+    for k in range(n):
+        pre = x * (k + 1) + k * (k + 1) // 2 * y
+        if pre > s:
+            break
+
+        sub = s - pre - (n - k - 1) * (x % y)
+        if sub < 0 or sub % y:
+            continue
+
+        cnt = sub // y
+        if dp[cnt] > n - k - 1:
+            continue
+
+        ans = list(range(x, x + k * y + 1, y)) + [x % y] * (n - k - 1 - dp[cnt])
+        # 开始构造答案
+        while cnt:
+            l = p[cnt]
+            cnt -= l * (l - 1) // 2
+            ans.extend(range(x % y, x % y + (l - 1) * y + 1, y))
+
+        print("YES")
+        print(*ans)
+        return
+
+    print("NO")
     return
