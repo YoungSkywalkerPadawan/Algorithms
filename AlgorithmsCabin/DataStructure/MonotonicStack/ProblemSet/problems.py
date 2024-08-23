@@ -2,8 +2,10 @@ from collections import deque, Counter
 from itertools import accumulate
 from typing import List
 
-
 # lc2281 巫师的总力量和
+from AlgorithmsCabin.Math.Util.utils import sint, ints
+
+
 def totalStrength(strength: List[int]) -> int:
     MOD = 10 ** 9 + 7
     # 先用单调栈维护每个点左边第一个小于等于它的元素，以及右边第一个比它小点元素
@@ -66,3 +68,57 @@ def smallestSubsequence(s: str, k: int, letter: str, repetition: int) -> str:
         dq.append(letter)
         cnt[letter] += 1
     return "".join(dq)
+
+
+def cf2001D():
+    n = sint()
+    a = ints()
+    # 单调递增栈，如果该数字只剩一次，必须留下
+    # 如果该元素之前出现过，直接跳过，次数减一
+    # 正常情况如果栈里是大小依此排列，如果当前更大，则找到最大位置，若当前小则找到小位置，间隔往前跳
+    dq = deque()
+    cnt = Counter(a)
+    vis = [0] * (n + 1)
+    for x in a:
+        if vis[x] == 1:
+            cnt[x] -= 1
+            continue
+        if dq and dq[-1] > x:
+            while dq and dq[-1] > x and cnt[dq[-1]] > 1:
+                if len(dq) % 2 == 0:
+                    cur = dq.pop()
+                    cnt[cur] -= 1
+                    vis[cur] = 0
+                else:
+                    # 小，看倒数第二在不在
+                    if len(dq) > 1 and cnt[dq[-2]] > 1 and dq[-2] > x:
+                        cur = dq.pop()
+                        cnt[cur] -= 1
+                        vis[cur] = 0
+                        cur = dq.pop()
+                        cnt[cur] -= 1
+                        vis[cur] = 0
+                    else:
+                        break
+        elif dq and dq[-1] < x:
+            while dq and dq[-1] < x and cnt[dq[-1]] > 1:
+                if len(dq) % 2:
+                    cur = dq.pop()
+                    cnt[cur] -= 1
+                    vis[cur] = 0
+                else:
+                    # 大，看倒数第二在不在
+                    if len(dq) > 1 and cnt[dq[-2]] > 1 and dq[-2] < x:
+                        cur = dq.pop()
+                        cnt[cur] -= 1
+                        vis[cur] = 0
+                        cur = dq.pop()
+                        cnt[cur] -= 1
+                        vis[cur] = 0
+                    else:
+                        break
+        dq.append(x)
+        vis[x] = 1
+    print(len(dq))
+    print(*dq)
+    return
