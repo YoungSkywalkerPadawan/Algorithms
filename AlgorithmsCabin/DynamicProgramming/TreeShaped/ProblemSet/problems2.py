@@ -332,3 +332,54 @@ def cf1923E():
     dfs(0, -1)
     print(ans)
     return
+
+
+def cf1929E():
+    n = int(input())
+    g = [[] for _ in range(n)]
+    for _ in range(n - 1):
+        u, v = map(int, input().split())
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    s = [0] * n
+    k = int(input())
+
+    for i in range(k):
+        u, v = map(int, input().split())
+        u -= 1
+        v -= 1
+        s[u] ^= 1 << i
+        s[v] ^= 1 << i
+
+    cnt = [[] for _ in range(k)]
+
+    @bootstrap
+    def dfs(x: int, f: int) -> None:
+        for y in g[x]:
+            if y == f:
+                continue
+
+            yield dfs(y, x)
+            s[x] ^= s[y]
+
+        for y in g[x]:
+            if y == f:
+                continue
+            for i_ in range(k):
+                # 贪心，每次离开的时候进行选择
+                if ~s[x] & s[y] & (1 << i_):
+                    cnt[i_].append(s[y])
+        yield
+
+    dfs(0, -1)
+    dp = [k] * (1 << k)
+    dp[0] = 0
+    for mask in range(1 << k):
+        for c in cnt:
+            for s in c:
+                dp[mask | s] = min(dp[mask | s], dp[mask] + 1)
+    print(dp[-1])
+    return
