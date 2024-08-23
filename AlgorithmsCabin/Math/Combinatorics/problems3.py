@@ -29,3 +29,37 @@ def cf2001E():
 
     print(dp[n][k])
     return
+
+
+def cf1931G():
+    MOD = 998244353
+    fact = Factorial(2 * 10 ** 6 + 10, MOD)
+    a, b, c, d = mint()
+    if abs(a - b) > 1:
+        print(0)
+        return
+
+    if a == b == 0:
+        if c > 0 and d > 0:
+            print(0)
+            return
+        else:
+            print(1)
+            return
+
+    def comb(x, y):
+        ans = 1
+        for v in range(y):
+            ans *= x - v
+            ans %= MOD
+        ans *= fact.fac_inv(y)
+        return ans % MOD
+
+    if a == b + 1:
+        res = comb(a + c - 1, c) * comb(a + d - 1, d)
+    elif b == a + 1:
+        res = comb(b + c - 1, c) * comb(b + d - 1, d)
+    else:
+        res = comb(a + c - 1, c) * comb(a + d, d) + comb(a + c, c) * comb(a + d - 1, d)
+    print(res % MOD)
+    return
