@@ -1,3 +1,4 @@
+from math import inf
 from typing import List
 from AlgorithmsCabin.GraphTheory.MinimumSpanningTree.kruskal import kruskal
 
@@ -24,3 +25,59 @@ def findCriticalAndPseudoCriticalEdges(n: int, p: List[List[int]]) -> List[List[
                 c_n.append(i)
     ans = [c, c_n]
     return ans
+
+
+def cf1468J():
+    n, m, k = map(int, input().split())
+    mn = []
+    mx = []
+    for _ in range(m):
+        x, y, w = map(int, input().split())
+        x -= 1
+        y -= 1
+        if w <= k:
+            mn.append((w, x, y))
+        else:
+            mx.append((w, x, y))
+
+    fa = list(range(n))
+
+    def find(x_: int) -> int:
+        if fa[x_] != x_:
+            fa[x_] = find(fa[x_])
+        return fa[x_]
+
+    def union(x_: int, y_: int) -> bool:
+        fx = find(x_)
+        fy = find(y_)
+        if fx == fy:
+            return False
+        size[fx] += size[fy]
+        fa[fy] = fx
+        return True
+
+    size = [1] * n
+
+    mn.sort()
+    mx.sort()
+    # 将小于等于k 和大于k的边都合并
+    res = inf
+    for w, x, y in mn:
+        union(x, y)
+        if size[find(x)] == n:
+            res = k - mn[-1][0]
+            break
+    if res < inf:
+        if mx:
+            res = min(res, mx[0][0] - k)
+        print(res)
+        return
+    res2 = 0
+    for w, x, y in mx:
+        if union(x, y):
+            res2 += w - k
+            if size[find(x)] == n:
+                break
+
+    print(res2)
+    return
