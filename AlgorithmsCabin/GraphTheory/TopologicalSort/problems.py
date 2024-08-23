@@ -7,8 +7,10 @@
 from collections import defaultdict
 from typing import List
 
-
 # lc1203 项目管理
+from AlgorithmsCabin.Math.Util.utils import mint, ints
+
+
 def sortItems(n: int, m: int, group: List[int], beforeItems: List[List[int]]) -> List[int]:
     # 先对项目进行分组，-1的给新的组
     g = [[] for _ in range(n + m)]
@@ -111,3 +113,43 @@ def largestPathValue(colors: str, edges: List[List[int]]) -> int:
     for i, row in enumerate(cnt):
         ans = max(ans, max(row))
     return ans
+
+
+def cf1931E():
+    n, k = mint()
+    if k == 1:
+        # a = ints()
+        print("YES")
+        return
+    g = [[] for _ in range(n)]
+    cnt = [0] * n
+    st = set()
+    for _ in range(k):
+        a = ints()
+        for i in range(1, n - 1):
+            u, v = a[i], a[i + 1]
+            if (u, v) in st:
+                continue
+            st.add((u, v))
+            u -= 1
+            v -= 1
+            g[u].append(v)
+            cnt[v] += 1
+
+    # 检验图是否有环
+    # 找入度为0的点
+    cur = [x for x in range(n) if cnt[x] == 0]
+    while cur:
+        pre = cur
+        cur = []
+        for x in pre:
+            for y in g[x]:
+                cnt[y] -= 1
+                if cnt[y] == 0:
+                    cur.append(y)
+    if sum(cnt) == 0:
+        print("YES")
+    else:
+        print("NO")
+
+    return
