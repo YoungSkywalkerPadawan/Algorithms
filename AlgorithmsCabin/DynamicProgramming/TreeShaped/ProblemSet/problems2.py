@@ -383,3 +383,40 @@ def cf1929E():
                 dp[mask | s] = min(dp[mask | s], dp[mask] + 1)
     print(dp[-1])
     return
+
+
+def cf1932A():
+    MOD = 998244353
+    n = int(input())
+    g = [[] for _ in range(n)]
+    for _ in range(n - 1):
+        u, v = map(int, input().split())
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    # 看每个节点的儿子，排列组合
+    # 考虑每个节点选或不选
+    # 选，则所有儿子里选一个，后者选分支的排列组合数，每次记录子节点数目和分支数目
+    # 不选，每个分支里挑一个或者考虑分支排列
+    # 记录分支数
+    ans = 0
+
+    @bootstrap
+    def dfs(x: int, f: int) -> int:
+        nonlocal ans
+        cnt = 1
+        for y in g[x]:
+            if y == f:
+                continue
+            c = yield dfs(y, x)
+            cnt = cnt * c % MOD
+
+        ans = (ans + cnt) % MOD
+        yield cnt + 1
+
+    dfs(0, -1)
+    ans = (ans + 1) % MOD
+    print(ans)
+    return
