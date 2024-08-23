@@ -1,5 +1,30 @@
+from types import GeneratorType
+
 from AlgorithmsCabin.Math.Util.Factorial import Factorial
 from AlgorithmsCabin.Math.Util.utils import mint
+
+
+def bootstrap(f, stack=None):
+    if stack is None:
+        stack = []
+
+    def func(*args, **kwargs):
+        if stack:
+            return f(*args, **kwargs)
+        else:
+            to = f(*args, **kwargs)
+            while True:
+                if type(to) is GeneratorType:
+                    stack.append(to)
+                    to = next(to)
+                else:
+                    stack.pop()
+                    if not stack:
+                        break
+                    to = stack[-1].send(to)
+            return to
+
+    return func
 
 
 def cf2001E():
@@ -62,4 +87,57 @@ def cf1931G():
     else:
         res = comb(a + c - 1, c) * comb(a + d, d) + comb(a + c, c) * comb(a + d - 1, d)
     print(res % MOD)
+    return
+
+
+def cf1929F():
+    MOD = 998244353
+    fact = Factorial(5 * 10 ** 5, MOD)
+    n, c = map(int, input().split())
+    left, right = [0] * n, [0] * n
+    a = [-1] * n
+    for i in range(n):
+        L, R, val = map(int, input().split())
+        if L != -1:
+            left[i] = L - 1
+        if R != -1:
+            right[i] = R - 1
+        a[i] = val
+
+    res = [1]
+
+    # 开始二叉搜索树的遍历
+    # 左中右
+    @bootstrap
+    def dfs(x: int):
+        if left[x]:
+            yield dfs(left[x])
+        res.append(a[x])
+        if right[x]:
+            yield dfs(right[x])
+        yield
+
+    dfs(0)
+    res.append(c)
+
+    # res 是有序的，看未知数的间隔, 间隔为L， 填的数选择为m, 看成L个相同的小球，放入m个不同的盒子
+    def comb(x, y):
+        cur = 1
+        for v in range(y):
+            cur *= x - v
+            cur %= MOD
+        cur *= fact.fac_inv(y)
+        return cur % MOD
+
+    # 双指针
+    l = 0
+    ans = 1
+    for r in range(1, n + 2):
+        if res[r] != -1:
+            if r - l > 1:
+                L = r - l - 1
+                m = res[r] - res[l] + 1
+                ans = ans * comb(m + L - 1, L) % MOD
+            l = r
+    print(ans)
     return
