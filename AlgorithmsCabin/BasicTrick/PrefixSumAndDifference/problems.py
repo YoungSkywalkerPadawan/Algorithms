@@ -1,4 +1,5 @@
 from collections import deque
+from math import sqrt
 from typing import List
 
 from AlgorithmsCabin.DataStructure.UnionFind.UnionFind import UnionFind
@@ -166,4 +167,34 @@ def cf1592F():
                     print(ans - 1)
                     return
     print(ans)
+    return
+
+
+def cf1921F():
+    n, q = map(int, input().split())
+    a = list(map(int, input().split()))
+    mx = int(sqrt(n))
+    pre1 = [[0] * (n + mx + 1) for _ in range(mx + 1)]
+    pre2 = [[0] * (n + mx + 1) for _ in range(mx + 1)]
+
+    # a1 + 2 * a4 + 3 * a7 + 4 * a10 + 5 * a13
+    # a10 + 2 * a13
+    # =a1 + 2 * a4 + 3 * a7 + 4 * a10 + 5 * a13 - a1 + 2 * a4 + 3 * a7 + 3 (a10 + a13)
+
+    for d in range(1, mx + 1):
+        for i in range(n):
+            pre1[d][i + d] = pre1[d][i] + a[i]
+            pre2[d][i + d] = pre2[d][i] + (i // d + 1) * a[i]
+
+    ans = [0] * q
+    for i in range(q):
+        s, d, k = map(int, input().split())
+        s -= 1
+        if d <= mx:
+            r = s + d * k
+            ans[i] = pre2[d][r] - pre2[d][s] - (pre1[d][r] - pre1[d][s]) * (s // d)
+        else:
+            for j in range(k):
+                ans[i] += a[s + j * d] * (j + 1)
+    print(*ans)
     return
