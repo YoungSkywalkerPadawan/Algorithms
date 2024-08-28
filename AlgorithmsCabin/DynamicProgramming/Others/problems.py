@@ -1,6 +1,8 @@
 from collections import deque
 from math import inf
 
+from AlgorithmsCabin.Math.Util.utils import sint, ints
+
 MOD = 998244353
 
 
@@ -224,4 +226,36 @@ def cf1921G():
     g.reverse()
     check()
     print(ans)
+    return
+
+
+def cf1927G():
+    n = sint()
+    a = ints()
+    # dp[i][j][k]为从i到左边最远的未绘制单元格的距离为j到右边最近的未绘制单元格的距离为k(包括自身)所需的最小操作次数
+    dp = [[[inf] * (n + 1) for _ in range(n + 1)] for _ in range(n + 1)]
+    dp[0][0][0] = 0
+    for i in range(n):
+        for j in range(n):
+            for k in range(n + 1):
+                if dp[i][j][k] == inf:
+                    continue
+                ni = i + 1
+                # 不选
+                nj = j + 1 if j > 0 else 1 if k == 0 else 0
+                nk = max(0, k - 1)
+                dp[ni][nj][nk] = min(dp[ni][nj][nk], dp[i][j][k])
+
+                # L
+                nj = j + 1 if j > 0 else 0
+                if nj <= a[i]:
+                    nj = 0
+                nk = max(0, k - 1)
+                dp[ni][nj][nk] = min(dp[ni][nj][nk], dp[i][j][k] + 1)
+
+                # R
+                nj = j + 1 if j > 0 else 0
+                nk = max(a[i] - 1, k - 1)
+                dp[ni][nj][nk] = min(dp[ni][nj][nk], dp[i][j][k] + 1)
+    print(min(dp[n][0]))
     return
