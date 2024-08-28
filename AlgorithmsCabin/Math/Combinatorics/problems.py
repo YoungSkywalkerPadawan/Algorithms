@@ -2,6 +2,7 @@ from collections import Counter, defaultdict
 from functools import cache
 from random import getrandbits
 
+from AlgorithmsCabin.Math.Util.Factorial import Factorial
 from AlgorithmsCabin.Math.Util.utils import fac, ifac, comb
 
 MOD = 10 ** 9 + 7
@@ -143,5 +144,46 @@ def cf1167E():
         cur_r = b[r - 1]
         # cur_l = min(cur_l, cur_r)
         ans += (cur_l * (b[r] - cur_r))
+    print(ans)
+    return
+
+
+def cf1925A():
+    mod = 10 ** 9 + 7
+    fact = Factorial(10 ** 5, mod)
+    n, m, k = map(int, input().split())
+
+    v = 0
+    for _ in range(m):
+        a, b, f = map(int, input().split())
+        v = (v + f) % mod
+    p = fact.inv(n) * fact.inv(n - 1) * 2 % mod
+
+    # 不考虑增量
+    # 贡献为k * v * p
+    ans = k * v % mod * p % mod
+
+    # 考虑增量
+    # m * Σ x (x +1 ) // 2 C k x (p) ^ x * (1 - p) ^ (k - x )
+    avg = 0
+    combi = 1
+    q = n * (n - 1) // 2
+    unpick = (q - 1) * p % mod
+    q1_inv = pow(q - 1, mod - 2, mod)
+    unpick_k = pow(unpick, k, mod)
+    inv_k = 1
+    for i in range(1, k + 1):
+        s = i * (i - 1) // 2
+        combi = combi * (k - i + 1) * pow(i, mod - 2, mod) % mod
+        inv_k = inv_k * p % mod
+        if i == k:
+            unpick_k = 1
+        else:
+            unpick_k = unpick_k * q1_inv * q % mod
+        # prob = comb * pow(q_inv, i, MOD) * pow(unpick, k - i, MOD)
+        prob = combi * inv_k * unpick_k % mod
+        avg = (avg + s * prob) % mod
+
+    ans = (ans + (m * avg) % mod) % mod
     print(ans)
     return
