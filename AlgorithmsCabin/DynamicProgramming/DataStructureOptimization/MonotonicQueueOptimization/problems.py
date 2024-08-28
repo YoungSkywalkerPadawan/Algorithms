@@ -10,6 +10,9 @@ from typing import List
 
 
 # lc1425 带限制的子序列和
+from AlgorithmsCabin.Math.Util.utils import sint, ints
+
+
 def constrainedSubsetSum(nums: List[int], k: int) -> int:
     q = deque([(0, nums[0])])
     n = len(nums)
@@ -100,5 +103,39 @@ def cf1941E():
         cost[i] = cost[i - 1] + h[-1][0]
         if i >= k:
             ans = min(ans, cost[i] - cost[i - k])
+    print(ans)
+    return
+
+
+def cf1918D():
+    n = sint()
+    a = ints()
+    pre = list(accumulate(a, initial=0))
+
+    def check(x: int) -> bool:
+        dp = [inf] * (n + 1)
+        dp[0] = 0
+        dq = deque([0])
+        # 单调队列优化DP
+        for i in range(n):
+            while dq and pre[i] - pre[dq[0]] > x:
+                dq.popleft()
+            dp[i + 1] = dp[dq[0]] + a[i]
+            while dq and dp[dq[-1]] > dp[i + 1]:
+                dq.pop()
+            dq.append(i + 1)
+            if dp[i + 1] <= x and pre[-1] - pre[i + 1] <= x:
+                return True
+        return False
+
+    l = 0
+    r = sum(a)
+    while l < r:
+        mid = (l + r) >> 1
+        if check(mid):
+            r = mid - 1
+        else:
+            l = mid + 1
+    ans = l if check(l) else l + 1
     print(ans)
     return
