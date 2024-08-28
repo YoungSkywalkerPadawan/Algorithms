@@ -109,3 +109,99 @@ def cf1946F():
         if not qry:
             break
     return " ".join(map(str, ans))
+
+
+def cf1925E():
+    n, m, q = mint()
+    a = list(map(lambda p: int(p) - 1, input().split()))
+    v = ints()
+
+    harbour_values = [0] * n
+    for x, y in zip(a, v):
+        harbour_values[x] = y
+
+    bit = BIT(n)
+    for x in a:
+        bit.add(x, 1)
+
+    def get_harbour_to_left(x_):
+        if harbour_values[x_]:
+            return x_
+        sm = bit.sm(x_ + 1)
+        return bit.select(sm - 1)
+
+    def get_harbour_to_right(x_):
+        if harbour_values[x_]:
+            return x_
+        sm = bit.sm(x_ + 1)
+        return bit.select(sm)
+
+    bit_costs = BIT(n)
+    cost_val = [0] * n
+    idx = sorted(range(m), key=lambda p: a[p])
+    for i in range(1, m):
+        left_harbour = a[idx[i - 1]]
+        left_harbour_value = harbour_values[left_harbour]
+        habour = a[idx[i]]
+        cost_val[habour] = (habour - left_harbour - 1) * (habour - left_harbour) // 2 * left_harbour_value
+        bit_costs.add(habour, cost_val[habour])
+
+    ans = []
+    for _ in range(q):
+        op = ints()
+        if op[0] == 1:
+            new_harbour, new_harbour_value = op[1], op[2]
+            new_harbour -= 1
+            left_harbour = get_harbour_to_left(new_harbour)
+            left_harbour_value = harbour_values[left_harbour]
+            right_harbour = get_harbour_to_right(new_harbour)
+
+            bit.add(new_harbour, 1)
+            harbour_values[new_harbour] = new_harbour_value
+
+            d = new_harbour - left_harbour - 1
+            cost_val[new_harbour] = d * (d + 1) // 2 * left_harbour_value
+            bit_costs.add(new_harbour, cost_val[new_harbour])
+
+            d = right_harbour - new_harbour - 1
+            delta = d * (d + 1) // 2 * new_harbour_value - cost_val[right_harbour]
+            cost_val[right_harbour] += delta
+            bit_costs.add(right_harbour, delta)
+        elif op[0] == 2:
+            l, r = op[1], op[2]
+            l -= 1
+            r -= 1
+
+            if get_harbour_to_right(l) > r:
+                left_harbour = get_harbour_to_left(l)
+                right_harbour = get_harbour_to_right(r)
+                left_harbour_value = harbour_values[left_harbour]
+                d1 = right_harbour - l
+                d2 = right_harbour - (r + 1)
+                res = (d1 * (d1 + 1) // 2 - d2 * (d2 + 1) // 2) * left_harbour_value
+                ans += [str(res)]
+                continue
+
+            res = bit_costs.range_sm(l, r + 1)
+
+            left_harbour = get_harbour_to_left(l)
+            if left_harbour == l:
+                res -= cost_val[l]
+            else:
+                left_harbour_value = harbour_values[left_harbour]
+                harbour = get_harbour_to_right(left_harbour + 1)
+                d1 = harbour - (left_harbour + 1)
+                d2 = harbour - l
+                res -= (d1 * (d1 + 1) // 2 - d2 * (d2 + 1) // 2) * left_harbour_value
+
+            right_harbour = get_harbour_to_right(r)
+            if r < right_harbour:
+                res += cost_val[right_harbour]
+            harbour = get_harbour_to_left(right_harbour - 1)
+            harbour_value = harbour_values[harbour]
+            d = right_harbour - (r + 1)
+            res -= d * (d + 1) // 2 * harbour_value
+            ans += [str(res)]
+
+    print("\n".join(ans))
+    return
