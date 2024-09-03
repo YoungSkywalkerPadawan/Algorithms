@@ -205,3 +205,41 @@ def cf1925E():
 
     print("\n".join(ans))
     return
+
+
+def cf1917D():
+    MOD = 998244353
+    n, k = mint()
+    a = ints()
+    b = ints()
+    bit_b = BIT(max(b) + 1)
+    ans = 0
+    for i in range(k - 1, -1, -1):
+        ans = (ans + bit_b.sm(b[i])) % MOD
+        bit_b.add(b[i], 1)
+
+    ans = n * ans % MOD
+    bit = BIT(2 * n)
+    for x in a:
+        l, r = (x + 1) // 2, x - 1
+        for i in range(1, k):
+            if r <= 0:
+                break
+            ans = (ans + bit.range_sm(l, r+1) * (k - i + 1) * (k - i) // 2) % MOD
+            l, r = (l + 1) // 2, l - 1
+
+        l, r = x + 1, x * 2
+        for i in range(k - 1):
+            if l >= n * 2:
+                break
+            ans = (ans + bit.range_sm(l, min(r, n * 2 - 1) + 1) * (k * k - (k - i) * (k - i - 1) // 2)) % MOD
+            l, r = r + 1, r * 2
+
+        if l < n * 2:
+            ans = (ans + bit.range_sm(l, n * 2) * k * k) % MOD
+
+        bit.add(x, 1)
+
+    print(ans)
+
+    return
