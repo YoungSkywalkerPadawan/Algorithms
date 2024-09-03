@@ -1,6 +1,6 @@
 from itertools import accumulate
 
-from AlgorithmsCabin.Math.Util.utils import ints, sint
+from AlgorithmsCabin.Math.Util.utils import ints, sint, mint
 
 
 def cf1996A():
@@ -101,15 +101,15 @@ def cf1923D():
             right[i] = i + 1
 
     def check(x_: int, y: int) -> bool:
-        return pre[y] - pre[x_] > a[y] and left[y-1] >= x_
+        return pre[y] - pre[x_] > a[y] and left[y - 1] >= x_
 
     def check2(x_: int, y: int) -> bool:
-        return pre[x_+1] - pre[y+1] > a[y] and right[y+1] <= x_
+        return pre[x_ + 1] - pre[y + 1] > a[y] and right[y + 1] <= x_
 
     ans = [-1] * n
     for i, x in enumerate(a):
         if i > 0:
-            if a[i-1] > a[i]:
+            if a[i - 1] > a[i]:
                 ans[i] = 1
                 continue
             l = 0
@@ -128,7 +128,7 @@ def cf1923D():
                 else:
                     ans[i] = min(ans[i], cur)
         if i < n - 1:
-            if a[i+1] > a[i]:
+            if a[i + 1] > a[i]:
                 ans[i] = 1
                 continue
             l = i + 1
@@ -148,4 +148,44 @@ def cf1923D():
                     ans[i] = min(ans[i], cur)
 
     print(*ans)
+    return
+
+
+def cf1914A():
+    n, q = mint()
+    a = ints()
+    # 统计每个数位的个数
+    cnt = [0] * (n + 1)
+    for x in a:
+        cnt[x] += 1
+
+    pre = list(accumulate(cnt, initial=0))
+
+    def check(m: int, x_: int) -> bool:
+        c = 0
+        for i in range(0, n + 1, x_):
+            c += pre[min(i + m + 1, n + 1)] - pre[i]
+        return c * 2 <= n
+
+    res = [-1] * (n + 1)
+    ans = []
+    for _ in range(q):
+        x = sint()
+        if res[x] >= 0:
+            ans.append(res[x])
+            continue
+
+        l = 0
+        r = x - 1
+        while l < r:
+            mid = (l + r) >> 1
+            if check(mid, x):
+                l = mid + 1
+            else:
+                r = mid - 1
+        l = l if check(l, x) else l - 1
+        res[x] = l + 1
+        ans.append(l + 1)
+    print(*ans)
+
     return
