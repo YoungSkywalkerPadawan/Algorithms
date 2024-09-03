@@ -6,6 +6,9 @@ from typing import List
 
 
 # lc1819 序列中不同最大公约数的数目
+from AlgorithmsCabin.Math.Util.utils import sint, ints
+
+
 def countDifferentSubsequenceGCDs(nums: List[int]) -> int:
     st = set(nums)
     ans = 0
@@ -76,5 +79,40 @@ def cf1972D():
             if f[a][b] == 0:
                 mx = min((n // a, m // b))
                 ans += mx // (a + b)
+    print(ans)
+    return
+
+
+def cf2002F():
+    n = sint()
+    a = ints()
+    b = [0] * (n - 1)
+    for i in range(n - 1):
+        b[i] = abs(a[i] - a[i + 1])
+
+    f = []
+    ans = n
+    n -= 1
+    for i in range(n):
+        f.append([b[i], 1])
+        g = b[i]
+        for j in range(len(f) - 1, -1, -1):
+            g = gcd(g, f[j][0])
+            f[j][0] = g
+
+        k = 0
+        for j in range(len(f)):
+            if k > 0 and f[j][0] == f[k - 1][0]:
+                f[k - 1][1] += f[j][1]
+            else:
+                f[k] = f[j]
+                k += 1
+
+        f = f[:k]
+
+        for x, c in f:
+            if x == 0 or x == (x & -x):
+                ans += c
+
     print(ans)
     return
