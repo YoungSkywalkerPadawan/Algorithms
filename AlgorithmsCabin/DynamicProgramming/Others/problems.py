@@ -1,7 +1,7 @@
 from collections import deque
 from math import inf
 
-from AlgorithmsCabin.Math.Util.utils import sint, ints
+from AlgorithmsCabin.Math.Util.utils import sint, ints, fac, ifac
 
 MOD = 998244353
 
@@ -258,4 +258,57 @@ def cf1927G():
                 nk = max(a[i] - 1, k - 1)
                 dp[ni][nj][nk] = min(dp[ni][nj][nk], dp[i][j][k] + 1)
     print(min(dp[n][0]))
+    return
+
+
+def perm(x, y):
+    return fac(x) * ifac(x - y) % MOD
+
+
+def cf1237F():
+    n, m, k = map(int, input().split())
+    banR = [False] * n
+    banC = [False] * m
+    for _ in range(k):
+        r1, c1, r2, c2 = map(int, input().split())
+        banR[r1 - 1] = True
+        banR[r2 - 1] = True
+        banC[c1 - 1] = True
+        banC[c2 - 1] = True
+
+    emptyR = emptyC = 0
+
+    for x in banR:
+        if not x:
+            emptyR += 1
+    for x in banC:
+        if not x:
+            emptyC += 1
+
+    f = [[0] * (n // 2 + 1) for _ in range(n + 1)]
+    for i in range(n + 1):
+        f[i][0] = 1
+
+    for i in range(1, n):
+        for j in range(1, (i + 1) // 2 + 1):
+            f[i + 1][j] = f[i][j]
+            if not banR[i] and not banR[i - 1]:
+                f[i + 1][j] = (f[i + 1][j] + f[i - 1][j - 1]) % MOD
+
+    g = [[0] * (m // 2 + 1) for _ in range(m + 1)]
+    for i in range(m + 1):
+        g[i][0] = 1
+
+    for i in range(1, m):
+        for j in range(1, (i + 1) // 2 + 1):
+            g[i + 1][j] = g[i][j]
+            if not banC[i] and not banC[i - 1]:
+                g[i + 1][j] = (g[i + 1][j] + g[i - 1][j - 1]) % MOD
+    ans = 0
+    for i, v in enumerate(f[n]):
+        for j, w in enumerate(g[m]):
+            if j > emptyR - i * 2 or i > emptyC - j * 2:
+                break
+            ans = (ans + v * w % MOD * perm(emptyC - j * 2, i) % MOD * perm(emptyR - i * 2, j)) % MOD
+    print(ans)
     return
