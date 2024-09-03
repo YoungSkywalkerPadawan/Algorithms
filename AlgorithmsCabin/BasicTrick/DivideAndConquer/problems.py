@@ -1,3 +1,30 @@
+from AlgorithmsCabin.Math.Util.utils import sint, ints
+from types import GeneratorType
+
+
+def bootstrap(f, stack=None):
+    if stack is None:
+        stack = []
+
+    def func(*args, **kwargs):
+        if stack:
+            return f(*args, **kwargs)
+        else:
+            to = f(*args, **kwargs)
+            while True:
+                if type(to) is GeneratorType:
+                    stack.append(to)
+                    to = next(to)
+                else:
+                    stack.pop()
+                    if not stack:
+                        break
+                    to = stack[-1].send(to)
+            return to
+
+    return func
+
+
 MOD = 10 ** 9 + 7
 
 
@@ -36,4 +63,57 @@ def cf1982E():
 
     ans = dfs(n - 1, k)[-1]
     print(ans)
+    return
+
+
+def cf1913D():
+    n = sint()
+    a = ints()
+    left = [-1] * n
+    right = [-1] * n
+
+    stack = []
+    for i in range(n):
+        x = a[i]
+        idx = -1
+        while len(stack) and a[stack[-1]] > x:
+            new_idx = stack.pop()
+            right[new_idx] = idx
+            idx = new_idx
+        if idx != -1:
+            left[i] = idx
+        stack.append(i)
+
+    idx = -1
+    while len(stack):
+        new_idx = stack.pop()
+        right[new_idx] = idx
+        idx = new_idx
+    dp = [0] * n
+    root = a.index(min(a))
+
+    @bootstrap
+    def dfs(o: int, f: int):
+        l = left[o]
+        r = right[o]
+        ll = rr = 1
+        if l >= 0:
+            yield dfs(l, f | 1)
+            ll = dp[l]
+        if r >= 0:
+            yield dfs(r, f | 2)
+            rr = dp[r]
+
+        dp[o] = ll * rr
+        if f & 1:
+            dp[o] += ll
+        if f & 2:
+            dp[o] += rr
+        if f == 3:
+            dp[o] -= 1
+        dp[o] %= MOD
+        yield
+
+    dfs(root, 0)
+    print(dp[root])
     return
