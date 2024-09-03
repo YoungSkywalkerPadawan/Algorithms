@@ -1,4 +1,4 @@
-from collections import deque, Counter
+from collections import deque, Counter, defaultdict
 from math import inf, gcd
 from types import GeneratorType
 
@@ -464,4 +464,54 @@ def cf1914A():
 
     ans = dfs2(0)
     print(ans)
+    return
+
+
+def cf2002A():
+    n, w = mint()
+    a = ints()
+    g = [[] for _ in range(n)]
+    for i in range(1, n):
+        f = a[i - 1] - 1
+        g[f].append(i)
+
+    # 每个点刚好经过两次
+
+    # 统计每条路径点的数量
+    cnt = Counter()
+    # 统计点在哪些路径
+    dt = defaultdict(list)
+    # 路径编号
+    c = 0
+
+    @bootstrap
+    def dfs(x_: int) -> None:
+        nonlocal c
+        for y_ in g[x_]:
+            cnt[c] += 1
+            dt[y_].append(c)
+            c += 1
+            yield dfs(y_)
+            cnt[c] += 1
+            dt[y_].append(c)
+
+        yield
+
+    dfs(0)
+
+    res = 0
+    cur = n
+    ans = []
+    for _ in range(n - 1):
+        x, y = mint()
+        x -= 1
+        w -= y
+        res += y * len(dt[x])
+        for p in dt[x]:
+            cnt[p] -= 1
+            if cnt[p] == 0:
+                cur -= 1
+        ans.append(res + w * cur)
+    print(*ans)
+
     return
