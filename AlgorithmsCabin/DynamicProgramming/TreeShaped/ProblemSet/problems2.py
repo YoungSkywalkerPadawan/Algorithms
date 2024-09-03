@@ -420,3 +420,48 @@ def cf1932A():
     ans = (ans + 1) % MOD
     print(ans)
     return
+
+
+def cf1914A():
+    n = sint()
+    a = ints()
+
+    g = [[] for _ in range(n)]
+    for i, v in enumerate(a):
+        v -= 1
+        i += 1
+        g[v].append(i)
+
+    siz = [0] * n
+
+    @bootstrap
+    def dfs(x: int) -> None:
+        siz[x] += 1
+
+        for y in g[x]:
+            yield dfs(y)
+            siz[x] += siz[y]
+
+        yield
+
+    dfs(0)
+
+    @bootstrap
+    def dfs2(x: int) -> int:
+        mx = 0
+        for y in g[x]:
+            mx = max(mx, siz[y])
+
+        if mx * 2 < siz[x] - 1:
+            yield (siz[x] - 1) // 2
+
+        for y in g[x]:
+            if siz[y] == mx:
+                res = yield dfs2(y)
+                yield res + min(siz[x] - 1 - mx, (siz[x] - 1 - res * 2) // 2)
+
+        yield 0
+
+    ans = dfs2(0)
+    print(ans)
+    return

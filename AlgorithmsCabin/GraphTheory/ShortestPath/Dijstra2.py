@@ -22,6 +22,28 @@ def dijstra(n: int, g: List[List[int]], start: int) -> List[int]:
     return dis
 
 
+def dijstra2(n: int, g: List[List[int]], start: int, s: int, dis: List[int]) -> List[int]:
+    # dis = [inf] * n
+    # dis[start] = 0
+    # h = [(0, start)]
+    dist = [inf] * n
+    dist[start] = dis[start]
+    h = [(dist[start], start)]
+    while h:
+        dx, x = heappop(h)
+        if dx > dist[x]:  # x 之前出堆过
+            continue
+        for y, wt in g[x]:
+            new_dis = dx + wt * s
+            if new_dis < dist[y]:
+                dist[y] = new_dis  # 更新 x 的邻居的最短路
+                heappush(h, (new_dis, y))
+    for i in range(n):
+        if dis[i] > dist[i]:
+            dis[i] = dist[i]
+    return dis
+
+
 # 字典序最短路
 def dijstraForDic(n: int, g: List[List[tuple]]):
     dis = [0] * n

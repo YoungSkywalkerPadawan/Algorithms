@@ -1,9 +1,11 @@
 from math import inf
 from typing import List
-from AlgorithmsCabin.GraphTheory.ShortestPath.Dijstra2 import dijstra, dijstraForDic
-
+from AlgorithmsCabin.GraphTheory.ShortestPath.Dijstra2 import dijstra, dijstraForDic, dijstra2
 
 # lc2662 前往目标的最小代价
+from AlgorithmsCabin.Math.Util.utils import mint, ints
+
+
 def minimumCost(source: str, target: str, original: List[str], changed: List[str], cost: List[int]) -> int:
     dis = [[inf] * 26 for _ in range(26)]
     for i in range(26):
@@ -123,4 +125,27 @@ def cf1937E():
 
     dis = dijstra(n * (m + 1), g, n - 1)
     print(dis[0])
+    return
+
+
+def cf2002F():
+    n, m = mint()
+    g = [[] for _ in range(n)]
+    for _ in range(m):
+        u, v, w = mint()
+        u -= 1
+        v -= 1
+        g[u].append((v, w))
+        g[v].append((u, w))
+
+    s = ints()
+    dis = [inf] * n
+    dis[0] = 0
+    idx = sorted(range(n), key=lambda p: -s[p])
+    dis = dijstra2(n, g, 0, s[0], dis)
+    for x in idx:
+        if x == 0 or x == n - 1:
+            continue
+        dis = dijstra2(n, g, x, s[x], dis)
+    print(dis[-1])
     return
