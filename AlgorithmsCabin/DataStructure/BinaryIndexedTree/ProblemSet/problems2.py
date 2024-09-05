@@ -1,4 +1,9 @@
+from collections import Counter
+from itertools import accumulate
+from random import getrandbits
+
 from AlgorithmsCabin.DataStructure.BinaryIndexedTree.BIT2 import BIT
+from AlgorithmsCabin.DataStructure.SegmentTree.SegTree import SegTree
 from AlgorithmsCabin.Math.Util.utils import mint, ints
 
 K = 20
@@ -225,7 +230,7 @@ def cf1917D():
         for i in range(1, k):
             if r <= 0:
                 break
-            ans = (ans + bit.range_sm(l, r+1) * (k - i + 1) * (k - i) // 2) % MOD
+            ans = (ans + bit.range_sm(l, r + 1) * (k - i + 1) * (k - i) // 2) % MOD
             l, r = (l + 1) // 2, l - 1
 
         l, r = x + 1, x * 2
@@ -242,4 +247,127 @@ def cf1917D():
 
     print(ans)
 
+    return
+
+
+def cf2009G():
+    n, k, q = mint()
+    a = ints()
+    for i in range(n):
+        a[i] -= i
+
+    h = getrandbits(30)
+    cnt = Counter()
+    cnt_mx = Counter()
+    mx = 0
+    for i in range(k):
+        x = a[i]
+        cnt[x ^ h] += 1
+        cnt_mx[cnt[x ^ h]] += 1
+        if cnt[x ^ h] > 1:
+            cnt_mx[cnt[x ^ h] - 1] -= 1
+        mx = max(mx, cnt[x ^ h])
+
+    res = [k - mx]
+
+    l = 0
+    for r in range(k, n):
+        x = a[r]
+        cnt[x ^ h] += 1
+        cnt_mx[cnt[x ^ h]] += 1
+        if cnt[x ^ h] > 1:
+            cnt_mx[cnt[x ^ h] - 1] -= 1
+        mx = max(mx, cnt[x ^ h])
+        x = a[l]
+        cnt[x ^ h] -= 1
+        cnt_mx[cnt[x ^ h]] += 1
+        cnt_mx[cnt[x ^ h] + 1] -= 1
+        if cnt[x ^ h] + 1 == mx and cnt_mx[cnt[x ^ h] + 1] == 0:
+            mx -= 1
+        l += 1
+        res.append(k - mx)
+
+    m = len(res)
+    # 前后缀分解， 找到每个元素左右第一个比他小的元素
+    left = [-1] * m
+    dq = [-1]
+    for i in range(m):
+        while dq[-1] != -1 and res[dq[-1]] > res[i]:
+            dq.pop()
+        left[i] = dq[-1] + 1
+        dq.append(i)
+
+    right = [m] * m
+    dq = [m]
+    for i in range(m - 1, -1, -1):
+        while dq[-1] != m and res[dq[-1]] >= res[i]:
+            dq.pop()
+        right[i] = dq[-1]
+        dq.append(i)
+    # 线段树维护区间最小值的下标，相等取左边
+
+    seg = SegTree(lambda u, v: u if u < v else v, 10 ** 10, [res[i] * m + i for i in range(m)])
+    # sum(ans[i] * (min(right[i], r + 1) - i) * (i + 1 - max(left[i], l)) for i in range(l, r + 1))
+
+    acc_right = list(accumulate((res[i] * (right[i] - i) * (i + 1) for i in range(m)), initial=0))
+    acc_left = list(accumulate((res[i] * (-i) * (i + 1 - left[i]) for i in range(m)), initial=0))
+    ls = []
+    rs = []
+    queries_ls = [[] for _ in range(m + 1)]
+    queries_rs = [[] for _ in range(m + 1)]
+
+    ans = [0] * q
+    for i in range(q):
+        l, r = mint()
+        l -= 1
+        r -= 1
+        r -= k - 1
+        ls.append(l)
+        rs.append(r)
+        # 找到最小下标
+        idx = seg.prod(l, r + 1) % m
+        ans[i] = res[idx] * (min(right[idx], r + 1) - idx) * (idx + 1 - max(left[idx], l))
+        # idx右边的区间左端点确定，右端点不确定，可能超过r，先待定不算，先计算左边部分
+        ans[i] += acc_left[r + 1] - acc_left[idx + 1]
+        # idx左边的区间右端点确定，左端点不确定，可能低于l，先待定不算，先计算右边部分
+        ans[i] += acc_right[idx] - acc_right[l]
+        # 待定的后续用树状数组求解
+        if l < idx:
+            queries_ls[l - 1].append(~i)
+            queries_ls[idx - 1].append(i)
+        if idx < r:
+            queries_rs[r + 1].append(~i)
+            queries_rs[idx + 1].append(i)
+
+    fen_cnt = BIT(m + 1)
+    fen_sum = BIT(m + 1)
+
+    for i in range(m):
+        fen_cnt.add(left[i], res[i] * (right[i] - i))
+        fen_sum.add(left[i], res[i] * (right[i] - i) * left[i])
+        for q_idx in queries_ls[i]:
+            if q_idx < 0:
+                q_idx = ~q_idx
+                l = ls[q_idx]
+                ans[q_idx] += fen_sum.range_sm(l, m + 1) + fen_cnt.range_sm(0, l) * l
+            else:
+                l = ls[q_idx]
+                ans[q_idx] -= fen_sum.range_sm(l, m + 1) + fen_cnt.range_sm(0, l) * l
+
+    fen_cnt = BIT(m + 1)
+    fen_sum = BIT(m + 1)
+
+    for i in range(m - 1, -1, -1):
+        fen_cnt.add(right[i], res[i] * (i + 1 - left[i]))
+        fen_sum.add(right[i], res[i] * (i + 1 - left[i]) * right[i])
+        for q_idx in queries_rs[i]:
+            if q_idx < 0:
+                q_idx = ~q_idx
+                r = rs[q_idx]
+                ans[q_idx] -= fen_sum.range_sm(0, r + 1) + fen_cnt.range_sm(r + 1, m + 1) * (r + 1)
+            else:
+                r = rs[q_idx]
+                ans[q_idx] += fen_sum.range_sm(0, r + 1) + fen_cnt.range_sm(r + 1, m + 1) * (r + 1)
+    for x in ans:
+        print(x)
     return
