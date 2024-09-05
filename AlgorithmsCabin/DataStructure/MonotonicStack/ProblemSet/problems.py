@@ -1,9 +1,10 @@
 from collections import deque, Counter
 from itertools import accumulate
+from random import getrandbits
 from typing import List
 
 # lc2281 巫师的总力量和
-from AlgorithmsCabin.Math.Util.utils import sint, ints
+from AlgorithmsCabin.Math.Util.utils import sint, ints, mint
 
 
 def totalStrength(strength: List[int]) -> int:
@@ -121,4 +122,88 @@ def cf2001D():
         vis[x] = 1
     print(len(dq))
     print(*dq)
+    return
+
+
+def cf2009G():
+    n, k, q = mint()
+    a = ints()
+    for i in range(n):
+        a[i] -= i
+
+    h = getrandbits(30)
+    cnt = Counter()
+    cnt_mx = Counter()
+    mx = 0
+    for i in range(k):
+        x = a[i]
+        cnt[x ^ h] += 1
+        cnt_mx[cnt[x ^ h]] += 1
+        if cnt[x ^ h] > 1:
+            cnt_mx[cnt[x ^ h] - 1] -= 1
+        mx = max(mx, cnt[x ^ h])
+
+    res = [k - mx]
+
+    l = 0
+    for r in range(k, n):
+        x = a[r]
+        cnt[x ^ h] += 1
+        cnt_mx[cnt[x ^ h]] += 1
+        if cnt[x ^ h] > 1:
+            cnt_mx[cnt[x ^ h] - 1] -= 1
+        mx = max(mx, cnt[x ^ h])
+        x = a[l]
+        cnt[x ^ h] -= 1
+        cnt_mx[cnt[x ^ h]] += 1
+        cnt_mx[cnt[x ^ h] + 1] -= 1
+        if cnt[x ^ h] + 1 == mx and cnt_mx[cnt[x ^ h] + 1] == 0:
+            mx -= 1
+        l += 1
+        res.append(k - mx)
+
+    queries = [[] for _ in range(n)]
+    for i in range(q):
+        l, r = mint()
+        l -= 1
+        r -= 1
+        r -= k - 1
+        queries[l].append(r * q + i)
+
+    # 单调栈
+    # 若res[i-1] < res[i],显然后面的不如前面,用前面的结果即可
+    res.append(0)  # 加入哨兵，方便判断
+    m = len(res)
+    dq = [m - 1]
+    acc = [0]
+    ans = [-1] * q
+
+    def check(x_: int, y: int) -> bool:
+        return dq[x_] <= y
+
+    for i in range(m - 2, -1, -1):
+        while res[i] < res[dq[-1]]:
+            dq.pop()
+            acc.pop()
+
+        acc.append(acc[-1] + res[i] * (dq[-1] - i))
+        dq.append(i)
+
+        for query in queries[i]:
+            r, idx = divmod(query, q)
+
+            # 在单调栈中 找到<=r的最近位置，左边直接用acc的前缀和计算，右边用单调栈中该索引对应的值计算
+            left = 0
+            right = len(dq) - 1
+            while left < right:
+                mid = (left + right) >> 1
+                if check(mid, r):
+                    right = mid - 1
+                else:
+                    left = mid + 1
+            left = left if check(left, r) else left + 1
+            ans[idx] = acc[-1] - acc[left] + res[dq[left]] * (r - dq[left] + 1)
+    for x in ans:
+        print(x)
+
     return
