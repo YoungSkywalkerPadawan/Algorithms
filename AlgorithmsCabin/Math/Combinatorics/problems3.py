@@ -1,7 +1,9 @@
+from collections import defaultdict
+from random import getrandbits
 from types import GeneratorType
 
 from AlgorithmsCabin.Math.Util.Factorial import Factorial
-from AlgorithmsCabin.Math.Util.utils import mint
+from AlgorithmsCabin.Math.Util.utils import mint, sint
 
 
 def bootstrap(f, stack=None):
@@ -141,3 +143,32 @@ def cf1929F():
             l = r
     print(ans)
     return
+
+
+dt = defaultdict()
+h = getrandbits(30)
+
+mod = 998244353
+
+
+def f_(n):
+    if n == 1:
+        return 1, 0
+    if n ^ h in dt.keys():
+        return dt[n ^ h]
+    l, r = n - n // 2, n // 2
+    x1, y1 = f_(l)
+    x2, y2 = f_(r)
+    x1 = 2 * (x1 + x2) % mod
+    y1 += x2 + y2
+    x1 += (pow(2, l, mod) - 1) * (pow(2, r, mod) - 1) % mod
+    x1 %= mod
+    y1 %= mod
+    dt[n ^ h] = (x1, y1)
+    return x1, y1
+
+
+def cf1905E():
+    n = sint()
+    ans = sum(f_(n)) % mod
+    print(ans)
