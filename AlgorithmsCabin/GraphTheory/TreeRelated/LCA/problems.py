@@ -1,4 +1,9 @@
+from operator import add
+
+from AlgorithmsCabin.DataStructure.SegmentTree.LazySegTree import LazySegTree
 from AlgorithmsCabin.GraphTheory.TreeRelated.LCA.HLD import HLD
+from AlgorithmsCabin.GraphTheory.TreeRelated.LCA.LCA import LCA
+from AlgorithmsCabin.Math.Util.utils import mint
 
 
 def cf2002D():
@@ -30,4 +35,113 @@ def cf2002D():
             good[x] = cur
             cnt += cur
         outs.append('YES' if cnt == n - 1 else 'NO')
+    return
+
+
+def cf1904E():
+    n, q = mint()
+    g = [[] for _ in range(n)]
+    for _ in range(n-1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    # 节点欧拉序列
+    # 节点刚进入的时间
+    tin = [0] * n
+    # 节点离开的时间
+    tout = [0] * n
+    # t_in * (n + 1) + n - t_out
+    msk = [0] * n
+    parent = [-1] * n
+    # 默认都加1
+    depth = [1] * n
+
+    dq = [0]
+    timestamp = 0
+    order = []
+
+    while dq:
+        u = dq.pop()
+        if u >= 0:
+            order.append(u)
+            tin[u] = timestamp
+            msk[u] += timestamp * (n + 1)
+            timestamp += 1
+            dq.append(~u)
+            for v in g[u]:
+                if parent[u] != v:
+                    parent[v] = u
+                    depth[v] = depth[u] + 1
+                    dq.append(v)
+        else:
+            msk[~u] += n - timestamp
+            tout[~u] = timestamp
+
+    seg = LazySegTree(lambda x, y: x if x > y else y, - n * 2, add, add, 0, [depth[x] for x in order])
+    queries = [[] for _ in range(n)]
+    nodes = []
+
+    for i in range(q):
+        u, _, *a = map(lambda x: int(x) - 1, input().split())
+        queries[u].append(i)
+        nodes.append(a)
+
+    ans = [-1] * q
+
+    lca = LCA(depth, parent)
+    cnt = 0
+    dq = [0]
+    while dq:
+        u = dq.pop()
+        if u >= 0:
+            dq.append(~u)
+            # 得到当前节点的in, out
+            l, r = divmod(msk[u], n + 1)
+            r = n - r
+            cnt += 1
+            seg.apply(l, r, -2)
+
+            for idx in queries[u]:
+                a = nodes[idx]
+                a.sort(key=lambda x: msk[x])
+
+                p = -1
+                for v in a:
+                    # 找到最近的被移除的祖先
+                    if tin[v] <= tin[u] and tout[v] >= tout[u]:
+                        p = v
+                if p == -1:
+                    l, r = 0, n
+                else:
+                    # 找到路径上移除的最近祖先下一个点
+                    p = lca.search(u, depth[u] - depth[p] - 1)
+                    l, r = tin[p], tout[p]
+
+                res = -n * 2
+                for v in a:
+                    if tin[v] < l or tout[v] > r:
+                        continue
+                    res = max(res, seg.prod(l, tin[v]))
+                    l = tout[v]
+
+                res = max(res, seg.prod(l, r))
+                # 在节点in - out范围内的值因为都减了2 ,+ cnt 后相当于随着节点的深入每次减去cnt深度
+                # 在外面的点则是其最大值加cnt深度
+                ans[idx] = res + cnt
+
+            for v in g[u]:
+                if parent[v] == u:
+                    dq.append(v)
+        else:
+            u = ~u
+            l, r = divmod(msk[u], n + 1)
+            r = n - r
+            # 离开节点，复原
+            cnt -= 1
+            seg.apply(l, r, 2)
+    for x in ans:
+        print(x)
     return
