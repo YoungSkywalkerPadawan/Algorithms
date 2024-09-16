@@ -6,6 +6,9 @@ from typing import List
 
 
 # lc2167 移除所有载有违禁货物车厢所需的时间
+from AlgorithmsCabin.Math.Util.utils import mint
+
+
 def minimumTime(s: str) -> int:
     n = len(s)
     suf = [0] * (n + 1)
@@ -92,4 +95,35 @@ def cf1932F():
         dp[i] = max(dp[i + 1], siz[i] + dp[nxt[i]])
 
     print(dp[0])
+    return
+
+
+def cf2002A():
+    n, m = mint()
+    g = [input() for _ in range(n)]
+    pos = ['n', 'a', 'r', 'e', 'k']
+    st = set(pos)
+    dp = [-inf] * 5
+    dp[0] = 0
+    for i in range(n):
+        ndp = dp.copy()
+        s = g[i]
+        for cur in range(5):
+            y = cur
+            c = dp[cur]
+            for x in s:
+                if x == pos[y]:
+                    y += 1
+                    if y == 5:
+                        y = 0
+                        c += 5
+                else:
+                    if x in st:
+                        c -= 1
+            ndp[y] = max(ndp[y], c)
+        dp = ndp
+    ans = 0
+    for i, x in enumerate(dp):
+        ans = max(ans, x - i)
+    print(ans)
     return

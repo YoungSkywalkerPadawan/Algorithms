@@ -6,6 +6,9 @@ from typing import List
 
 
 # lc1140 石子游戏II
+from AlgorithmsCabin.Math.Util.utils import mint, ints
+
+
 def stoneGameII(piles: List[int]) -> int:
     s = list(accumulate(piles, initial=0))  # 前缀和
 
@@ -108,4 +111,46 @@ def cf1966C():
         print("Alice")
     else:
         print("Bob")
+    return
+
+
+def cf2002A():
+    l, n, m = mint()
+    a = ints()
+    g = [ints() for _ in range(n)]
+    # dp = [[[0] * 8 for _ in range(m + 1)] for _ in range(n + 1)]
+    # # dp[i][j][v]表示从[i][j]开始到[n][m]是否能找到v
+    # for i in range(n - 1, -1, -1):
+    #     for j in range(m - 1, -1, -1):
+    #         for v in range(8):
+    #             if g[i][j] == v or dp[i + 1][j][v] or dp[i][j + 1][v]:
+    #                 dp[i][j][v] = 1
+
+    # 当层可选状态, 1 表示可选
+    f = [[True for _ in range(m + 1)] for _ in range(n + 1)]
+    for k in range(l - 1, -1, -1):
+        v = a[k]
+        # 这一层的状态, 看能不能在可选状态中找到v
+        flag = False
+        diff = [[0 for _ in range(m + 1)] for _ in range(n + 1)]
+        for i in range(n - 1, -1, -1):
+            for j in range(m - 1, -1, -1):
+                if f[i][j] and g[i][j] == v:
+                    flag = True
+                    if i > 0 and j > 0:
+                        diff[1][1] += 1
+                        diff[i + 1][1] -= 1
+                        diff[1][j + 1] -= 1
+                        diff[i + 1][j + 1] += 1
+
+        for i in range(1, n + 1):
+            for j in range(1, m + 1):
+                diff[i][j] += diff[i - 1][j] + diff[i][j - 1] - diff[i - 1][j - 1]
+                if diff[i][j]:
+                    f[i-1][j-1] = False
+                else:
+                    f[i-1][j-1] = True
+        if k == 0:
+            print("T" if flag else "N")
+
     return
