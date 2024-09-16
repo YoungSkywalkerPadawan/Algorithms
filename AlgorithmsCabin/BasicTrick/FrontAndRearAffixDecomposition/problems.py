@@ -1,6 +1,6 @@
 from collections import defaultdict
 from itertools import accumulate
-from math import inf
+from math import inf, gcd
 from operator import xor
 from random import getrandbits
 from typing import List
@@ -162,3 +162,77 @@ def cf1863F():
                     ans.append("0")
     print("".join(ans))
     return
+
+
+def cf2005D():
+    n = sint()
+    a = ints()
+    b = ints()
+    # 前后缀分解
+    sufa, sufb = [0] * (n + 1), [0] * (n + 1)
+    for i in range(n - 1, -1, -1):
+        sufa[i] = gcd(sufa[i + 1], a[i])
+        sufb[i] = gcd(sufb[i + 1], b[i])
+
+    prea = 0
+    preb = 0
+    cur = []
+    ans, cnt = 0, 1
+    cur.append((0, 0, 1))
+    for i in range(n):
+        pre = []
+        for x, y, z in cur:
+            pre.append((gcd(x, b[i]), gcd(y, a[i]), z))
+        pre.sort()
+        cur = []
+        for x, y, z in pre:
+            if len(cur) == 0 or (cur[-1][0], cur[-1][1]) != (x, y):
+                cur.append((x, y, z))
+            else:
+                cur[-1] = (cur[-1][0], cur[-1][1], cur[-1][2] + z)
+        for x, y, z in cur:
+            res = gcd(x, sufa[i + 1]) + gcd(y, sufb[i + 1])
+            if res > ans:
+                ans = res
+                cnt = 0
+            if res == ans:
+                cnt += z
+        prea = gcd(prea, a[i])
+        preb = gcd(preb, b[i])
+        cur.append((prea, preb, 1))
+    print(ans, cnt)
+    return
+
+
+# lc3287 求出数组中最大序列值
+def maxValue(nums: List[int], k: int) -> int:
+    # 前后缀分解
+    n = len(nums)
+
+    pre = [set() for _ in range(n)]
+    dp = [set() for _ in range(k + 1)]
+    dp[0].add(0)
+    for i in range(n):
+        for j in range(k - 1, -1, -1):
+            for x in dp[j]:
+                dp[j + 1].add(nums[i] | x)
+        for x in dp[-1]:
+            pre[i].add(x)
+
+    suf = [set() for _ in range(n)]
+    dp = [set() for _ in range(k + 1)]
+    dp[0].add(0)
+    for i in range(n - 1, -1, -1):
+        for j in range(k - 1, -1, -1):
+            for x in dp[j]:
+                dp[j + 1].add(nums[i] | x)
+        for x in dp[-1]:
+            suf[i].add(x)
+
+    ans = 0
+    for i in range(k - 1, n - k):
+        for x in pre[i]:
+            for y in suf[i + 1]:
+                if x ^ y > ans:
+                    ans = x ^ y
+    return ans

@@ -198,3 +198,6 @@ def cf1921F():
                 ans[i] += a[s + j * d] * (j + 1)
     print(*ans)
     return
+
+
+
