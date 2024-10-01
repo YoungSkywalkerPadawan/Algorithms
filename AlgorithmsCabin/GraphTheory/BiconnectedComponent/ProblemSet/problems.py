@@ -1,10 +1,13 @@
+from collections import Counter
 from math import inf
 from typing import List
 
 from AlgorithmsCabin.GraphTheory.BiconnectedComponent.tarjan import TARJAN
 
-
 # lc1192 查找集群内的关键连接
+from AlgorithmsCabin.Math.Util.utils import sint, ints, mint
+
+
 def criticalConnections(n: int, connections: List[List[int]]) -> List[List[int]]:
     g = [[] for _ in range(n)]
     for x, y in connections:
@@ -141,4 +144,29 @@ def cf1986F():
         sz = min(size[x], size[y])
         ans = min(ans, sz * (sz - 1) // 2 + (n - sz) * (n - sz - 1) // 2)
     print(ans)
+    return
+
+
+def cf1363C():
+    n = sint()
+    a = ints()
+    m = sint()
+    g = [[] for _ in range(n)]
+    for _ in range(m):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+
+    tg = TARJAN(n, g)
+    scc = tg.find_SCC()
+    ans = 1
+    cost = 0
+    for res in scc:
+        cnt = Counter([a[i] for i in res])
+        mn = min(cnt)
+        cost += mn
+        ans *= cnt[mn]
+        # ans %= MOD
+    print(cost, ans)
     return
