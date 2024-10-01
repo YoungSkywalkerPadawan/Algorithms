@@ -1,7 +1,7 @@
 import math
 from types import GeneratorType
 
-from AlgorithmsCabin.Math.Util.utils import sint, mint
+from AlgorithmsCabin.Math.Util.utils import sint, mint, ints
 
 
 def bootstrap(f, stack=None):
@@ -157,4 +157,52 @@ def cf2013F():
     ll += rr
     for x_ in ll:
         print("Alice" if x_ else "Bob")
+    return
+
+
+def cf2014F():
+    n, c = mint()
+    a = ints()
+    g = [[] for _ in range(n)]
+    for _ in range(n - 1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    # 树形DP
+    @bootstrap
+    def dfs(x: int, f: int) -> tuple:
+        cur = a[x]
+        ans1 = ans2 = 0
+        # 选或不选
+        for y in g[x]:
+            if y != f:
+                res1, sub, res2 = yield dfs(y, x)
+                ext = min(sub, c) + min(cur, c)
+                if res2 + ext >= res1:
+                    ans1 += res2
+                else:
+                    ans1 += res1
+                    cur -= c
+                    if sub > c:
+                        ans1 -= c
+                    else:
+                        ans1 -= sub
+                    if cur < 0:
+                        cur = 0
+
+                if res2 >= res1:
+                    ans2 += res2
+                else:
+                    ans2 += res1
+
+        if cur < 0:
+            cur = 0
+        ans1 += cur
+        yield ans1, cur, ans2
+
+    ans1_, _, ans2_ = dfs(0, -1)
+    print(max(ans1_, ans2_))
     return
