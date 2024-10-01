@@ -1,9 +1,8 @@
 import math
 from collections import defaultdict, Counter
-from functools import cache
+from functools import cache, reduce
 from math import gcd, sqrt
 from typing import List
-
 
 # lc1819 序列中不同最大公约数的数目
 from AlgorithmsCabin.Math.Util.utils import sint, ints
@@ -114,5 +113,25 @@ def cf2002F():
             if x == 0 or x == (x & -x):
                 ans += c
 
+    print(ans)
+    return
+
+
+def cf2013E():
+    n = sint()
+    a = ints()
+    gd = reduce(gcd, a)
+    a.sort()
+    cur = ans = a[0]
+    st = set(a[1:])
+    while cur != gd:
+        pre = cur
+        for x in st:
+            if gcd(x, cur) < pre:
+                pre = gcd(x, cur)
+        ans += pre
+        cur = pre
+        n -= 1
+    ans += gd * (n - 1)
     print(ans)
     return
