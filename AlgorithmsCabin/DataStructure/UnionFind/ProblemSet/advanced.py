@@ -5,6 +5,9 @@ from AlgorithmsCabin.DataStructure.UnionFind.UnionFind import UnionFind
 
 
 # lc2157 字符串分组
+from AlgorithmsCabin.Math.Util.utils import mint
+
+
 def groupStrings(words: List[str]) -> List[int]:
     n = len(words)
     dt = defaultdict(list)
@@ -152,3 +155,32 @@ def cf1985H1():
         ans = max(ans, res)
     print(ans)
     return
+
+
+def cf2020D():
+    n, m = mint()
+    # 按d分组
+    uf = UnionFind(n+1)
+    cnt = defaultdict(list)
+    for _ in range(m):
+        a, d, k = mint()
+        cnt[d].append((a, a + d * k))
+
+    for i in range(1, 11):
+        if cnt[i]:
+            diff = [0] * (n+1)
+            for x, y in cnt[i]:
+                diff[x] += 1
+                diff[y] -= 1
+
+            for j in range(i, n+1):
+                diff[j] += diff[j - i]
+
+            for idx, x in enumerate(diff):
+                if x > 0:
+                    uf.union(idx, idx + i)
+
+    print(uf.setCount - 1)
+
+    return
+
