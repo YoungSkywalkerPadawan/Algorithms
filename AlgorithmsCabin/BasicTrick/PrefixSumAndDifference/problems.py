@@ -1,11 +1,12 @@
-from collections import deque
-from math import sqrt
+from collections import deque, defaultdict
+from math import sqrt, inf
+from random import getrandbits
 from typing import List
 
 from AlgorithmsCabin.DataStructure.UnionFind.UnionFind import UnionFind
 
 # lc2132 用邮票贴满网格图
-from AlgorithmsCabin.Math.Util.utils import mint
+from AlgorithmsCabin.Math.Util.utils import mint, ints, sint
 
 
 def possibleToStamp(grid: List[List[int]], stampHeight: int, stampWidth: int) -> bool:
@@ -200,4 +201,41 @@ def cf1921F():
     return
 
 
+def cf1363C():
+    n = sint()
+    a = ints()
+    # 从小到大考虑，每一步确定一个范围
+    dt = defaultdict(list)
+    h = getrandbits(30)
+    for i, x in enumerate(a):
+        dt[x ^ h].append(i)
 
+    c = 0
+    diff = [0] * (n + 1)
+    L = inf
+    R = -1
+    for i in range(1, n + 1):
+        if len(dt[i ^ h]):
+            c += 1
+            res = dt[i ^ h]
+            mn = min(res)
+            mx = max(res)
+            L = min(L, mn)
+            R = max(R, mx)
+            if R - mn >= i:
+                print(0)
+                return
+            if mx - L >= i:
+                print(0)
+                return
+            diff[max(0, mx - i + 1)] += 1
+            diff[min(n, mn + i)] -= 1
+
+    for i in range(1, n + 1):
+        diff[i] += diff[i - 1]
+
+    ans = 0
+    for i in range(n):
+        if diff[i] == c:
+            ans += 1
+    print(ans)
