@@ -239,3 +239,25 @@ def cf1363C():
         if diff[i] == c:
             ans += 1
     print(ans)
+
+
+def cf1355C():
+    a, b, c, d = mint()
+    ans = 0
+    n = max(d + 1, b + c + 2)
+    diff = [0] * n
+    for i in range(a, b + 1):
+        diff[i + b] += 1
+        diff[i + c + 1] -= 1
+
+    for i in range(1, n):
+        diff[i] += diff[i - 1]
+
+    for i in range(1, n):
+        diff[i] += diff[i - 1]
+
+    for i in range(c, d + 1):
+        ans += diff[n - 1] - diff[i]
+    print(ans)
+
+    return
