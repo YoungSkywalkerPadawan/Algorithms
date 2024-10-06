@@ -155,7 +155,7 @@ def cf1931E():
     return
 
 
-def cf1363C():
+def cf919D():
     n, m = mint()
     s = input()
     g = [[] for _ in range(n)]
