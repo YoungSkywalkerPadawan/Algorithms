@@ -3,7 +3,7 @@ from random import getrandbits
 from types import GeneratorType
 
 from AlgorithmsCabin.Math.Util.Factorial import Factorial
-from AlgorithmsCabin.Math.Util.utils import mint, sint
+from AlgorithmsCabin.Math.Util.utils import mint, sint, ints
 
 
 def bootstrap(f, stack=None):
@@ -171,4 +171,20 @@ def f_(n):
 def cf1905E():
     n = sint()
     ans = sum(f_(n)) % mod
+    print(ans)
+
+
+def cf1462E():
+    fact = Factorial(2 * 10 ** 5 + 5, mod)
+    n, m, k = mint()
+    a = ints()
+    a.sort()
+    l = 0
+    ans = 0
+    for r, x in enumerate(a):
+        while a[l] + k < x:
+            l += 1
+        if (r - l + 1) >= m:
+            ans += fact.combi(r-l, m-1)
+            ans %= mod
     print(ans)
