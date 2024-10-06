@@ -1,3 +1,4 @@
+from bisect import bisect_left
 from collections import defaultdict
 from itertools import accumulate
 from math import inf, gcd
@@ -236,3 +237,41 @@ def maxValue(nums: List[int], k: int) -> int:
                 if x ^ y > ans:
                     ans = x ^ y
     return ans
+
+
+def cf1335E():
+    n = sint()
+    a = ints()
+    # 前后缀分解
+    pre = [[0] * (n + 1) for _ in range(26)]
+    for i, x in enumerate(a):
+        for j in range(26):
+            if x == j + 1:
+                pre[j][i + 1] = pre[j][i] + 1
+            else:
+                pre[j][i + 1] = pre[j][i]
+
+    suf = [[0] * (n + 1) for _ in range(26)]
+    for i in range(n):
+        x = a[n - i - 1]
+        for j in range(26):
+            if x == j + 1:
+                suf[j][i + 1] = suf[j][i] + 1
+            else:
+                suf[j][i + 1] = suf[j][i]
+
+    ans = 0
+    for i in range(n):
+        for j in range(26):
+            cx = pre[j][i]
+            # 去尽量右边找满足的x
+            idx = bisect_left(suf[j], cx)
+            if n - idx <= i:
+                continue
+            for k in range(26):
+                cur = cx * 2 + pre[k][n - idx] - pre[k][i]
+                if cur > ans:
+                    ans = cur
+    print(ans)
+
+    return
