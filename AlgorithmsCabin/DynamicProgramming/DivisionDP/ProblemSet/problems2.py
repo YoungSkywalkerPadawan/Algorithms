@@ -7,8 +7,10 @@ from itertools import accumulate
 from math import inf
 from typing import List
 
-
 # lc3117 划分数组得到最小的值的和
+from AlgorithmsCabin.Math.Util.utils import mint, ints
+
+
 def minimumValueSum(nums: List[int], andValues: List[int]) -> int:
     @cache
     def dfs(x: int, y: int, pre: int) -> int:
@@ -84,3 +86,47 @@ def palindromePartition(s: str, k: int) -> int:
     ans = dfs(n, k)
     dfs.cache_clear()
     return ans
+
+
+def cf1625C():
+    n, t, k = mint()
+    d = ints()
+    d.append(t)
+    a = ints()
+
+    # 区间dp
+    # def dfs(x: int, y: int) -> int:
+    #     if x < 0:
+    #         return 0
+    #     if y == 0:
+    #         return a[x] * (d[x + 1] - d[x]) + dfs(x - 1, y)
+    #     res = a[x] * (d[x + 1] - d[x]) + dfs(x - 1, y)
+    #     for j in range(1, y+1):
+    #         if x - j >= 0:
+    #             res2 = a[x - j] * (d[x + 1] - d[x - j]) + dfs(x - j - 1, y - j)
+    #             if res2 < res:
+    #                 res = res2
+    #         else:
+    #             break
+    #     return res
+    #
+    # ans = dfs(n-1, k)
+    # print(ans)
+    dp = [[0] * (k + 1) for _ in range(n + 1)]
+    for j in range(k + 1):
+        for i in range(1, n + 1):
+            if j == 0:
+                dp[i][j] = a[i - 1] * (d[i] - d[i - 1]) + dp[i - 1][j]
+            else:
+                res = a[i - 1] * (d[i] - d[i - 1]) + dp[i - 1][j]
+                for p in range(1, j + 1):
+                    if i - p - 1 >= 0:
+                        res2 = a[i - p - 1] * (d[i] - d[i - p - 1]) + dp[i - p - 1][j - p]
+                        if res2 < res:
+                            res = res2
+                    else:
+                        break
+                dp[i][j] = res
+    print(dp[n][k])
+
+    return
