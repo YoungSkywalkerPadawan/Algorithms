@@ -5,6 +5,8 @@ import random
 # lc3031 将单词恢复初始状态所需的最短时间II
 from collections import defaultdict
 
+from AlgorithmsCabin.Math.Util.utils import sint
+
 
 def minimumTimeToInitialState(word: str, k: int) -> int:
     n = len(word)
@@ -62,4 +64,33 @@ def cf1977D():
         if i == ind[0] and g[i][j] == '0':
             ans[i] = '1'
     print("".join(ans))
+    return
+
+
+def cf1363C():
+    MOD1 = 998244353
+    MOD2 = 10 ** 9 + 7
+    s = input()
+    a = list(map(int, input()))
+    k = sint()
+    res = [1 - a[ord(c) - ord('a')] for c in s]
+
+    st = set()
+    n = len(s)
+    b1 = 27
+    b2 = 13331
+
+    for i in range(n):
+        c = 0
+        hash1 = hash2 = 0
+        for j in range(i, n):
+            c += res[j]
+            if c > k:
+                break
+            hash1 = (hash1 * b1 + (ord(s[j]) - 96)) % MOD1
+            hash2 = (hash2 * b2 + (ord(s[j]) - 96)) % MOD2
+            st.add((hash1, hash2))
+
+    print(len(st))
+
     return
