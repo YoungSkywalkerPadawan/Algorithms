@@ -1,4 +1,4 @@
-from collections import Counter
+from collections import Counter, defaultdict
 from itertools import accumulate
 from random import getrandbits
 
@@ -370,4 +370,42 @@ def cf2009G():
                 ans[q_idx] += fen_sum.range_sm(0, r + 1) + fen_cnt.range_sm(r + 1, m + 1) * (r + 1)
     for x in ans:
         print(x)
+    return
+
+
+def cf220B():
+    n, m = mint()
+    nums = ints()
+
+    # 离线查询
+    q = [[] for _ in range(n)]
+    for i in range(m):
+        l, r = mint()
+        q[r - 1].append((l - 1, i))
+
+    bit = BIT(n + 1)
+
+    ans = [0] * m
+    pos = defaultdict(list)
+
+    for r, x in enumerate(nums):
+        pos[x].append(r)
+        l = len(pos[x])
+        if l >= x:
+            # 前x个位置 + 1
+            bit.add(pos[x][l - x], 1)
+        if l > x:
+            # 前x + 1个位置 - 2， 把前面的1抹除并把前x个位置的1抵消
+            bit.add(pos[x][l - x - 1], -2)
+        if l > x + 1:
+            # 前x + 2个位置 + 1，把之前x+1位置抵消的1抹除
+            bit.add(pos[x][l - x - 2], 1)
+        if not q[r]:
+            continue
+        rs = bit.sm(r + 1)
+        for l, i in q[r]:
+            ans[i] = rs - bit.sm(l)
+
+    for v in ans:
+        print(v)
     return
