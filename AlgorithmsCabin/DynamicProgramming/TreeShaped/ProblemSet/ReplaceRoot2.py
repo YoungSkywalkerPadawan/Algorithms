@@ -175,3 +175,44 @@ def cf1822F():
     reroot(0, -1)
     print(ans)
     return
+
+
+def cf1324F():
+    n = sint()
+    a = ints()
+    g = [[] for _ in range(n)]
+    for _ in range(n - 1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    # 换根DP
+    # 先求顶点的答案
+    dp = [0] * n
+
+    @bootstrap
+    def dfs(x: int, f: int) -> None:
+        res = 1 if a[x] == 1 else -1
+        for y in g[x]:
+            if y != f:
+                yield dfs(y, x)
+                res += max(0, dp[y])
+        dp[x] = res
+        yield
+
+    dfs(0, -1)
+
+    @bootstrap
+    def dfs2(x: int, f: int) -> None:
+        for y in g[x]:
+            if y != f:
+                res = dp[x] - max(0, dp[y])
+                dp[y] += max(0, res)
+                yield dfs2(y, x)
+        yield
+
+    dfs2(0, -1)
+    print(*dp)
+    return

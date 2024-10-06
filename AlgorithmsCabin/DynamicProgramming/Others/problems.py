@@ -312,3 +312,30 @@ def cf1237F():
             ans = (ans + v * w % MOD * perm(emptyC - j * 2, i) % MOD * perm(emptyR - i * 2, j)) % MOD
     print(ans)
     return
+
+
+def cf1525D():
+    # n = sint()
+    a = ints()
+    res1 = []
+    res0 = []
+    for i, x in enumerate(a):
+        if x:
+            res1.append(i)
+        else:
+            res0.append(i)
+
+    x = len(res0)
+    y = len(res1)
+
+    dp = [[inf] * (y + 1) for _ in range(x + 1)]
+    dp[0][0] = 0
+
+    for i in range(1, x + 1):
+        for j in range(y + 1):
+            # 不选
+            dp[i][j] = dp[i - 1][j]
+            if j > 0:
+                dp[i][j] = min(dp[i][j], dp[i - 1][j - 1] + abs(res0[i - 1] - res1[j - 1]))
+    print(dp[-1][-1])
+    return
