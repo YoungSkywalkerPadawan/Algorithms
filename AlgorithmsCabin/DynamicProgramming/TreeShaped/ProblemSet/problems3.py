@@ -270,3 +270,43 @@ def cf758E():
     for row in es:
         print(*row)
     return
+
+
+def cf161D():
+    n, k = mint()
+    g = [[] for _ in range(n)]
+
+    for _ in range(n - 1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    dfs_order = []
+    parent = [-1] * n
+    stack = [0]
+
+    while stack:
+        u = stack.pop()
+        for v in g[u]:
+            if v != parent[u]:
+                parent[v] = u
+                dfs_order.append(v)
+                stack.append(v)
+
+    dfs_order.reverse()
+    dp = [[0] * k for _ in range(n)]
+
+    for i in range(n):
+        dp[i][0] = 1
+
+    ans = 0
+    for i in dfs_order:
+        for d in range(k):
+            ans += dp[i][d] * dp[parent[i]][k - d - 1]
+        for d in range(k - 1):
+            dp[parent[i]][d + 1] += dp[i][d]
+
+    print(ans)
+    return
