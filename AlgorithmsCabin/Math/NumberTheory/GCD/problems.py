@@ -135,3 +135,32 @@ def cf2013E():
     ans += gd * (n - 1)
     print(ans)
     return
+
+
+def cf1548B():
+    n = sint()
+    a = ints()
+    b = [abs(a[i] - a[i + 1]) for i in range(n - 1)]
+
+    ans = 0
+    pre = [[-1, 1]]
+    for i, x in enumerate(b):
+        k = len(pre)
+
+        gd = x
+        pre.append([i, x])
+        for idx in range(k - 1, -1, -1):
+            gd = gcd(gd, pre[idx][1])
+            pre[idx][1] = gd
+
+        cur = [[-1, 1]]
+        for idx, val in pre:
+            if val > cur[-1][1]:
+                cur.append([idx, val])
+            else:
+                cur[-1][0] = idx
+        pre = cur
+        ans = max(ans, i - pre[0][0])
+
+    print(ans + 1)
+    return
