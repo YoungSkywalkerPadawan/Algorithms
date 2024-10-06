@@ -1,8 +1,10 @@
 from functools import cache
 from typing import List
 
-
 # lc546 移除盒子
+from AlgorithmsCabin.Math.Util.utils import sint, ints
+
+
 def removeBoxes(boxes: List[int]) -> int:
     # 计算区间[x, y]的分数，k为[y+1,)等于boxes[r]的个数
     @cache
@@ -46,3 +48,29 @@ def maxCoins(nums: List[int]) -> int:
     ans = dfs(0, n - 1)
     dfs.cache_clear()
     return ans
+
+
+def cf1509C():
+    n = sint()
+    a = ints()
+    a.sort()
+
+    # 区间DP
+    # def dfs(x: int, y: int) -> int:
+    #     if x == y:
+    #         return 0
+    #     res1 = dfs(x + 1, y)
+    #     res2 = dfs(x, y - 1)
+    #     return min(res1, res2) + a[y] - a[x]
+    #
+    # ans = dfs(0, n - 1)
+    # print(ans)
+    dp = [[0] * n for _ in range(n)]
+
+    for i in range(1, n):
+        for j in range(n - i):
+            s, e = j, j + i
+            dp[s][e] = min(dp[s + 1][e], dp[s][e - 1]) + a[e] - a[s]
+
+    print(dp[0][n - 1])
+    return
