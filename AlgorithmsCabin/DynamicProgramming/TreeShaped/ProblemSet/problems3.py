@@ -206,3 +206,67 @@ def cf2014F():
     ans1_, _, ans2_ = dfs(0, -1)
     print(max(ans1_, ans2_))
     return
+
+
+def cf758E():
+    n = sint()
+    g = [[] for _ in range(n + 1)]
+    es = [ints() for _ in range(n - 1)]
+    for i in range(n - 1):
+        u, v, w, p = es[i]
+        g[u].append((v, i))
+
+    # 计算每个节点字树的最小重量和，以及需要修剪的重量
+
+    mnSum = [0] * (n + 1)
+    ext = [0] * (n + 1)
+
+    # 第一次dfs ,返回最小重量和 和最大重量和，最小重量和用于后续修剪，最大重量和用于确定要修剪多少，每次贪心最大重量
+    @bootstrap
+    def dfs(x: int) -> tuple:
+        curMn = 0
+        curMx = 0
+        for y, i_ in g[x]:
+            mn_, mx = yield dfs(y)
+            p_ = es[i_][3]
+            if mn_ < 0 or p < mn_:
+                yield -1, 0
+
+            w_ = es[i_][2]
+            # p -> mn , wt -> (wt - (p - mn)
+            curMn += max(w_ - (p_ - mn_), 1) + mn_
+            # 最大值尽量大
+            curMx += w_ + min(mx, p_)
+
+            ext[y] = max(mx - p_, 0)
+
+        mnSum[x] = curMn
+        yield curMn, curMx
+
+    mn, _ = dfs(1)
+
+    if mn < 0:
+        print(-1)
+        return
+
+    # 第二次dfs, 开始修剪，每次都从最下面开始修剪
+
+    cnt = 0
+
+    @bootstrap
+    def dfs2(x: int) -> None:
+        nonlocal cnt
+        for y, i_ in g[x]:
+            cnt += ext[y]
+            yield dfs2(y)
+            d = min(es[i_][2] - 1, es[i_][3] - mnSum[y], cnt)
+            cnt -= d
+            es[i_][2] -= d
+            es[i_][3] -= d
+        yield
+
+    dfs2(1)
+    print(n)
+    for row in es:
+        print(*row)
+    return
