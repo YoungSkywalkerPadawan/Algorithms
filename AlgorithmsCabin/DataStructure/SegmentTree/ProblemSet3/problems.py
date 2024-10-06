@@ -1,4 +1,5 @@
-from AlgorithmsCabin.DataStructure.SegmentTree.ImprovedBinarySegmentTree import SortedList, SegmentTree
+from AlgorithmsCabin.DataStructure.SegmentTree.ImprovedBinarySegmentTree import SegmentTree
+from AlgorithmsCabin.DataStructure.SortedList.SortedList import SortedList
 
 inf = 10 ** 18
 MX = 2 * 10 ** 6
