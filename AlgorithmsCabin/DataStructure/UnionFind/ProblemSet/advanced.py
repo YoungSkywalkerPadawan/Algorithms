@@ -5,7 +5,7 @@ from AlgorithmsCabin.DataStructure.UnionFind.UnionFind import UnionFind
 
 
 # lc2157 字符串分组
-from AlgorithmsCabin.Math.Util.utils import mint
+from AlgorithmsCabin.Math.Util.utils import mint, sint
 
 
 def groupStrings(words: List[str]) -> List[int]:
@@ -183,3 +183,29 @@ def cf2020D():
     print(uf.setCount - 1)
 
     return
+
+
+def cf1383A():
+    n = sint()
+    s = input()
+    t = input()
+    g = [[] for _ in range(20)]
+    for i in range(n):
+        u = ord(s[i]) - ord('a')
+        v = ord(t[i]) - ord('a')
+        if v == u:
+            continue
+        if u > v:
+            print(-1)
+            return
+        g[u].append(v)
+
+    uf = UnionFind(20)
+    ans = 0
+    for i in range(19, -1, -1):
+        for x in g[i]:
+            if uf.connected(i, x):
+                continue
+            ans += 1
+            uf.union(i, x)
+    print(ans)
