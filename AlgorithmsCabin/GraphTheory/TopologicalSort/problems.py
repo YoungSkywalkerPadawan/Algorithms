@@ -153,3 +153,64 @@ def cf1931E():
         print("NO")
 
     return
+
+
+def cf1363C():
+    n, m = mint()
+    s = input()
+    g = [[] for _ in range(n)]
+    deg = [0] * n
+    f = [[] for _ in range(n)]
+    deg2 = [0] * n
+    for _ in range(m):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        f[v].append(u)
+        deg[v] += 1
+        deg2[u] += 1
+    # 先拓扑排序找环
+    cur = [i for i, x in enumerate(deg) if x == 0]
+    while cur:
+        pre = cur
+        cur = []
+        for x in pre:
+            for y in g[x]:
+                deg[y] -= 1
+                if deg[y] == 0:
+                    cur.append(y)
+
+    cur = [i for i, x in enumerate(deg) if x > 0]
+    if cur:
+        print(-1)
+        return
+
+    # 没有环。反向DP
+    cur = []
+    dp = [[0] * 26 for _ in range(n)]
+    for i, x in enumerate(deg2):
+        if x == 0:
+            cur.append(i)
+            dp[i][ord(s[i]) - ord('a')] = 1
+
+    ans = 1
+    while cur:
+        pre = cur
+        cur = []
+        for x in pre:
+            for y in f[x]:
+                deg2[y] -= 1
+                if deg2[y] == 0:
+                    cur.append(y)
+                c = ord(s[y]) - ord('a')
+                for i in range(26):
+                    if c == i:
+                        dp[y][i] = max(dp[y][i], dp[x][i] + 1)
+                    else:
+                        dp[y][i] = max(dp[y][i], dp[x][i])
+
+    for i, row in enumerate(dp):
+        ans = max(ans, max(row))
+    print(ans)
+    return
