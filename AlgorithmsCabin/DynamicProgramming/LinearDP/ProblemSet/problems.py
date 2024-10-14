@@ -4,7 +4,6 @@ from heapq import heappush, heappop
 from math import inf
 from typing import List
 
-
 # lc2167 移除所有载有违禁货物车厢所需的时间
 from AlgorithmsCabin.Math.Util.utils import mint, sint, ints
 
@@ -188,13 +187,49 @@ def cf1381B():
     #
     # ans = dfs(m-1, 0)
     # print("YES" if ans else "NO")
-    dp = [[False] * (n + 1) for _ in range(m+1)]
+    dp = [[False] * (n + 1) for _ in range(m + 1)]
     dp[0][n] = True
-    for i in range(1, m+1):
-        for j in range(n+1):
-            dp[i][j] = dp[i-1][j]
-            if j + res[i-1] <= n:
-                dp[i][j] = dp[i - 1][j + res[i-1]] or dp[i][j]
+    for i in range(1, m + 1):
+        for j in range(n + 1):
+            dp[i][j] = dp[i - 1][j]
+            if j + res[i - 1] <= n:
+                dp[i][j] = dp[i - 1][j + res[i - 1]] or dp[i][j]
 
     print("YES" if dp[m][0] else "NO")
+    return
+
+
+def cf1221D():
+    n = sint()
+    a = []
+    b = []
+    for _ in range(n):
+        u, v = mint()
+        a.append(u)
+        b.append(v)
+    a.append(0)
+
+    # def dfs(x: int, y: int) -> int:
+    #     if x < 0:
+    #         return 0
+    #     # 每一个可以选择不变，加一，或者加2
+    #     res = inf
+    #     for i in range(3):
+    #         if a[x] + i != a[x+1] + y:
+    #             res = min(res, i * b[x] + dfs(x-1, i))
+    #     return res
+    #
+    # ans = dfs(n-1, 0)
+    # print(ans)
+    dp = [[inf] * 3 for _ in range(n + 1)]
+    for i in range(3):
+        dp[0][i] = 0
+
+    for i in range(1, n + 1):
+        for j in range(3):
+
+            for k in range(3):
+                if a[i - 1] + k != a[i] + j:
+                    dp[i][j] = min(dp[i][j], k * b[i - 1] + dp[i - 1][k])
+    print(dp[n][0])
     return
