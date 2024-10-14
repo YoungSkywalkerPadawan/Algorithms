@@ -355,3 +355,58 @@ def cf1338B():
                     break
     print(mn, mx)
     return
+
+
+def cf1363C():
+    mod = 10 ** 9 + 7
+    n = sint()
+    g = [[] for _ in range(n)]
+    for _ in range(n - 1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    m = sint()
+    p = ints()
+    p.sort(reverse=True)
+    # 考虑每一个点的儿子。如果有的话
+    siz = [0] * n
+    cnt = [0] * (n - 1)
+
+    @bootstrap
+    def dfs(x: int, f: int) -> None:
+        c_ = 1
+        for y in g[x]:
+            if y != f:
+                yield dfs(y, x)
+                c1 = siz[y]
+                c2 = n - c1
+                cnt[y - 1] = c1 * c2
+                c_ += c1
+        siz[x] = c_
+        yield
+
+    dfs(0, -1)
+    cnt.sort(reverse=True)
+    if len(p) < n - 1:
+        ans = 0
+        for i in range(m):
+            ans = (ans + p[i] * cnt[i]) % mod
+
+        for i in range(m, n - 1):
+            ans = (ans + cnt[i]) % mod
+        print(ans)
+
+    else:
+        ans = 0
+        c = 1
+        for i in range(m - n + 2):
+            c = c * p[i] % mod
+        ans = (ans + c * cnt[0]) % mod
+        for i in range(m - n + 2, m):
+            ans = (ans + p[i] * cnt[i + n - m - 1]) % mod
+        print(ans)
+
+    return
