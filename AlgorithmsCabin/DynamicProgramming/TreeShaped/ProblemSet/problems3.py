@@ -310,3 +310,48 @@ def cf161D():
 
     print(ans)
     return
+
+
+def cf1338B():
+    n = sint()
+    g = [[] for _ in range(n)]
+    deg = [0] * n
+    for _ in range(n - 1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+        deg[u] += 1
+        deg[v] += 1
+
+    dis = [0] * n
+
+    @bootstrap
+    def dfs(x_: int, f_: int) -> None:
+        for y_ in g[x_]:
+            if y_ == f_:
+                continue
+            dis[y_] = dis[x_] ^ 1
+            yield dfs(y_, x_)
+        yield
+
+    dfs(0, -1)
+    mn = 1
+    mx = n - 1
+    cur = -1
+    for i, x in enumerate(deg):
+        if x == 1:
+            mx -= 1
+            if cur == -1:
+                cur = dis[i]
+            else:
+                if cur != dis[i]:
+                    mn = 3
+        else:
+            for y in g[i]:
+                if deg[y] == 1:
+                    mx += 1
+                    break
+    print(mn, mx)
+    return
