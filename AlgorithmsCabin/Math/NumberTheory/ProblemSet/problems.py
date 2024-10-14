@@ -120,3 +120,9 @@ def cf1993F():
         ans += cnt[(vx, vy)]
     print(ans)
     return
+
+
+def cf1295D():
+    a, m = mint()
+    print(phi(m // math.gcd(a, m)))
+    return
