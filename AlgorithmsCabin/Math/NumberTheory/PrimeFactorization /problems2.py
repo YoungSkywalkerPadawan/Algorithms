@@ -31,7 +31,7 @@ def cf1538D():
     return
 
 
-def cf1572A():
+def cf1225D():
     n, k = mint()
     pt = PrimeTable(10 ** 5)
     a = ints()
