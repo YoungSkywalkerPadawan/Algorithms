@@ -161,3 +161,40 @@ def cf1096D():
                 dp[i][j] = min(dp[i - 1][j - 1], dp[i - 1][j] + a[i - 1])
     print(dp[-1][-1])
     return
+
+
+def cf1381B():
+    n = sint()
+    p = ints()
+    # 分块，找到每个元素比它大的，开始下一个
+    res = []
+    l = 0
+    for r, x in enumerate(p):
+        if x > p[l]:
+            res.append(r - l)
+            l = r
+    res.append(2 * n - l)
+    m = len(res)
+    # dp 选或不选
+    # def dfs(x: int, y: int) -> bool:
+    #     if x < 0:
+    #         return y == n
+    #     if y > n:
+    #         return False
+    #     res1 = dfs(x-1, y + res[x])
+    #     res2 = dfs(x-1, y )
+    #     return  res1 or res2
+    #
+    #
+    # ans = dfs(m-1, 0)
+    # print("YES" if ans else "NO")
+    dp = [[False] * (n + 1) for _ in range(m+1)]
+    dp[0][n] = True
+    for i in range(1, m+1):
+        for j in range(n+1):
+            dp[i][j] = dp[i-1][j]
+            if j + res[i-1] <= n:
+                dp[i][j] = dp[i - 1][j + res[i-1]] or dp[i][j]
+
+    print("YES" if dp[m][0] else "NO")
+    return
