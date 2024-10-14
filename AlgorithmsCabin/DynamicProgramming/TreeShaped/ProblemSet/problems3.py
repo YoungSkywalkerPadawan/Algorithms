@@ -410,3 +410,50 @@ def cf1363C():
         print(ans)
 
     return
+
+
+def cf1388C():
+    n, m = mint()
+    p = ints()
+    h = ints()
+    g = [[] for _ in range(n)]
+    for _ in range(n - 1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    res = [0] * n
+
+    @bootstrap
+    def dfs(x_: int, f: int) -> tuple:
+
+        c1 = 0
+        c2 = 0
+        for y in g[x_]:
+            if y != f:
+                x1, x2 = yield dfs(y, x_)
+                c1 += x1
+                c2 += x2
+        tot = p[x_] + c1 + c2
+        if (tot + h[x_]) % 2 == 1:
+            res[x] = -math.inf
+            yield n, n
+
+        d1 = (tot + h[x_]) // 2
+        d2 = tot - d1
+        if d1 < c1 or d2 < 0:
+            res[x_] = -math.inf
+            yield n, n
+
+        res[x_] = h[x_]
+        yield d1, d2
+
+    dfs(0, -1)
+    for i, x in enumerate(res):
+        if x != h[i]:
+            print("NO")
+            return
+    print("YES")
+    return
