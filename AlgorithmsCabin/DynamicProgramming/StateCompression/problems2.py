@@ -1,4 +1,6 @@
-from AlgorithmsCabin.Math.Util.utils import mint, sint
+from collections import Counter
+
+from AlgorithmsCabin.Math.Util.utils import mint, sint, ints
 
 
 def cf1995D():
@@ -72,4 +74,52 @@ def cf1935E():
                     break
         ans.append(x)
     print(*ans)
+    return
+
+
+def cf580D():
+    n, m, k = mint()
+    a = ints()
+    # 状压DP
+    dt = [Counter() for _ in range(n)]
+    for _ in range(k):
+        u, v, w = mint()
+        u -= 1
+        v -= 1
+        dt[u][v] = w
+
+    # def dfs(x: int, y: int, z: int) -> int:
+    #     if x == m:
+    #         return 0
+    #     res = -1
+    #     for i in range(n):
+    #         if (1 << i) & y == 0:
+    #             cur = a[i] + dfs(x+1, y ^ (1 << i), i)
+    #             if z >= 0:
+    #                 cur += dt[z][i]
+    #             if cur > res:
+    #                 res = cur
+    #     return res
+    #
+    # ans = dfs(0, 0, -1)
+    dp = [[0] * n for _ in range((1 << n))]
+    for i in range(n):
+        dp[1 << i][i] = a[i]
+
+    for i in range(1 << n):
+        for j in range(n):
+            # 上次是j，上一个选有的
+            if i >> j & 1:
+                for k in range(n):
+                    # 下一个选没有的
+                    if not i >> k & 1:
+                        new_mask = i ^ (1 << k)
+                        dp[new_mask][k] = max(dp[new_mask][k], dp[i][j] + dt[j][k] + a[k])
+
+    ans = 0
+    for i in range(1 << n):
+        if bin(i).count('1') == m:
+            ans = max(ans, max(dp[i]))
+
+    print(ans)
     return
