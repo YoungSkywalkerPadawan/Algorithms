@@ -8,7 +8,7 @@ from collections import defaultdict
 from typing import List
 
 # lc1203 项目管理
-from AlgorithmsCabin.Math.Util.utils import mint, ints
+from AlgorithmsCabin.Math.Util.utils import mint, ints, sint
 
 
 def sortItems(n: int, m: int, group: List[int], beforeItems: List[List[int]]) -> List[int]:
@@ -213,4 +213,36 @@ def cf919D():
     for i, row in enumerate(dp):
         ans = max(ans, max(row))
     print(ans)
+    return
+
+
+def cf1572A():
+    n = sint()
+    g = [[] for _ in range(n)]
+    deg = [0] * n
+
+    for i in range(n):
+        m, *res = ints()
+        deg[i] = m
+        for v in res:
+            g[v - 1].append(i)
+    cur = [i for i in range(n) if deg[i] == 0]
+    cnt = [0] * n
+    for x in cur:
+        cnt[x] = 1
+    while cur:
+        pre = cur
+        cur = []
+        for x in pre:
+            for y in g[x]:
+                deg[y] -= 1
+                cnt[y] = max(cnt[y], cnt[x] if y > x else cnt[x] + 1)
+                if deg[y] == 0:
+                    cur.append(y)
+
+    for x in deg:
+        if x > 0:
+            print(-1)
+            return
+    print(max(cnt))
     return
