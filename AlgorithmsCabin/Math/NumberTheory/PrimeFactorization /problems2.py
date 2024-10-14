@@ -1,7 +1,9 @@
+from collections import Counter
 from math import gcd
 
-from AlgorithmsCabin.Math.Util.utils import mint
+from AlgorithmsCabin.Math.Util.utils import mint, ints
 from factorize2 import factorize
+from PrimeTable import PrimeTable
 
 
 def cf1538D():
@@ -26,4 +28,28 @@ def cf1538D():
             print("YES")
         else:
             print("NO")
+    return
+
+
+def cf1572A():
+    n, k = mint()
+    pt = PrimeTable(10 ** 5)
+    a = ints()
+    cnt = Counter()
+    for num in a:
+        tmp = [(p, c % k) for p, c in pt.prime_factorization(num) if c % k != 0]
+        cnt[tuple(tmp)] += 1
+    ans = 0
+    for x in cnt:
+        tmp = []
+        for p, c in x:
+            tmp.append((p, (-c) % k))
+        tmp = tuple(tmp)
+        if tmp in cnt:
+            if tmp == x:
+                ans += cnt[x] * (cnt[x] - 1)
+            else:
+                ans += cnt[x] * cnt[tmp]
+    print(ans // 2)
+
     return
