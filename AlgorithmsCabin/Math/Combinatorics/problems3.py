@@ -185,6 +185,23 @@ def cf1462E():
         while a[l] + k < x:
             l += 1
         if (r - l + 1) >= m:
-            ans += fact.combi(r-l, m-1)
+            ans += fact.combi(r - l, m - 1)
             ans %= mod
     print(ans)
+
+
+def cf1327E():
+    MOD = 998244353
+    p = [1] * 200005
+    for i in range(1, 200005):
+        p[i] = (p[i - 1] * 10) % MOD
+    n = int(input())
+    ans = []
+    for i in range(1, n):
+        res = 2 * 10 * 9 * p[n - i - 1]
+        res += (n - 1 - i) * 10 * 9 * 9 * p[n - i - 2]
+        ans.append(res % MOD)
+    ans.append(10)
+    print(*ans)
+
+    return
