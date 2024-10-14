@@ -261,3 +261,30 @@ def cf1355C():
     print(ans)
 
     return
+
+
+def cf1672H():
+    n, m = mint()
+    s = input()
+    pre0 = [0] * (n + 1)
+    pre1 = [0] * (n + 1)
+    for i in range(1, n):
+        x = s[i]
+        if x == '0':
+            pre1[i + 1] = pre1[i]
+            if s[i - 1] == '0':
+                pre0[i + 1] = pre0[i] + 1
+            else:
+                pre0[i + 1] = pre0[i]
+        else:
+            pre0[i + 1] = pre0[i]
+            if s[i - 1] == '1':
+                pre1[i + 1] = pre1[i] + 1
+            else:
+                pre1[i + 1] = pre1[i]
+    for _ in range(m):
+        l, r = mint()
+        res1 = pre1[r] - pre1[l]
+        res0 = pre0[r] - pre0[l]
+        print(max(res1, res0) + 1)
+    return
