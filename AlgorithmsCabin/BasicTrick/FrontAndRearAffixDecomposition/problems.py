@@ -7,7 +7,7 @@ from random import getrandbits
 from typing import List
 
 # lc2552 统计上升四元组
-from AlgorithmsCabin.Math.Util.utils import sint, ints
+from AlgorithmsCabin.Math.Util.utils import sint, ints, mint
 
 
 def countQuadruplets(nums: List[int]) -> int:
@@ -274,4 +274,66 @@ def cf1335E():
                     ans = cur
     print(ans)
 
+    return
+
+
+def cf2021D():
+    n, m = mint()
+    a = ints()
+
+    def getSuf():
+        ans = [0] * m
+        ans[-1] = a[-1]
+        for i_ in range(m - 2, -1, -1):
+            ans[i_] = max(ans[i_ + 1], 0) + a[i_]
+        return ans
+
+    def getPre():
+        ans = [0] * m
+        ans[0] = a[0]
+        for i_ in range(1, m):
+            ans[i_] = max(ans[i_ - 1], 0) + a[i_]
+        return ans
+
+    # 前后缀分解
+    dp_suf = getSuf()
+    dp_pre = getPre()
+
+    for _ in range(n-1):
+        a = ints()
+        cur_suf = getSuf()
+        cur_pre = getPre()
+        nxt_suf = [-inf] * m
+        nxt_pre = [-inf] * m
+
+        # 原先的前缀加现在的后缀
+        for i in range(m - 1):
+            nxt_suf[i] = dp_pre[i] + cur_suf[i + 1] + a[i]
+
+        # 原先的后缀加现在的前缀
+        for i in range(1, m):
+            nxt_pre[i] = dp_suf[i] + cur_pre[i - 1] + a[i]
+
+        for i in range(m - 3, -1, -1):
+            nxt_suf[i] = max(nxt_suf[i], nxt_suf[i + 1] + a[i])
+
+        for i in range(2, m):
+            nxt_pre[i] = max(nxt_pre[i], nxt_pre[i - 1] + a[i])
+
+        v = -inf
+        # 原先的前缀加现在的前缀再加后面的一个元素
+        for i in range(1, m):
+            v = max(v + a[i - 1], dp_pre[i - 1] + cur_pre[i - 1])
+            nxt_pre[i] = max(nxt_pre[i], v + a[i])
+
+        v = -inf
+        # 原先的后缀加现在的后缀再加前面的一个元素
+        for i in range(m - 2, -1, -1):
+            v = max(v + a[i + 1], dp_suf[i + 1] + cur_suf[i + 1])
+            nxt_suf[i] = max(nxt_suf[i], v + a[i])
+
+        dp_suf = nxt_suf
+        dp_pre = nxt_pre
+
+    print(max(dp_suf))
     return
