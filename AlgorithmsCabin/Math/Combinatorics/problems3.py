@@ -205,3 +205,18 @@ def cf1327E():
     print(*ans)
 
     return
+
+
+def cf300C():
+    a, b, n = mint()
+    fact = Factorial(n, mod)
+
+    target = set(str(10 * a + b))
+    ans = 0
+    for i in range(n + 1):
+        v = i * a + (n - i) * b
+        if set(str(v)) - target == set():
+            ans += fact.combi(n, i)
+
+    print(ans % mod)
+    return
