@@ -89,3 +89,46 @@ def cf3D():
         return
     print(ans)
     print("".join(s))
+
+
+def cf1709C():
+    s = input()
+    # 统计还需要放几个(,）
+    tot = len(s) // 2
+    c1 = 0
+    c2 = 0
+    for x in s:
+        if x == '(':
+            c1 += 1
+        elif x == ')':
+            c2 += 1
+
+    c1 = tot - c1
+    c2 = tot - c2
+    flag = False
+    # 默认都是(
+    cnt = 0
+    for x in s:
+        if x == '(':
+            cnt += 1
+        elif x == ')':
+            if cnt > 0:
+                cnt -= 1
+            else:
+                # 原先的问号不应该是)
+                c2 += 1
+                c1 -= 1
+                cnt += 1
+                flag = False
+        else:
+            if cnt == 0 or c2 == 0 or flag:
+                cnt += 1
+                c1 -= 1
+            else:
+                cnt -= 1
+                c2 -= 1
+                if c1 > 0:
+                    flag = True
+
+    print("YES" if not flag else "NO")
+    return
