@@ -10,6 +10,8 @@ from functools import cache
 # lc233 数字1的个数 模板0.0
 from string import ascii_lowercase
 
+from AlgorithmsCabin.Math.Util.utils import sint
+
 
 def countDigitOne(n: int) -> int:
     # 数位dp
@@ -135,3 +137,53 @@ def findGoodStrings(n: int, s1: str, s2: str, evil: str) -> int:
         return res % MOD
 
     return dfs(0, 0, True, True)
+
+
+def cf914C():
+    mod = 10 ** 9 + 7
+    s = input()
+    k = sint()
+    if k == 0:
+        print(1)
+        return
+
+    if k == 1:
+        print(len(s) - 1)
+        return
+
+    n = len(s)
+    f = [0] * (n + 1)
+    for i in range(2, n + 1):
+        f[i] = f[i.bit_count()] + 1
+
+    if k > max(f) + 1:  # 实际上 max(ops) 最大只有 4
+        print(0)
+        return
+
+    memo = [[-1] * (n + 1) for _ in range(n)]
+
+    def dfs(idx, cnt, is_limit):
+
+        if idx == n:
+            return cnt == 0
+
+        if cnt < 0 or cnt > n - idx:  # 两个剪枝很重要
+            return 0
+        if not is_limit and memo[idx][cnt] != -1:
+            return memo[idx][cnt]
+
+        res = 0
+        up = int(s[idx]) if is_limit else 1
+        for d in range(up + 1):
+            res += dfs(i + 1, cnt - (d == 1), is_limit and d == up)
+        res %= mod
+        if not is_limit:
+            memo[i][cnt] = res
+        return res
+
+    ans = 0
+    for i in range(2, n + 1):
+        if f[i] + 1 == k:
+            ans += dfs(0, i, True)
+    print(ans % mod)
+    return
