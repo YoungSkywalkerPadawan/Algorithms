@@ -189,3 +189,32 @@ def cf1914A():
     print(*ans)
 
     return
+
+
+def cf1856C():
+    n, k = mint()
+    a = ints()
+
+    def check(x: int) -> bool:
+        for i in range(n):
+            cnt = 0
+            for j in range(i, n):
+                if x - (j - i) <= a[j]:
+                    return True
+                cnt += x - (j - i) - a[j]
+                if cnt > k:
+                    break
+        return False
+
+    l = max(a)
+    r = max(a) + k
+    while l < r:
+        mid = (l + r) >> 1
+        if check(mid):
+            l = mid + 1
+        else:
+            r = mid - 1
+
+    ans = l if check(l) else l - 1
+    print(ans)
+    return
