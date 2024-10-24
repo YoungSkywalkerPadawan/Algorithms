@@ -5,9 +5,11 @@ from sortedcontainers import SortedList
 
 from AlgorithmsCabin.DataStructure.SegmentTree.SegmentTree import SegmentTree
 
-
 # lc2298 使数组按非递减顺序排序
 # 使用线段树进行单点更新和区间最大值查询
+from AlgorithmsCabin.Math.Util.utils import sint
+
+
 def totalSteps(nums: List[int]) -> int:
     # 若当前元素nums[i]需要被删除，找到左边第一个比它大的元素nums[j]
     # 看这段区间[j+1,i-1]内被删的元素的最大时间，该元素被删除的时间为最大时间+1
@@ -69,3 +71,34 @@ def leftmostBuildingQueries(heights: List[int], queries: List[List[int]]) -> Lis
             pos = t.BinaryQuery(1, 1, n, j + 1, heights[i])
             ans.append(pos - 1)  # 不存在时刚好得到 -1
     return ans
+
+
+def cf1535D():
+    k = sint()
+    s = list(input())
+    s = s[::-1]
+
+    n = 1 << k
+    cnt = [1] * (2 * n)
+
+    def upd(i: int) -> None:
+        c1 = cnt[i * 2 + 1] if s[i] != '0' else 0
+        c2 = cnt[i * 2 + 2] if s[i] != '1' else 0
+        cnt[i] = c1 + c2
+
+    for i_ in range(n - 2, -1, -1):
+        upd(i_)
+
+    q = sint()
+    while q:
+        p, c = map(str, input().split())
+        p = int(p)
+        p = n - p - 1
+        s[p] = c
+        while p:
+            upd(p)
+            p = (p - 1) // 2
+        upd(0)
+        print(cnt[0])
+        q -= 1
+    return
