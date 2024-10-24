@@ -266,3 +266,32 @@ def cf547B():
     print(*ans)
 
     return
+
+
+def cf25D():
+    n = sint()
+    uf = UnionFind(n)
+    g = [[] for _ in range(n)]
+    deg = [0] * n
+    tmp = []
+    for _ in range(n - 1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+        deg[u] += 1
+        deg[v] += 1
+        if not uf.union(u, v):
+            tmp.append([u + 1, v + 1])
+
+    isRoot = [0] * n
+    for i in range(n):
+        isRoot[uf.find(i)] = 1
+
+    roots = [i + 1 for i in range(n) if isRoot[i]]
+    print(len(tmp))
+    for i in range(len(tmp)):
+        print(*tmp[i], roots[i], roots[i + 1])
+
+    return
