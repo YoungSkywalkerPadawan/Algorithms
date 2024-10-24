@@ -164,3 +164,24 @@ def cf1548B():
 
     print(ans + 1)
     return
+
+
+def cf1627D():
+    n = sint()
+    a = ints()
+    mx = max(a)
+    st = set(a)
+    cnt = 0
+    for num in range(1, mx + 1):
+        gd = -1
+        for i in range(1, mx // num + 1):
+            if i * num in st:
+                if gd == -1:
+                    gd = i
+                else:
+                    gd = gcd(gd, i)
+                if gd == 1:
+                    cnt += 1
+                    break
+    print(cnt - n)
+    return
