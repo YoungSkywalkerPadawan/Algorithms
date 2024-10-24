@@ -303,3 +303,41 @@ def cf1730B():
         left = max(new_l, left)
     print(left / 2)
     return
+
+
+def cf1619D():
+    m, n = mint()
+    g = [ints() for _ in range(m)]
+
+    def check(x: int) -> bool:
+        for i in range(n):
+            flag = False
+            for j in range(m):
+                if g[j][i] >= x:
+                    flag = True
+                    break
+            if not flag:
+                return False
+        flag = False
+        for j in range(m):
+            cnt = 0
+            for i in range(n):
+                if g[j][i] >= x:
+                    cnt += 1
+            if cnt >= 2:
+                flag = True
+                break
+
+        return flag
+
+    l = 1
+    r = 10 ** 9
+    while l < r:
+        mid = (l + r) >> 1
+        if check(mid):
+            l = mid + 1
+        else:
+            r = mid - 1
+    ans = l if check(l) else l - 1
+    print(ans)
+    return
