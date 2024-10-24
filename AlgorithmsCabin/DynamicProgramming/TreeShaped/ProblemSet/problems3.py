@@ -504,3 +504,37 @@ def cf1328E():
             print('YES')
 
     return
+
+
+def cf109C():
+    n = sint()
+    g = [[] for _ in range(n)]
+    for _ in range(n-1):
+        u, v, w = mint()
+        u -= 1
+        v -= 1
+        s = str(w)
+        lucky = 1 if s.count('4') + s.count('7') == len(s) else 0
+        g[u].append((v, lucky))
+        g[v].append((u, lucky))
+
+    vis = [0] * n
+    siz = 0
+
+    @bootstrap
+    def dfs(x: int) -> None:
+        nonlocal siz
+        siz += 1
+        vis[x] = 1
+        for y, z in g[x]:
+            if vis[y] == 0 and z == 0:
+                yield dfs(y)
+        yield
+
+    ans = 0
+    for i in range(n):
+        if vis[i] == 0:
+            siz = 0
+            dfs(i)
+            ans += siz * (n - siz) * (n - siz - 1)
+    print(ans)
