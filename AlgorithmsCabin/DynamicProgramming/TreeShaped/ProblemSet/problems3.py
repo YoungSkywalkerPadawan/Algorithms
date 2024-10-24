@@ -457,3 +457,50 @@ def cf1388C():
             return
     print("YES")
     return
+
+
+def cf1328E():
+    n, m = mint()
+    g = [[] for _ in range(n)]
+    for _ in range(n - 1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    parent = [-1] * n
+    depth = [0] * n
+    tin = [0] * n
+    tout = [0] * n
+    time = 0
+
+    @bootstrap
+    def dfs(x: int, f: int) -> None:
+        nonlocal time
+        time += 1
+        tin[x] = time
+        parent[x] = f
+        depth[x] = depth[f] + 1
+        for y in g[x]:
+            if y != f:
+                yield dfs(y, x)
+
+        tout[x] = time
+        yield
+
+    dfs(0, -1)
+
+    for _ in range(m):
+        a = ints()
+        nodes = a[1:]
+        nodes = [parent[node - 1] if node > 1 else 0 for node in nodes]
+        nodes.sort(key=lambda x: depth[x])
+        for u, v in zip(nodes, nodes[1:]):
+            if tin[u] > tout[v] or tout[u] < tin[v]:
+                print('NO')
+                break
+        else:
+            print('YES')
+
+    return
