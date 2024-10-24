@@ -1,4 +1,5 @@
 from collections import defaultdict
+from heapq import heappop, heappush
 from random import getrandbits
 from types import GeneratorType
 
@@ -219,4 +220,28 @@ def cf300C():
             ans += fact.combi(n, i)
 
     print(ans % mod)
+    return
+
+
+def cf1420D():
+    n, k = mint()
+    # h = getrandbits(30)
+    # mod = 998244353
+    fact = Factorial(n, mod)
+    res = []
+    for _ in range(n):
+        u, v = mint()
+        res.append((u, v))
+
+    res.sort(key=lambda p: p[0])
+    h_ = []
+    ans = 0
+    for x, y in res:
+        while h_ and h_[0][0] < x:
+            heappop(h_)
+        if len(h_) >= k - 1:
+            ans = (ans + fact.combi(len(h_), k - 1)) % mod
+        heappush(h_, (y, x))
+
+    print(ans)
     return
