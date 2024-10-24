@@ -1,5 +1,6 @@
 import sys
 from itertools import accumulate
+from math import inf
 
 from AlgorithmsCabin.Math.Util.utils import ints, sint, mint
 
@@ -269,4 +270,36 @@ def cf1363C():
     # ans = l if check(l) else l + 1
     print(l if check(l) else l + 1)
 
+    return
+
+
+def cf1730B():
+    # n = sint()
+    a = ints()
+    b = ints()
+
+    def check(m: int) -> bool:
+        left_, right_ = -inf, inf
+        for x_, y_ in zip(a, b):
+            new_l_ = x_ * 2 - (m - 2 * y_)
+            new_r_ = x_ * 2 + (m - 2 * y_)
+            left_ = max(new_l_, left_)
+            right_ = min(new_r_, right_)
+        return left_ <= right_
+
+    l = 2 * max(b)
+    r = 2 * (max(a) - min(a) + max(b))
+    while l < r:
+        mid = (l + r) >> 1
+        if check(mid):
+            r = mid - 1
+        else:
+            l = mid + 1
+
+    l = l if check(l) else l + 1
+    left = -inf
+    for x, y in zip(a, b):
+        new_l = x * 2 - (l - 2 * y)
+        left = max(new_l, left)
+    print(left / 2)
     return
