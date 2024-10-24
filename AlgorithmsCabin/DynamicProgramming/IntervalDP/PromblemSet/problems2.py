@@ -74,3 +74,53 @@ def cf1509C():
 
     print(dp[0][n - 1])
     return
+
+
+def cf607B():
+    n = sint()
+    a = ints()
+    # dt = {}
+    #
+    # # @bootstrap
+    # def dfs(x: int, y: int) -> int:
+    #     if x > y:
+    #         return 0
+    #     if x == y:
+    #         return 1
+    #     if (x, y) in dt.keys():
+    #         return dt[(x, y)]
+    #     pre = dfs(x + 1, y)
+    #     res = 1 + pre
+    #     if a[x] == a[x + 1]:
+    #         nxt = dfs(x + 2, y)
+    #         res2 = 1 + nxt
+    #         if res2 < res:
+    #             res = res2
+    #     for k in range(x + 2, y + 1):
+    #         if a[x] == a[k]:
+    #             nxt1 = dfs(x + 1, k - 1)
+    #             nxt2 = dfs(k + 1, y)
+    #             res2 = nxt2 + nxt1
+    #             if res2 < res:
+    #                 res = res2
+    #     dt[(x, y)] = res
+    #     return res
+    #
+    # ans = dfs(0, n - 1)
+    # print(ans)
+    dp = [[0] * n for _ in range(n + 1)]
+    for i in range(n):
+        for j in range(n - i):
+            s, e = j, i + j
+            if i == 0:
+                dp[s][e] = 1
+            else:
+                dp[s][e] = dp[s + 1][e] + 1
+                for k in range(s + 2, e + 1):
+                    if a[s] == a[k]:
+                        dp[s][e] = min(dp[s][e], dp[s + 1][k - 1] + dp[k + 1][e])
+                if s < n - 1 and a[s] == a[s + 1]:
+                    dp[s][e] = min(dp[s][e], dp[s + 2][e] + 1)
+
+    print(dp[0][n - 1])
+    return
