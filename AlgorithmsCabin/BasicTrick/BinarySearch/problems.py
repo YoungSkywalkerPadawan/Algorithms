@@ -1,3 +1,4 @@
+import sys
 from itertools import accumulate
 
 from AlgorithmsCabin.Math.Util.utils import ints, sint, mint
@@ -217,4 +218,55 @@ def cf1856C():
 
     ans = l if check(l) else l - 1
     print(ans)
+    return
+
+
+def read_int():
+    res = b''
+
+    while True:
+        d = sys.stdin.buffer.read(1)
+        if d == b'-' or d.isdigit():
+            res += d
+        elif res:
+            break
+
+    return int(res)
+
+
+def cf1363C():
+    n, m = read_int(), read_int()
+    a = [read_int() for _ in range(n)]
+    b = [read_int() for _ in range(m)]
+
+    def check(x: int) -> bool:
+        c = 0
+        for v in a:
+            if v <= x:
+                c += 1
+
+        for v in b:
+            if v > 0:
+                if v <= x:
+                    c += 1
+            else:
+                if -v <= c:
+                    c -= 1
+
+        return c > 0
+
+    if not check(n):
+        print(0)
+        return
+    l = 1
+    r = n
+    while l < r:
+        mid = (l + r) >> 1
+        if check(mid):
+            r = mid - 1
+        else:
+            l = mid + 1
+    # ans = l if check(l) else l + 1
+    print(l if check(l) else l + 1)
+
     return
