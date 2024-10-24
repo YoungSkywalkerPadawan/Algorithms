@@ -1,4 +1,5 @@
 from collections import Counter
+from math import inf
 
 from AlgorithmsCabin.Math.Util.utils import mint, ints
 
@@ -37,7 +38,7 @@ def cf1363C():
     # DP，遇到可以分配的时候，枚举选哪个
     cnt1 = Counter()
     cnt2 = Counter()
-    dp = [[0] * (m + 1) for _ in range(m+1)]
+    dp = [[0] * (m + 1) for _ in range(m + 1)]
 
     for x in a:
         if x > 0:
@@ -57,13 +58,45 @@ def cf1363C():
         for i in range(cnt + 1):
             j = cnt - i
             if i > 0:
-                if dp[i-1][j] + cnt1[i] > dp[i][j]:
-                    dp[i][j] = dp[i-1][j] + cnt1[i]
+                if dp[i - 1][j] + cnt1[i] > dp[i][j]:
+                    dp[i][j] = dp[i - 1][j] + cnt1[i]
             if j > 0:
-                if dp[i][j-1] + cnt2[j] > dp[i][j]:
-                    dp[i][j] = dp[i][j-1] + cnt2[j]
+                if dp[i][j - 1] + cnt2[j] > dp[i][j]:
+                    dp[i][j] = dp[i][j - 1] + cnt2[j]
             if dp[i][j] > ans:
                 ans = dp[i][j]
     print(ans)
+
+    return
+
+
+def cf1517D():
+    n, m, k = mint()
+    row = [ints() for _ in range(n)]
+    col = [ints() for _ in range(n - 1)]
+
+    if k % 2:
+        ans = [[-1] * m for _ in range(n)]
+        for x in ans:
+            print(*x)
+    else:
+        dp = [[0] * m for _ in range(n)]
+        for _ in range(k // 2):
+            ndp = [[inf] * m for _ in range(n)]
+            for i in range(n):
+                for j in range(m):
+                    for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
+                        if 0 <= x < n and 0 <= y < m:
+                            # w = 0
+                            if i == x:
+                                w = row[i][min(j, y)]
+                            else:
+                                w = col[min(i, x)][j]
+
+                            if dp[x][y] + w < ndp[i][j]:
+                                ndp[i][j] = dp[x][y] + w
+            dp = ndp
+        for x in dp:
+            print(*(v * 2 for v in x))
 
     return
