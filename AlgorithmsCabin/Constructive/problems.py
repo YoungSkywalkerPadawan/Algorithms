@@ -1,6 +1,6 @@
 from collections import Counter, defaultdict
 
-from AlgorithmsCabin.Math.Util.utils import sint, ints
+from AlgorithmsCabin.Math.Util.utils import sint, ints, mint
 
 
 def cf1227G():
@@ -71,5 +71,63 @@ def cf1375D():
 
     print(len(ans))
     print(*ans)
+
+    return
+
+
+def cf1363C():
+    n, m = mint()
+    g = [ints() for _ in range(n)]
+
+    #  判断一个格子是不是好格子，自己是1 或者有一个小于自己的邻居
+    def ok(x_: int, y_: int) -> bool:
+        return (g[x_][y_] == 1) or (y_ > 0 and g[x_][y_ - 1] < g[x_][y_]) or \
+               (y_ + 1 < m and g[x_][y_ + 1] < g[x_][y_]) or (x_ > 0 and g[x_ - 1][y_] < g[x_][y_]) or\
+               (x_ + 1 < n and g[x_ + 1][y_] < g[x_][y_])
+
+    # 判断（x,y） 和它的邻居是不是都是好格子
+    def ok2(x_: int, y_: int) -> bool:
+        return ok(x_, y_) and (y_ == 0 or ok(x_, y_ - 1)) and (y_ + 1 == m or ok(x_, y_ + 1)) \
+               and (x_ == 0 or ok(x_ - 1, y_)) and (x_ + 1 == n or ok(x_ + 1, y_))
+
+    # 收集坏格子
+    badPos = []
+    for i in range(n):
+        for j in range(m):
+            if not ok(i, j):
+                badPos.append((i, j))
+
+    if not badPos:
+        print(0)
+        return
+
+    ans = set()
+    bi, bj = badPos[0][0], badPos[0][1]
+
+    for pi, pj in (bi, bj), (bi, bj - 1), (bi, bj + 1), (bi - 1, bj), (bi + 1, bj):
+        if pi < 0 or pi == n or pj < 0 or pj == m:
+            continue
+
+        for i in range(n):
+            for j in range(m):
+                g[pi][pj], g[i][j] = g[i][j], g[pi][pj]
+                flag = False
+                for x, y in badPos:
+                    if not ok(x, y):
+                        flag = True
+                        break
+
+                if flag:
+                    g[pi][pj], g[i][j] = g[i][j], g[pi][pj]
+                    continue
+
+                if ok2(i, j) and ok2(pi, pj):
+                    ans.add((min(pi * m + pj, i * m + j), max(pi * m + pj, i * m + j)))
+                g[pi][pj], g[i][j] = g[i][j], g[pi][pj]
+
+    if ans:
+        print(1, len(ans))
+    else:
+        print(2)
 
     return
