@@ -5,7 +5,7 @@ import math
 # lc633 平方数之和
 from collections import defaultdict
 
-from AlgorithmsCabin.Math.Util.utils import phi, mint
+from AlgorithmsCabin.Math.Util.utils import phi, mint, ints
 
 
 def judgeSquareSum(c: int) -> bool:
@@ -125,4 +125,35 @@ def cf1993F():
 def cf1295D():
     a, m = mint()
     print(phi(m // math.gcd(a, m)))
+    return
+
+
+def cf1753B():
+    n, x = mint()
+    a = ints()
+    a.sort()
+    cur = 1
+    cnt = 0
+    for num in a:
+        if num == cur:
+            cnt += 1
+        else:
+            for i in range(cur + 1, num + 1):
+                if cnt % i:
+                    if i - 1 >= x:
+                        print('Yes')
+                    else:
+                        print('No')
+                    return
+                cnt //= i
+            cur = num
+            cnt += 1
+
+    while cnt % (cur + 1) == 0:
+        cnt //= cur + 1
+        cur += 1
+    if cur >= x:
+        print('Yes')
+    else:
+        print('No')
     return
