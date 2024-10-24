@@ -299,7 +299,7 @@ def cf2021D():
     dp_suf = getSuf()
     dp_pre = getPre()
 
-    for _ in range(n-1):
+    for _ in range(n - 1):
         a = ints()
         cur_suf = getSuf()
         cur_pre = getPre()
@@ -336,4 +336,35 @@ def cf2021D():
         dp_pre = nxt_pre
 
     print(max(dp_suf))
+    return
+
+
+def cf446A():
+    n = sint()
+    a = ints()
+    if n == 1:
+        print(1)
+        return
+    suf = [1] * n
+    for i in range(1, n):
+        if a[i] > a[i - 1]:
+            suf[i] = suf[i - 1] + 1
+
+    pre = [1] * n
+    for i in range(n - 2, -1, -1):
+        if a[i] < a[i + 1]:
+            pre[i] = pre[i + 1] + 1
+
+    ans = 0
+    for i in range(n):
+        if i == 0:
+            ans = max(ans, 1 + pre[1])
+        elif i == n - 1:
+            ans = max(ans, 1 + suf[n - 2])
+        else:
+            if a[i + 1] - a[i - 1] >= 2:
+                ans = max(ans, 1 + pre[i + 1] + suf[i - 1])
+            else:
+                ans = max(ans, 1 + pre[i + 1], 1 + suf[i - 1])
+    print(ans)
     return
