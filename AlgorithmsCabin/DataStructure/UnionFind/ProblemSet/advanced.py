@@ -3,9 +3,8 @@ from typing import List
 
 from AlgorithmsCabin.DataStructure.UnionFind.UnionFind import UnionFind
 
-
 # lc2157 字符串分组
-from AlgorithmsCabin.Math.Util.utils import mint, sint
+from AlgorithmsCabin.Math.Util.utils import mint, sint, ints
 
 
 def groupStrings(words: List[str]) -> List[int]:
@@ -160,7 +159,7 @@ def cf1985H1():
 def cf2020D():
     n, m = mint()
     # 按d分组
-    uf = UnionFind(n+1)
+    uf = UnionFind(n + 1)
     cnt = defaultdict(list)
     for _ in range(m):
         a, d, k = mint()
@@ -168,12 +167,12 @@ def cf2020D():
 
     for i in range(1, 11):
         if cnt[i]:
-            diff = [0] * (n+1)
+            diff = [0] * (n + 1)
             for x, y in cnt[i]:
                 diff[x] += 1
                 diff[y] -= 1
 
-            for j in range(i, n+1):
+            for j in range(i, n + 1):
                 diff[j] += diff[j - i]
 
             for idx, x in enumerate(diff):
@@ -209,3 +208,31 @@ def cf1383A():
             ans += 1
             uf.union(i, x)
     print(ans)
+
+
+def cf1620E():
+    n = sint()
+    mx = 5 * 10 ** 5 + 1
+    val = [-1] * mx
+    g = defaultdict(list)
+    uf = UnionFind(mx)
+    idx = 0
+    for _ in range(n):
+        a = ints()
+        if a[0] == 1:
+            v = a[1]
+            g[v].append(idx)
+            val[idx] = v
+            idx += 1
+        else:
+            v1, v2 = a[1], a[-1]
+            if len(g[v1]):
+                for i in range(len(g[v1]) - 1):
+                    uf.union(g[v1][i + 1], g[v1][i])
+                fa = uf.find(g[v1][-1])
+                g[v1] = []
+                g[v2].append(fa)
+                val[fa] = v2
+    print(*(val[uf.find(i)] for i in range(idx)))
+
+    return
