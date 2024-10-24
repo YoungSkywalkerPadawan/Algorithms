@@ -1,11 +1,13 @@
 import math
+from bisect import bisect_right
 from collections import defaultdict, Counter
 from functools import cache, reduce
 from math import gcd, sqrt
 from typing import List
 
 # lc1819 序列中不同最大公约数的数目
-from AlgorithmsCabin.Math.Util.utils import sint, ints
+from AlgorithmsCabin.Math.NumberTheory.GCD.PrimeTable import PrimeTable
+from AlgorithmsCabin.Math.Util.utils import sint, ints, mint
 
 
 def countDifferentSubsequenceGCDs(nums: List[int]) -> int:
@@ -184,4 +186,16 @@ def cf1627D():
                     cnt += 1
                     break
     print(cnt - n)
+    return
+
+
+def cf75C():
+    pt = PrimeTable(10 ** 5)
+    a, b = mint()
+    factors = sorted(pt.get_factors(gcd(a, b)))
+    n = sint()
+    for _ in range(n):
+        l, r = mint()
+        v = factors[bisect_right(factors, r) - 1]
+        print(v if v >= l else -1)
     return
