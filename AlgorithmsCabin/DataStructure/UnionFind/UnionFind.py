@@ -8,6 +8,7 @@ class UnionFind:
         self.n = n
         # 当前连通分量数目
         self.setCount = n
+        self.mx_siz = 1
 
     def find(self, x: int) -> int:
         if self.parent[x] != x:
@@ -22,6 +23,8 @@ class UnionFind:
             x, y = y, x
         self.parent[y] = x
         self.size[x] += self.size[y]
+        if self.size[x] > self.mx_siz:
+            self.mx_siz = self.size[x]
         self.setCount -= 1
         return True
 

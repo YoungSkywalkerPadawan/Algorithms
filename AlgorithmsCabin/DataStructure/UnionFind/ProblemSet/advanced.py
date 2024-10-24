@@ -1,4 +1,5 @@
 from collections import defaultdict
+from random import getrandbits
 from typing import List
 
 from AlgorithmsCabin.DataStructure.UnionFind.UnionFind import UnionFind
@@ -234,5 +235,34 @@ def cf1620E():
                 g[v2].append(fa)
                 val[fa] = v2
     print(*(val[uf.find(i)] for i in range(idx)))
+
+    return
+
+
+def cf547B():
+    n = sint()
+    a = ints()
+    # 从大到小依次构建联通快
+    dt = defaultdict(list)
+    h = getrandbits(30)
+    for i, x in enumerate(a):
+        dt[x ^ h].append(i)
+
+    res = list(set(a))
+    res.sort(reverse=True)
+    uf = UnionFind(n)
+    ans = [-1] * n
+    for x in res:
+        for idx in dt[x ^ h]:
+            if idx - 1 >= 0 and a[idx - 1] >= x:
+                uf.union(idx, idx - 1)
+            if idx + 1 < n and a[idx + 1] >= x:
+                uf.union(idx, idx + 1)
+        for i in range(uf.mx_siz - 1, -1, -1):
+            if ans[i] < 0:
+                ans[i] = x
+            else:
+                break
+    print(*ans)
 
     return
