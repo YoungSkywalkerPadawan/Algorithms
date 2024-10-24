@@ -1,6 +1,7 @@
 from heapq import heappop, heapify, heappush
+from math import inf
 
-from AlgorithmsCabin.Math.Util.utils import mint
+from AlgorithmsCabin.Math.Util.utils import mint, sint, ints
 
 
 def cf1945A():
@@ -67,4 +68,34 @@ def cf1946E():
 
         heappush(eat, (t + s[i], i))
     print(-1)
+    return
+
+
+def cf2024D():
+    n = sint()
+    a = ints()
+    b = ints()
+    for i in range(n):
+        b[i] -= 1
+
+    dp = [inf] * n
+    h = [(0, 0)]
+    while h:
+        d, i = heappop(h)
+        if dp[i] < inf:
+            continue
+        # 当前位置最小跳过分数
+        dp[i] = d
+        # 选择跳过
+        heappush(h, (d + a[i], b[i]))
+        if i > 0:
+            # 选择要
+            heappush(h, (d, i - 1))
+
+    ans = 0
+    sm = 0
+    for i in range(n):
+        sm += a[i]
+        ans = max(ans, sm - dp[i])
+    print(ans)
     return
