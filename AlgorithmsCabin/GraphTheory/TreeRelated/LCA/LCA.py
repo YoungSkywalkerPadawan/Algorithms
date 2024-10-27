@@ -33,3 +33,15 @@ class LCA:
             if x >> k & 1:
                 v = self.parent[k][v]
         return v
+
+    def getDis(self, u, v):
+        return self.depth[u] + self.depth[v] - self.depth[self.getLCA(u, v)] * 2
+
+    def addNode(self, cur, v):
+        self.parent[0][cur] = v
+        self.depth[cur] = self.depth[v] + 1
+        for k in range(self.num - 1):
+            if self.parent[k][cur] == -1:
+                self.parent[k + 1][cur] = -1
+            else:
+                self.parent[k + 1][cur] = self.parent[k][self.parent[k][cur]]

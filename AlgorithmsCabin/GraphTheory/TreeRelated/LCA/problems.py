@@ -3,7 +3,7 @@ from operator import add
 from AlgorithmsCabin.DataStructure.SegmentTree.LazySegTree import LazySegTree
 from AlgorithmsCabin.GraphTheory.TreeRelated.LCA.HLD import HLD
 from AlgorithmsCabin.GraphTheory.TreeRelated.LCA.LCA import LCA
-from AlgorithmsCabin.Math.Util.utils import mint
+from AlgorithmsCabin.Math.Util.utils import mint, sint
 
 
 def cf2002D():
@@ -41,7 +41,7 @@ def cf2002D():
 def cf1904E():
     n, q = mint()
     g = [[] for _ in range(n)]
-    for _ in range(n-1):
+    for _ in range(n - 1):
         u, v = mint()
         u -= 1
         v -= 1
@@ -144,4 +144,42 @@ def cf1904E():
             seg.apply(l, r, 2)
     for x in ans:
         print(x)
+    return
+
+
+def cf379F():
+    q = sint()
+    n = 5 + q * 2
+    parent = [-1] * n
+    # 默认都加1
+    depth = [0] * n
+    parent[1] = 0
+    parent[2] = 0
+    parent[3] = 0
+    depth[1] = 1
+    depth[2] = 1
+    depth[3] = 1
+    lca = LCA(depth, parent)
+    cur = 4
+    end1 = 1
+    end2 = 2
+    res = 2
+
+    for _ in range(q):
+        v = sint()
+        v -= 1
+        lca.addNode(cur, v)
+        lca.addNode(cur + 1, v)
+        d1 = lca.getDis(end1, cur)
+        d2 = lca.getDis(end2, cur)
+        if d1 > res:
+            end2 = cur
+            res = d1
+        elif d2 > res:
+            end1 = cur
+            res = d2
+
+        print(res)
+        cur += 2
+
     return
