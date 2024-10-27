@@ -1,8 +1,14 @@
+from bisect import bisect_right
 from functools import cache
+from itertools import accumulate
+from math import inf
 from typing import List
 
 
 # lc1444 切披萨的方案树
+from AlgorithmsCabin.Math.Util.utils import mint, ints
+
+
 def ways(pizza: List[str], k: int) -> int:
     # 二维前缀和
     MOD = 10 ** 9 + 7
@@ -80,3 +86,63 @@ def superEggDrop(k: int, n: int) -> int:
     ans = dfs(k, n)
     dfs.cache_clear()
     return ans
+
+
+def cf2027D():
+    mod = 10 ** 9 + 7
+    n, m = mint()
+    a = ints()
+    b = ints()
+    # def dfs(x: int, y: int) -> int:
+    #     if x >= n:
+    #         return 0
+    #     if y >= m:
+    #         return inf
+    #     # 不要
+    #     res1 = dfs(x, y+1)
+    #     # 要
+    #     cost = m - (y+1)
+    #     idx = bisect_right(pre, pre[x] + b[y]) - 2
+    #     if idx >= x:
+    #         res2 = cost + dfs(idx + 1, y)
+    #         if res2 < res1:
+    #             res1 = res2
+    #     return res1
+    #
+    # ans = dfs(0, 0)
+    # print(ans if ans < inf else -1)
+    pre = list(accumulate(a, initial=0))
+    dp = [[inf] * (m + 1) for _ in range(n + 1)]
+    cnt = [[0] * (m + 1) for _ in range(n + 1)]
+    for i in range(m + 1):
+        dp[n][i] = 0
+        cnt[n][i] = 1
+    for j in range(m - 1, -1, -1):
+        suf = [0] * (n + 2)
+        suf[n] = 1
+        for i in range(n - 1, -1, -1):
+            res, c, cost = dp[i][j + 1], cnt[i][j + 1], m - (j + 1)
+            # 最右边能到哪
+            idx = bisect_right(pre, pre[i] + b[j]) - 2
+            if idx >= i:
+                res1 = cost + dp[idx + 1][j]
+                if res1 <= res:
+                    # 看最左边能到哪，二分check
+                    l, r = i, idx
+                    while l - 1 < r:
+                        mid = (l + r) >> 1
+                        if cost + dp[mid + 1][j] == res1:
+                            r = mid - 1
+                        else:
+                            l = mid + 1
+                    sm = (suf[l+1] - suf[idx+2]) % mod
+                    c = sm if res1 < res else c + sm
+                    res = res1
+            dp[i][j] = res
+            cnt[i][j] = (cnt[i][j] + c) % mod
+            suf[i] = (suf[i+1] + cnt[i][j]) % mod
+    if dp[0][0] == inf:
+        print(-1)
+        return
+    print(dp[0][0], cnt[0][0])
+    return
