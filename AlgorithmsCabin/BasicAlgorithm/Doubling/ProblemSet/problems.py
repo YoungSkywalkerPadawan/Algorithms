@@ -1,6 +1,8 @@
 from typing import List
 from types import GeneratorType
 
+from AlgorithmsCabin.Math.Util.utils import sint, mint
+
 
 def bootstrap(f, stack=None):
     if stack is None:
@@ -110,3 +112,75 @@ def minOperationsQueries(n: int, edges: List[List[int]], queries: List[List[int]
         path_len -= depth[lca] * 2
         ans.append(path_len - max(cw))
     return ans
+
+
+def cf2033G():
+    n = sint()
+    g = [[] for _ in range(n)]
+    for _ in range(n - 1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    mx = n.bit_length()
+    res = [[0] * n for _ in range(mx + 1)]
+    p = [[-1] * n for _ in range(mx + 1)]
+    dep = [0] * n
+    # 记录节点的最长链
+    h = [0] * n
+
+    @bootstrap
+    def dfs(x: int) -> None:
+        # 记录x的前两长链
+        f = [0] * 2
+        for y in g[x]:
+            if y == p[0][x]:
+                continue
+            dep[y] = dep[x] + 1
+            p[0][y] = x
+            yield dfs(y)
+            # y的最长链
+            val = h[y] + 1
+            if val > f[0]:
+                f[1] = f[0]
+                f[0] = val
+            elif val > f[1]:
+                f[1] = val
+
+        h[x] = f[0]
+        for y in g[x]:
+            if y == p[0][x]:
+                continue
+            # 统计y向上一步能到达最远的位置，看x的最长链是不是自己提供的，如果是，则去第二长链
+            res[0][y] = f[f[0] == 1 + h[y]] + 1
+        yield
+
+    dfs(0)
+
+    # 开始倍增算法
+    for i in range(mx):
+        for j in range(n):
+            # j的深度允许它往上跳2 * (1 << i)
+            if (2 << i) <= dep[j]:
+                p[i + 1][j] = p[i][p[i][j]]
+                res[i + 1][j] = max(res[i][j], res[i][p[i][j]] + (1 << i))
+
+    q = sint()
+    ans = [0] * q
+    for i in range(q):
+        v, k = mint()
+        v -= 1
+        cur = h[v]
+        k = min(k, dep[v])
+        l = 0
+        for j in range(mx, -1, -1):
+            if (k >> j) & 1:
+                cur = max(cur, res[j][v] + l)
+                v = p[j][v]
+                l += (1 << j)
+        ans[i] = cur
+    print(*ans)
+
+    return
