@@ -216,3 +216,53 @@ def cf1324F():
     dfs2(0, -1)
     print(*dp)
     return
+
+
+def cf527F():
+    n = sint()
+    a = ints()
+    tot = sum(a)
+    g = [[] for _ in range(n)]
+    for _ in range(n-1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    dep = [0] * n
+    cost = [0] * n
+    # 统计当前子树和
+    res = [0] * n
+    p = [-1] * n
+
+    @bootstrap
+    def dfs(x: int) -> None:
+        sm = a[x]
+        for y in g[x]:
+            if y == p[x]:
+                continue
+            p[y] = x
+            dep[y] = dep[x] + 1
+            yield dfs(y)
+            sm += res[y]
+        res[x] = sm
+        yield
+
+    dfs(0)
+    for i, v in enumerate(a):
+        cost[0] += v * dep[i]
+
+    # 换根dp
+    @bootstrap
+    def dfs2(x: int) -> None:
+        for y in g[x]:
+            if y == p[x]:
+                continue
+            cost[y] = cost[x] - res[y] + (tot - res[y])
+            yield dfs2(y)
+        yield
+    dfs2(0)
+    ans = max(cost)
+    print(ans)
+    return
