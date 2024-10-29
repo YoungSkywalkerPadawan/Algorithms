@@ -49,8 +49,8 @@ def maximumANDSum(nums: List[int], numSlots: int) -> int:
         add(n + 1 + j, t, 2, 0)
 
     mcmf = MCMF(N, M, s, t, ver, edge, cost, Next, head)
-
-    return mcmf.solve()
+    _, ans = mcmf.solve()
+    return ans
 
 
 def cf1913E():

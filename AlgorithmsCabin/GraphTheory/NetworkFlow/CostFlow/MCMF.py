@@ -72,11 +72,11 @@ class MCMF:
         self.ans += self.d[self.t] * self.incf[self.t]
 
     # 计算最大费用最大流
-    def solve(self) -> int:
+    def solve(self) -> tuple:
         while True:
             if self.spfa():
                 self.update()
             else:
                 break
 
-        return self.ans
+        return self.maxflow, self.ans
