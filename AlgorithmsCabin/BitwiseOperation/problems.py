@@ -1,4 +1,4 @@
-from AlgorithmsCabin.Math.Util.utils import ints
+from AlgorithmsCabin.Math.Util.utils import ints, mint
 
 
 def cf1395C():
@@ -21,4 +21,27 @@ def cf1395C():
             print(x)
             return
 
+    return
+
+
+def get(x: int) -> int:
+    rem = x % 4
+    if rem == 0:
+        return x
+    if rem == 1:
+        return 1
+    if rem == 2:
+        return x + 1
+    return 0
+
+
+def xor_range(l: int, r: int) -> int:
+    return get(r) ^ get(l - 1)
+
+
+def cf1363C():
+    l, r, i, k = mint()
+    highBits = xor_range((l - k + (1 << i) - 1) >> i, (r - k) >> i) << i
+    lowBits = k * (((r - k) // (1 << i) - (l - k - 1) // (1 << i)) & 1)
+    print(xor_range(l, r) ^ highBits ^ lowBits)
     return
