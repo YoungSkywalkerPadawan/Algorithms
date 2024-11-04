@@ -39,7 +39,7 @@ def xor_range(l: int, r: int) -> int:
     return get(r) ^ get(l - 1)
 
 
-def cf1363C():
+def cf2036F():
     l, r, i, k = mint()
     highBits = xor_range((l - k + (1 << i) - 1) >> i, (r - k) >> i) << i
     lowBits = k * (((r - k) // (1 << i) - (l - k - 1) // (1 << i)) & 1)

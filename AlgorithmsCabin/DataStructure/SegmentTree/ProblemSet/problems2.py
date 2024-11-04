@@ -5,9 +5,12 @@ from AlgorithmsCabin.DataStructure.SegmentTree.ImprovedLazySegmentTree import Im
 from AlgorithmsCabin.DataStructure.SegmentTree.LazySegmentTree2 import DynamicSegmentTree
 from AlgorithmsCabin.DataStructure.SegmentTree.LazySegmentTree3 import LazySegmentTree
 from AlgorithmsCabin.DataStructure.SegmentTree.SegmentTree2 import SegmentTree
-
+from AlgorithmsCabin.DataStructure.SegmentTree.SegTree2 import SegmentTree as SegmentTree2
 
 # lc399周赛T4 不包含相邻元素的子序列的最大和
+from AlgorithmsCabin.Math.Util.utils import mint
+
+
 def maximumSumSubsequence(nums: List[int], queries: List[List[int]]) -> int:
     MOD = 10 ** 9 + 7
     mx = len(nums)
@@ -156,4 +159,18 @@ def cf1969E():
         p_last[x], p[x] = p[x], r
 
     print(ans)
+    return
+
+
+def cf1609F():
+    n, q = mint()
+    s = input()
+    segTree = SegmentTree2(n, s)
+    segTree.build(1, 1, n)
+    for _ in range(q):
+        idx, v = map(str, input().split())
+        idx = int(idx)
+        segTree.update(1, 1, n, idx, v)
+        print(segTree.abc[1])
+
     return
