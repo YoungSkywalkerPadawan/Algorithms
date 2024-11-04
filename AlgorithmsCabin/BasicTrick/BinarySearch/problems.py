@@ -341,3 +341,43 @@ def cf1619D():
     ans = l if check(l) else l - 1
     print(ans)
     return
+
+
+def cf1117C():
+    x1, y1 = mint()
+    x2, y2 = mint()
+    n = sint()
+    s = input()
+    dx = x2 - x1
+    dy = y2 - y1
+
+    tmp = [(0, 0)]
+    for i in range(n):
+        x, y = tmp[-1]
+        if s[i] == 'U':
+            y += 1
+        elif s[i] == 'D':
+            y -= 1
+        elif s[i] == 'L':
+            x -= 1
+        else:
+            x += 1
+        tmp.append((x, y))
+
+    def check(m: int) -> bool:
+        v, sub = divmod(m, n)
+        x_, y_ = v * tmp[-1][0] + tmp[sub][0], v * tmp[-1][1] + tmp[sub][1]
+        return abs(x_ - dx) + abs(y_ - dy) <= m
+
+    l = 0
+    r = 10 ** 20
+    while l < r:
+        mid = (l + r) >> 1
+        if check(mid):
+            r = mid - 1
+        else:
+            l = mid + 1
+
+    ans = l if check(l) else l + 1
+    print(ans if ans < 10 ** 20 else -1)
+    return
