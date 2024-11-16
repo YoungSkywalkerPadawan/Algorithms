@@ -144,3 +144,27 @@ def cf903F():
     ans = dfs(n - 1, 0, 0, 0, 0)
     print(ans)
     return
+
+
+def cf505C():
+    n, d = mint()
+    cnt = [0] * 30002
+
+    for _ in range(n):
+        x = sint()
+        cnt[x] += 1
+
+    dp = [[-inf] * 30002 for _ in range(501)]
+    cur = 250
+    dp[cur][d] = cnt[d]
+    for i in range(d, 30002):
+        for j in range(501):
+            if dp[j][i] >= 0:
+                step = d + j - cur
+                for new_d in range(step - 1, step + 2):
+                    if 0 < new_d <= cur + d:
+                        new_i = min(30001, i + new_d)
+                        new_j = new_d - d + cur
+                        dp[new_j][new_i] = max(dp[new_j][new_i], dp[j][i] + cnt[new_i])
+    print(max(max(x) for x in dp))
+    return
