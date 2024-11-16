@@ -199,3 +199,27 @@ def cf75C():
         v = factors[bisect_right(factors, r) - 1]
         print(v if v >= l else -1)
     return
+
+
+def cf1366D():
+    pt = PrimeTable(10 ** 7)
+    # n = sint()
+    a = ints()
+    d1 = []
+    d2 = []
+    for num in a:
+        factorization = list(pt.prime_factorization(num))
+        if len(factorization) == 1:
+            d1.append(-1)
+            d2.append(-1)
+        else:
+            new1 = factorization[0][0]
+            new2 = 1
+            for i in range(1, len(factorization)):
+                new2 *= factorization[i][0]
+            d1.append(new1)
+            d2.append(new2)
+
+    print(*d1)
+    print(*d2)
+    return
