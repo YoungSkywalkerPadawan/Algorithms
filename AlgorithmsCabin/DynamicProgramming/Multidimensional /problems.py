@@ -1,7 +1,7 @@
 from collections import Counter
 from math import inf
 
-from AlgorithmsCabin.Math.Util.utils import mint, ints
+from AlgorithmsCabin.Math.Util.utils import mint, ints, sint
 
 
 def cf2025E():
@@ -99,4 +99,48 @@ def cf1517D():
         for x in dp:
             print(*(v * 2 for v in x))
 
+    return
+
+
+def cf903F():
+    n = sint()
+    a = ints()
+    g = [list(input()) for _ in range(4)]
+
+    memo = [[[[[0] * 16 for _ in range(16)] for _ in range(16)] for _ in range(4)] for _ in range(n)]
+
+    def dfs(j, i, cur, pre, pre2) -> int:
+        if j < 0:
+            if pre > 0 or pre2 > 0:
+                return a[3]
+            return 0
+
+        if i > 3:
+            if pre2 > 0:
+                nxt = dfs(j - 2, 0, 0, 0, 0)
+                return nxt + a[3]
+            nxt = dfs(j - 1, 0, 0, cur, pre)
+            return nxt
+
+        p = memo[j][i][cur][pre][pre2]
+        if p > 0:
+            return p - 1
+        v = 1 if g[i][j] == '*' else 0
+        res = dfs(j, i + 1, (cur << 1) | v, pre, pre2)
+        res1 = dfs(j, i + 1, cur << 1, pre, pre2)
+        if res1 + a[0] < res:
+            res = res1 + a[0]
+        res2 = dfs(j, i + 2, cur << min(4 - i, 2), pre & (~(3 << max(2 - i, 0))), pre2)
+        if res2 + a[1] < res:
+            res = res2 + a[1]
+
+        res3 = dfs(j, i + 3, cur << min(4 - i, 3), pre & (~(7 << max(1 - i, 0))), pre2 & (~(7 << max(1 - i, 0))))
+        if res3 + a[2] < res:
+            res = res3 + a[2]
+
+        memo[j][i][cur][pre][pre2] = res + 1
+        return res
+
+    ans = dfs(n - 1, 0, 0, 0, 0)
+    print(ans)
     return
