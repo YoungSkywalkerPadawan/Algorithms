@@ -223,3 +223,68 @@ def cf1366D():
     print(*d1)
     print(*d2)
     return
+
+
+def cf2B():
+    n = sint()
+    g = [ints() for _ in range(n)]
+    # 统计每个数字有几个2，几个5
+
+    dp2 = [[0] * n for _ in range(n)]
+    dp5 = [[0] * n for _ in range(n)]
+    idx = idy = -1
+    for i, row in enumerate(g):
+        for j, x in enumerate(row):
+            while x and x % 2 == 0:
+                dp2[i][j] += 1
+                x //= 2
+
+            while x and x % 5 == 0:
+                dp5[i][j] += 1
+                x //= 5
+
+            if i and j:
+                dp2[i][j] += min(dp2[i - 1][j], dp2[i][j - 1])
+                dp5[i][j] += min(dp5[i - 1][j], dp5[i][j - 1])
+            elif i:
+                dp2[i][j] += dp2[i - 1][j]
+                dp5[i][j] += dp5[i - 1][j]
+            elif j:
+                dp2[i][j] += dp2[i][j - 1]
+                dp5[i][j] += dp5[i][j - 1]
+
+            if x == 0:
+                idx, idy = i, j
+
+    if dp2[-1][-1] <= dp5[-1][-1]:
+        dp = dp2
+    else:
+        dp = dp5
+
+    if dp[-1][-1] and idx != -1:
+        ans = "D" * idx + "R" * idy + "D" * (n - 1 - idx) + "R" * (n - 1 - idy)
+        print(1)
+        print(ans)
+        return
+
+    ans = []
+    x = y = n - 1
+    while x != 0 or y != 0:
+        if y == 0:
+            x -= 1
+            ans.append("D")
+        elif x == 0:
+            y -= 1
+            ans.append("R")
+        elif dp[x - 1][y] < dp[x][y - 1]:
+            x -= 1
+            ans.append("D")
+        else:
+            y -= 1
+            ans.append("R")
+
+    ans.reverse()
+    print(dp[-1][-1])
+    print("".join(ans))
+
+    return
