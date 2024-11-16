@@ -65,9 +65,9 @@ def cf1968G1():
                 idx += 1
         return cnt
 
-    ans = [0] * (n+1)
+    ans = [0] * (n + 1)
     E = math.ceil(math.sqrt(n))
-    for k in range(1, E+1):
+    for k in range(1, E + 1):
         l = 1
         r = n
         while l < r:
@@ -79,7 +79,7 @@ def cf1968G1():
         l = l if check(l) >= k else l - 1
         ans[k] = l
 
-    for x in range(1, E+1):
+    for x in range(1, E + 1):
         k = 1
         i = x
         while i < n:
@@ -90,9 +90,40 @@ def cf1968G1():
                 i += 1
         ans[k] = max(ans[k], x)
 
-    for i in range(n-1, 0, -1):
-        ans[i] = max(ans[i], ans[i+1])
+    for i in range(n - 1, 0, -1):
+        ans[i] = max(ans[i], ans[i + 1])
 
-    res = ans[L:R+1]
+    res = ans[L:R + 1]
     print(*res)
+    return
+
+
+def cf432D():
+    s = input()
+    n = len(s)
+    z = [0] * n
+    l = r = 0
+    for i in range(1, n):
+        if i <= r:
+            z[i] = min(z[i - l], r - i + 1)  # z函数的核心思想
+        while i + z[i] < n and s[z[i]] == s[i + z[i]]:
+            l, r = i, i + z[i]
+            z[i] += 1
+    z[0] = n
+    cnt = [0] * (n + 1)
+    for i in range(n):
+        cnt[z[i]] += 1
+
+    for i in range(n - 1, -1, -1):
+        cnt[i] += cnt[i + 1]
+
+    res = []
+    for i in range(n):
+        if i + z[i] == n:
+            res.append([z[i], cnt[z[i]]])
+
+    res.reverse()
+    print(len(res))
+    for x in res:
+        print(*x)
     return
