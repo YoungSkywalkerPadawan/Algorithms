@@ -5,6 +5,7 @@ from typing import List
 from AlgorithmsCabin.GraphTheory.BiconnectedComponent.tarjan import TARJAN
 
 # lc1192 查找集群内的关键连接
+from AlgorithmsCabin.GraphTheory.BiconnectedComponent.tarjan2 import TARJAN2
 from AlgorithmsCabin.Math.Util.utils import sint, ints, mint
 
 
@@ -169,4 +170,61 @@ def cf1363C():
         ans *= cnt[mn]
         # ans %= MOD
     print(cost, ans)
+    return
+
+
+def cf118E():
+    n, m = mint()
+    g = [[] for _ in range(n)]
+    for _ in range(m):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    tg = TARJAN2(n, g)
+    # tg.tarjan()
+    if len(tg.bridge):
+        print(0)
+        return
+    # res = []
+    # T = 0
+    # dfn, low = [0] * n, [0] * n
+    # parent = [-1] * n
+    #
+    # stack = [0]
+    # while stack:
+    #     u = stack.pop()
+    #
+    #     if u >= 0:
+    #         if dfn[u]:  # 访问过就不看了
+    #             continue
+    #         T += 1
+    #         dfn[u] = low[u] = T
+    #         stack.append(~u)
+    #
+    #         for v in g[u]:
+    #             if v == parent[u]:
+    #                 continue
+    #
+    #             if dfn[v]:
+    #                 res.append([u, v])
+    #                 if low[u] > dfn[v]:
+    #                     low[u] = dfn[v]
+    #             else:
+    #                 parent[v] = u
+    #                 stack.append(v)
+    #     else:  # 回溯到节点 ~u
+    #         p, u = parent[~u], ~u
+    #         if p != -1:
+    #             res.append([p, u])
+    #             if low[p] > low[u]:
+    #                 low[p] = low[u]
+    #             if dfn[p] < low[u]:  # 割边判定
+    #                 print(0)
+    #                 return
+
+    for x in tg.res:
+        print(*(v + 1 for v in x))
     return
