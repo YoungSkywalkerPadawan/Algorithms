@@ -110,7 +110,7 @@ def getMu(n):
     return mu
 
 
-def cf1572A():
+def cf2037G():
     pt = PrimeTable(10 ** 6)
     n = sint()
     a = ints()
