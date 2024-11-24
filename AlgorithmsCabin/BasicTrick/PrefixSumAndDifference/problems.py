@@ -288,3 +288,41 @@ def cf1672H():
         res0 = pre0[r] - pre0[l]
         print(max(res1, res0) + 1)
     return
+
+
+def cf2037F():
+    n, m, k = mint()
+    h = ints()
+    x = ints()
+
+    def check(v: int) -> bool:
+        dt = defaultdict(int)
+        for i in range(n):
+            mx = (h[i] + v - 1) // v
+            if mx > m:
+                continue
+            # 可以达到
+            # 差分
+            dt[x[i] - m + mx] += 1
+            dt[x[i] + m - mx + 1] -= 1
+
+        cnt = 0
+        for y in sorted(dt.keys()):
+            cnt += dt[y]
+            if cnt >= k:
+                return True
+        return False
+
+    l = 1
+    r = 10 ** 10
+    while l < r:
+        mid = (l + r) >> 1
+        if check(mid):
+            r = mid - 1
+        else:
+            l = mid + 1
+
+    ans = l if check(l) else l + 1
+    print(ans if ans < 10 ** 10 else -1)
+
+    return
