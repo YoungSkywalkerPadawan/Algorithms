@@ -1,4 +1,5 @@
 from functools import cache
+from math import inf
 from typing import List
 
 # lc546 移除盒子
@@ -123,4 +124,41 @@ def cf607B():
                     dp[s][e] = min(dp[s][e], dp[s + 2][e] + 1)
 
     print(dp[0][n - 1])
+    return
+
+
+def cf1132F():
+    n = sint()
+    s = input()
+
+    # def dfs(x: int, y: int) -> int:
+    #     if x > y:
+    #         return 0
+    #     if x == y:
+    #         return 1
+    #     res = 1 + dfs(x + 1, y)
+    #     for i in range(x + 1, y + 1):
+    #         if s[x] == s[i]:
+    #             res2 = dfs(x + 1, i - 1) + dfs(i, y)
+    #             if res2 < res:
+    #                 res = res2
+    #     return res
+    #
+    # ans = dfs(0, n - 1)
+    # print(ans)
+    dp = [[inf] * n for _ in range(n)]
+    for i in range(n):
+        dp[i][i] = 1
+
+    for i in range(1, n):
+        for j in range(n - i):
+            res = 1 + dp[j + 1][j + i]
+            for k in range(j + 1, j + i + 1):
+                if s[j] == s[k]:
+                    res2 = dp[j + 1][k - 1] + dp[k][j + i] if j + 1 <= k - 1 else dp[k][j + i]
+                    if res2 < res:
+                        res = res2
+            dp[j][j + i] = res
+    print(dp[0][n - 1])
+
     return
