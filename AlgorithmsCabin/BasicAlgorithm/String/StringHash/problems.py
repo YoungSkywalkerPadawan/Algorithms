@@ -140,3 +140,33 @@ def cf514C():
         print("YES" if f else "NO")
 
     return
+
+
+def cf1200E():
+    # n = sint()
+    strs = list(input().split())
+    random.seed()
+    BASE = random.randint(100, 200)
+    mod = random.getrandbits(48)
+    P = [0] * (10 ** 6)
+    P[0] = 1
+    for i in range(1, 10 ** 6):
+        P[i] = P[i - 1] * BASE % mod
+    pre = [0]
+    ans = []
+
+    for s in strs:
+        n = len(s)
+        h = [0] * (n + 1)
+        for i in range(1, n + 1):
+            h[i] = (h[i - 1] * BASE + ord(s[i - 1]) - ord('a')) % mod
+        mx = min(len(ans), len(s))
+        for i in range(mx, -1, -1):
+            if h[i] == (pre[-1] - pre[-1 - i] * P[i]) % mod:
+                for j in range(i, len(s)):
+                    ans.append(s[j])
+                    pre.append((pre[-1] * BASE + ord(s[j]) - ord('a')) % mod)
+                break
+    print("".join(ans))
+
+    return
