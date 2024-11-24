@@ -4,6 +4,9 @@
 from math import lcm
 from typing import List
 
+from AlgorithmsCabin.Math.NumberTheory.GCD.PrimeTable import PrimeTable
+from AlgorithmsCabin.Math.Util.utils import sint, ints
+
 MOD = 10 ** 9 + 7
 
 
@@ -82,4 +85,57 @@ def cf451E():
             c = -c
         ans += c
     print(ans % MOD)
+    return
+
+
+def getMu(n):
+    mu = [0] * (n + 1)
+    flg = [0] * (n + 1)
+    p = [0] * (n + 1)
+    tot = 0
+    mu[1] = 1
+    for i in range(2, n + 1):
+        if flg[i] == 0:
+            tot = tot + 1
+            p[tot] = i
+            mu[i] = -1
+        j = 1
+        while j <= tot and i * p[j] <= n:
+            flg[i * p[j]] = 1
+            if i % p[j] == 0:
+                mu[i * p[j]] = 0
+                break
+            mu[i * p[j]] = - mu[i]
+            j = j + 1
+    return mu
+
+
+def cf1572A():
+    pt = PrimeTable(10 ** 6)
+    n = sint()
+    a = ints()
+    mod = 998244353
+    dp = [0] * (10 ** 6 + 1)
+    mu = getMu(10 ** 6)
+    for f in pt.get_factors(a[-1]):
+        if f > 1:
+            dp[f] = 1
+    ans = 0
+    for i in range(n - 2, -1, -1):
+        ans = 0
+        for f in pt.get_factors(a[i]):
+            if f > 1:
+                ans -= dp[f] * mu[f]
+                if ans < 0:
+                    ans += mod
+                elif ans >= mod:
+                    ans -= mod
+
+        for f in pt.get_factors(a[i]):
+            dp[f] += ans
+            if dp[f] >= mod:
+                dp[f] -= mod
+
+    print(ans)
+
     return
