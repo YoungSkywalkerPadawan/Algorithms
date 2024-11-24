@@ -3,9 +3,10 @@
 import random
 
 # lc3031 将单词恢复初始状态所需的最短时间II
+from bisect import bisect_left
 from collections import defaultdict
 
-from AlgorithmsCabin.Math.Util.utils import sint
+from AlgorithmsCabin.Math.Util.utils import sint, mint
 
 
 def minimumTimeToInitialState(word: str, k: int) -> int:
@@ -92,5 +93,50 @@ def cf1363C():
             st.add((hash1, hash2))
 
     print(len(st))
+
+    return
+
+
+def cf514C():
+    n, m = mint()
+    random.seed()
+    BASE = random.randint(100, 200)
+    mod = random.getrandbits(48)
+    P = [0] * (10 ** 6)
+    P[0] = 1
+    for i in range(1, 10 ** 6):
+        P[i] = P[i - 1] * BASE % mod
+
+    h = [0] * n
+    for i in range(n):
+        s = input()
+        l = len(s)
+        H = 0
+        for j in range(1, l + 1):
+            H = (H * BASE + ord(s[j - 1]) - ord('a') + 1) % mod
+        h[i] = H
+
+    h.sort()
+
+    for _ in range(m):
+        s = input()
+        l = len(s)
+        H = 0
+        for j in range(1, l + 1):
+            H = (H * BASE + ord(s[j - 1]) - ord('a') + 1) % mod
+
+        f = False
+        for i in range(1, l + 1):
+            if f:
+                break
+            for j in 'abc':
+                if j == s[i - 1]:
+                    continue
+                # y = (ord(j) - ord(s[i-1]))
+                x = (H + (ord(j) - ord(s[i - 1])) * P[l - i] % mod + mod) % mod
+                idx = bisect_left(h, x)
+                if idx < n and h[idx] == x:
+                    f = True
+        print("YES" if f else "NO")
 
     return

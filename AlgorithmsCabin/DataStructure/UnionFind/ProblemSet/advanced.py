@@ -2,6 +2,7 @@ from collections import defaultdict
 from random import getrandbits
 from typing import List
 
+from AlgorithmsCabin.DataStructure.BinaryIndexedTree.BIT2 import BIT
 from AlgorithmsCabin.DataStructure.UnionFind.UnionFind import UnionFind
 
 # lc2157 字符串分组
@@ -293,5 +294,39 @@ def cf25D():
     print(len(tmp))
     for i in range(len(tmp)):
         print(*tmp[i], roots[i], roots[i + 1])
+
+    return
+
+
+def cf920F():
+    n, m = mint()
+    a = ints()
+    bit = BIT(n)
+    for i, x in enumerate(a):
+        bit.add(i, x)
+
+    f = [0] * (10 ** 6 + 1)
+    for i in range(1, 10 ** 6 + 1):
+        for j in range(i, 10 ** 6 + 1, i):
+            f[j] += 1
+
+    uf = UnionFind(n)
+    for _ in range(m):
+        t, l, r = mint()
+        t -= 1
+        l -= 1
+        r -= 1
+        if t == 0:
+            l = uf.find(l)
+            while l <= r:
+                bit.add(l, f[a[l]] - a[l])
+                a[l] = f[a[l]]
+                if l == n - 1:
+                    break
+                if a[l] <= 2:
+                    uf.union(l, l+1)
+                l = uf.find(l + 1)
+        else:
+            print(bit.range_sm(l, r+1))
 
     return
