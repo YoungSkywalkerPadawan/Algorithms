@@ -228,3 +228,39 @@ def cf118E():
     for x in tg.res:
         print(*(v + 1 for v in x))
     return
+
+
+def cf999E():
+    n, m, s = mint()
+    s -= 1
+    edges = []
+    g = [[] for _ in range(n)]
+    for _ in range(m):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        edges.append((u, v))
+
+    tg = TARJAN(n, g)
+    scc = tg.find_SCC()
+    deg = [0] * n
+    group = [None] * n
+
+    for i in range(len(scc)):
+        for j in scc[i]:
+            group[j] = i
+
+    for u, v in edges:
+        if group[u] != group[v]:
+            deg[group[v]] += 1
+
+    ans = 0
+    for i in range(len(scc)):
+        if deg[i] == 0:
+            ans += 1
+
+    if deg[group[s]] == 0:
+        ans -= 1
+    print(ans)
+    return
