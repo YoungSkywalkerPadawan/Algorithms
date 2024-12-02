@@ -1,3 +1,9 @@
+from itertools import permutations
+from math import factorial
+
+from AlgorithmsCabin.Math.Util.utils import mint
+
+
 def cf1966D():
     n, k = map(int, input().split())
     # 分为左右两块
@@ -78,3 +84,89 @@ def cf1966D2():
 
     print(len(ans))
     print(*ans)
+
+
+def cf2034E():
+    n, k = mint()
+    ans = []
+    if n % 2 == 0:
+        if k % 2:
+            print("NO")
+            return
+        else:
+            if n >= 10 or k <= factorial(n):
+                print("YES")
+                cnt = 0
+                for p in permutations(range(1, n + 1)):
+                    cnt += 2
+                    ans.append(' '.join(map(str, p)))
+                    ans.append(' '.join(str(n + 1 - x) for x in p))
+                    if cnt == k:
+                        break
+            else:
+                print("NO")
+                return
+    else:
+        if n == 1:
+            if k == 1:
+                print("YES")
+                ans.append('1')
+            else:
+                print("NO")
+                return
+        else:
+            if k == 1:
+                print("NO")
+                return
+            elif n <= 9 and (k == factorial(n) - 1 or k > factorial(n)):
+                print("NO")
+                return
+            else:
+                print("YES")
+                if k % 2 == 0:
+                    cnt = 0
+                    for p in permutations(range(1, n + 1)):
+                        cnt += 2
+                        ans.append(' '.join(map(str, p)))
+                        ans.append(' '.join(str(n + 1 - x) for x in p))
+                        if cnt == k:
+                            break
+                else:
+                    v = [[] for _ in range(3)]
+                    v[0] = list(range(1, n + 1))
+                    v[1] = list(range(n // 2 + 1, n + 1)) + list(range(1, n // 2 + 1))
+                    v[2] = [3 * (n + 1) // 2 - v[0][i] - v[1][i] for i in range(n)]
+                    ans.append(' '.join(map(str, v[0])))
+                    ans.append(' '.join(map(str, v[1])))
+                    ans.append(' '.join(map(str, v[2])))
+                    k -= 3
+                    cnt = 0
+                    for p in permutations(range(1, n + 1)):
+                        flg = True
+                        for i in range(3):
+                            vs = [p[j] + v[i][j] for j in range(n)]
+                            flg1 = True
+                            for j in range(1, n):
+                                if vs[j] != vs[j - 1]:
+                                    flg1 = False
+                            if flg1:
+                                flg = False
+                                break
+                            vs = [p[j] - v[i][j] for j in range(n)]
+                            flg1 = True
+                            for j in range(1, n):
+                                if vs[j] != vs[j - 1]:
+                                    flg1 = False
+                            if flg1:
+                                flg = False
+                                break
+                        if not flg:
+                            continue
+                        if cnt == k:
+                            break
+                        cnt += 2
+                        ans.append(' '.join(map(str, p)))
+                        ans.append(' '.join(str(n + 1 - x) for x in p))
+    for x in ans:
+        print(x)
+    return
