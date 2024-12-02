@@ -245,3 +245,16 @@ def cf1420D():
 
     print(ans)
     return
+
+
+def cf1359E():
+    n, k = mint()
+    # mod = 998244353
+    f = Factorial(n, mod)
+    ans = 0
+    for i in range(1, n + 1):
+        if i * k > n:
+            break
+        ans = (ans + f.combi(n // i - 1, k - 1)) % mod
+    print(ans)
+    return
