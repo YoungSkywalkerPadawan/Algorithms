@@ -233,3 +233,33 @@ def cf1221D():
                     dp[i][j] = min(dp[i][j], k * b[i - 1] + dp[i - 1][k])
     print(dp[n][0])
     return
+
+
+def cf478D():
+    x, y = mint()
+    mod = 10 ** 9 + 7
+
+    def check(v: int) -> bool:
+        return v * (v + 1) // 2 <= x + y
+
+    l = 0
+    r = max(x, y)
+    while l < r:
+        mid = (l + r) >> 1
+        if check(mid):
+            l = mid + 1
+        else:
+            r = mid - 1
+    h = l if check(l) else l - 1
+    # dp[i] 表示用了i个x颜色的方案数
+    dp = [0] * (x + 1)
+    dp[0] = 1
+    for i in range(1, h + 1):
+        cur = i * (i + 1) // 2
+        for j in range(min(x, cur), i - 1, -1):
+            dp[j] += dp[j - i]
+            dp[j] %= mod
+    ans = sum(dp[max(0, h * (h + 1) // 2 - y):])
+    ans %= mod
+    print(ans)
+    return
