@@ -1,3 +1,6 @@
+from bisect import bisect_right, bisect_left
+from collections import defaultdict
+
 from AlgorithmsCabin.DataStructure.BinaryIndexedTree.BIT2 import BIT
 from AlgorithmsCabin.Math.Util.utils import mint, ints
 
@@ -49,4 +52,34 @@ def cf383C():
             bit.add(left[v], x * flag[v])
             bit.add(right[v], -x * flag[v])
 
+    return
+
+
+def cf1045G():
+    n, k = mint()
+    a = []
+    g = defaultdict(list)
+    for i in range(n):
+        x, r, q = mint()
+        a.append((x, r, q))
+        g[q].append(x)
+
+    a.sort(key=lambda p: -p[1])
+    bit = defaultdict()
+    for q in g.keys():
+        g[q].sort()
+        bit[q] = BIT(len(g[q]))
+
+    ans = 0
+    for x, r, q in a:
+        for iq in range(q - k, q + k + 1):
+            if iq in g.keys():
+                tree = bit[iq]
+                idr = bisect_right(g[iq], x + r)
+                idl = bisect_left(g[iq], x - r)
+                ans += tree.range_sm(idl, idr)
+        idx = bisect_left(g[q], x)
+        tree = bit[q]
+        tree.add(idx, 1)
+    print(ans)
     return
