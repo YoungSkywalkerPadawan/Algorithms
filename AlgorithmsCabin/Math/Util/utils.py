@@ -16,6 +16,10 @@ def ints():
     return list(map(int, input().split()))
 
 
+def ints2():
+    return list(map(lambda x: int(x) - 1, input().split()))
+
+
 # 计算阶乘
 @cache
 def fac(n: int) -> int:

@@ -1,7 +1,8 @@
 from heapq import heapify, heappop, heappush
 from math import inf
 
-from AlgorithmsCabin.Math.Util.utils import mint
+from AlgorithmsCabin.GraphTheory.ShortestPath.Dijstra2 import dijstra
+from AlgorithmsCabin.Math.Util.utils import mint, ints2
 
 
 def cf449B():
@@ -38,4 +39,37 @@ def cf449B():
             elif new_dis == dis[y]:
                 used[y] = 0
     print(k - sum(used))
+    return
+
+
+def cf337D():
+    n, m, d = mint()
+    a = ints2()
+    g = [[] for _ in range(n)]
+    for _ in range(n - 1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append((v, 1))
+        g[v].append((u, 1))
+
+    dis1 = dijstra(n, g, a[0])
+    r1 = a[0]
+    for x in a:
+        if dis1[x] > dis1[r1]:
+            r1 = x
+
+    dis2 = dijstra(n, g, r1)
+    r2 = a[0]
+    for x in a:
+        if dis2[x] > dis2[r2]:
+            r2 = x
+
+    dis3 = dijstra(n, g, r2)
+    ans = 0
+    for x in range(n):
+        if dis2[x] <= d and dis3[x] <= d:
+            ans += 1
+
+    print(ans)
     return
