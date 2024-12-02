@@ -5,6 +5,9 @@ from typing import List
 
 
 # lc2127 参加会议的最多员工数
+from AlgorithmsCabin.Math.Util.utils import sint, mint
+
+
 def maximumInvitations(favorite: List[int]) -> int:
     # 先找环，利用正图，拓扑排序，若环大小 > 2, 统计
     # 反之，反向查找
@@ -163,3 +166,37 @@ def chaseGame(edges: List[List[int]], startA: int, startB: int) -> int:
         if dist_a[i] - 1 > dist_b[i]:
             ans = max(ans, dist_a[i])
     return ans
+
+
+def cf1454E():
+    n = sint()
+    g = [[] for _ in range(n)]
+    deg = [0] * n
+    for _ in range(n):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+        deg[u] += 1
+        deg[v] += 1
+
+    # 基环树
+    size = [1] * n
+    cur = [i for i, x in enumerate(deg) if x == 1]
+    while cur:
+        pre = cur
+        cur = []
+        for x in pre:
+            for y in g[x]:
+                deg[y] -= 1
+                size[y] += size[x]
+                if deg[y] == 1:
+                    cur.append(y)
+
+    ans = 0
+    for i, x in enumerate(deg):
+        if x == 2:
+            ans += size[i] * (size[i] - 1) // 2 + size[i] * (n - size[i])
+    print(ans)
+    return
