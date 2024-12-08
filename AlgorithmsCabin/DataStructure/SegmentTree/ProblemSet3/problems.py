@@ -1,5 +1,8 @@
+from math import gcd
+
 from AlgorithmsCabin.DataStructure.SegmentTree.ImprovedBinarySegmentTree import SegmentTree
 from AlgorithmsCabin.DataStructure.SortedList.SortedList import SortedList
+from AlgorithmsCabin.Math.Util.utils import mint, ints
 
 inf = 10 ** 18
 MX = 2 * 10 ** 6
@@ -46,3 +49,32 @@ def cf2000H():
         seg.update(sl[0][0], 0)
         sl.pop(0)
     return ans
+
+
+def cf2050F():
+    n, q = mint()
+    a = ints()
+    res = []
+    for i in range(n - 1):
+        res.append(abs(a[i + 1] - a[i]))
+    seg1 = SegmentTree([0] * (n + 1), 0, lambda x1, y1: x1 if x1 > y1 else x1)
+    for i, x in enumerate(a):
+        seg1.update(i + 1, x)
+    seg2 = SegmentTree([0] * n, 0, lambda x1, y1: gcd(x1, y1))
+    for i, x in enumerate(res):
+        seg2.update(i + 1, x)
+    ans = [0] * q
+    for i in range(q):
+        l, r = mint()
+        if l == r:
+            ans[i] = 0
+            continue
+        mx = seg1.query(l, r)
+        gd = seg2.query(l, r - 1)
+        if gd == mx:
+            ans[i] = 0
+        else:
+            ans[i] = gd
+    print(*ans)
+
+    return
