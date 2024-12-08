@@ -1,3 +1,4 @@
+from bisect import bisect_left
 from collections import deque, Counter
 from itertools import accumulate
 from random import getrandbits
@@ -206,4 +207,56 @@ def cf2009G():
     for x in ans:
         print(x)
 
+    return
+
+
+def cf2042D():
+    n = sint()
+    res = []
+    # h = getrandbits(30)
+    # st = set()
+    for _ in range(n):
+        x, y = mint()
+        res.append([x, y])
+        # cnt[(x ^ h, y ^ h)] += 1
+    ans = [0] * n
+    # st = SortedList()
+    pre = -1
+    st = []
+    T = 10 ** 9 + 1
+    ind = list(range(n))
+    ind.sort(key=lambda p: (res[p][0], -res[p][1]))
+    for i in ind:
+        x, y = res[i]
+        j = bisect_left(st, (-y, T))
+        if j:
+            ans[i] += res[i][0] - st[j - 1][1]
+        if not st or st[-1][1] != x:
+            while st and st[-1][0] >= -y:
+                st.pop()
+            st.append((-y, x))
+        if pre >= 0 and res[pre][0] == x and res[pre][1] == y:
+            ans[pre] = 0
+        pre = i
+    st = []
+    pre = -1
+    ind = list(range(n))
+    ind.sort(key=lambda p: (-res[p][1], res[p][0]))
+    for i in ind:
+        x, y = res[i]
+        j = bisect_left(st, (x, T))
+        if j:
+            ans[i] += st[j - 1][1] - res[i][1]
+        if not st or st[-1][1] != y:
+            while st and st[-1][0] >= x:
+                st.pop()
+            st.append((x, y))
+        if pre >= 0 and res[pre][0] == x and res[pre][1] == y:
+            ans[pre] = 0
+        pre = i
+    for i in range(n):
+        # if cnt[(res[i][0] ^ h, res[i][1] ^ h)] > 1:
+        #     print(0)
+        # else:
+        print(ans[i])
     return
