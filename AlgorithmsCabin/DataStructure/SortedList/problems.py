@@ -108,7 +108,7 @@ def cf2021C():
     return
 
 
-def cf1572A():
+def cf2047E():
     n = sint()
     a = []
     for _ in range(n):
