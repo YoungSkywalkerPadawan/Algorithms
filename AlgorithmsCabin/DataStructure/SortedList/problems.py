@@ -106,3 +106,32 @@ def cf2021C():
         else:
             print("YA")
     return
+
+
+def cf1572A():
+    n = sint()
+    a = []
+    for _ in range(n):
+        u, v = mint()
+        a.append((u, v))
+    a.sort()
+    dt = defaultdict(list)
+    sl = SortedList()
+    sr = SortedList()
+    for x, y in a:
+        dt[x].append(y)
+        sr.add(y)
+
+    ans = 0
+    pos = (0, 0)
+    for x in sorted(dt.keys()):
+        for y in dt[x]:
+            sl.add(y)
+            sr.remove(y)
+        if (ans + 1) * 2 > len(sr):
+            break
+        while max(sl[ans], sr[ans]) < min(sl[-ans - 1], sr[-ans - 1]):
+            ans += 1
+            pos = (x + 1, min(sl[-ans], sr[-ans]))
+    print(ans)
+    print(*pos)
