@@ -509,7 +509,7 @@ def cf1328E():
 def cf109C():
     n = sint()
     g = [[] for _ in range(n)]
-    for _ in range(n-1):
+    for _ in range(n - 1):
         u, v, w = mint()
         u -= 1
         v -= 1
@@ -538,3 +538,45 @@ def cf109C():
             dfs(i)
             ans += siz * (n - siz) * (n - siz - 1)
     print(ans)
+
+
+def cf2050G():
+    n = sint()
+    g = [[] for _ in range(n)]
+    for _ in range(n - 1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    childs = [0] * n
+    ans = 1
+
+    @bootstrap
+    def dfs(x: int, f: int) -> None:
+        nonlocal ans
+        mx1 = mx2 = 0
+        c = 0
+        for y in g[x]:
+            if y != f:
+                yield dfs(y, x)
+                c += 1
+                siz = childs[y]
+                if siz > mx1:
+                    mx2 = mx1
+                    mx1 = siz
+                elif siz > mx2:
+                    mx2 = siz
+        cur = c if x == 0 else 1 + c
+        if mx1 > 0:
+            cur -= 1
+        if mx2 > 0:
+            cur -= 1
+        ans = max(ans, cur + mx2 + mx1)
+        childs[x] = mx1 + c - 1 if c > 0 else 1
+        yield
+
+    dfs(0, -1)
+    print(ans)
+    return
