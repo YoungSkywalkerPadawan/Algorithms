@@ -258,3 +258,48 @@ def cf1359E():
         ans = (ans + f.combi(n // i - 1, k - 1)) % mod
     print(ans)
     return
+
+
+def cf1906H():
+    # mod = 998244353
+    fac = Factorial(2 * 10 ** 5, mod)
+
+    n, m = mint()
+    s = input()
+    t = input()
+    cnt_s = [0] * 26
+    cnt_t = [0] * 26
+
+    for x in s:
+        cnt_s[ord(x) - ord('A')] += 1
+
+    for x in t:
+        cnt_t[ord(x) - ord('A')] += 1
+
+    # s 的可重集排列数
+    ans = fac.fac(n)
+    for x in cnt_s:
+        ans = ans * fac.fac_inv(x) % mod
+
+    if cnt_s[25] > cnt_t[25]:
+        print(0)
+        return
+
+    cnt_t[25] -= cnt_s[25]
+
+    f = [0] * (n + 1)
+    f[0] = 1
+    pre = [0] * (n + 2)
+    for i in range(25):
+        x = cnt_s[i]
+        for j, y in enumerate(f):
+            pre[j + 1] = pre[j] + y
+
+        f = [0] * (n + 1)
+        # s[i] 和 t[i+1] j 个匹配
+        for j in range(max(x - cnt_t[i], 0), min(x, cnt_t[i + 1]) + 1):
+            f[j] = pre[min(cnt_t[i] - x + j, n) + 1] % mod * fac.combi(x, j) % mod
+
+    ans = ans * sum(f) % mod
+    print(ans)
+    return
