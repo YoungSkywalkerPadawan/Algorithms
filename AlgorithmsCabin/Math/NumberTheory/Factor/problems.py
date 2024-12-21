@@ -1,5 +1,9 @@
 # 枚举因子
 from math import lcm, isqrt, gcd, sqrt
+from random import getrandbits
+
+from AlgorithmsCabin.Math.NumberTheory.Factor.Factor import AllFactor
+from AlgorithmsCabin.Math.Util.utils import mint, ints, sint
 
 
 def cf1976C():
@@ -73,5 +77,57 @@ def cf1955G():
         if dp[-1] == 1:
             print(x)
             return
+
+    return
+
+
+def cf2044F():
+    mx = 2 * 10 ** 5
+    n, m, q = mint()
+    h = getrandbits(30)
+    a = ints()
+    b = ints()
+    st_a = set()
+    st_b = set()
+    sm_a = sum(a)
+    sm_b = sum(b)
+    for x in a:
+        st_a.add((sm_a - x) ^ h)
+
+    for x in b:
+        st_b.add((sm_b - x) ^ h)
+
+    vis = [0] * (2 * mx + 10)
+    af = AllFactor(mx)
+
+    for _ in range(q):
+        x = sint()
+        if vis[x] != 0:
+            print("YES" if vis[x] > 0 else "NO")
+            continue
+        f = False
+        fac = af.get_all_factor(abs(x))
+        for i in fac:
+            if i ^ h in st_a and (x // i) ^ h in st_b:
+                print("YES")
+                f = True
+                break
+            if (-i) ^ h in st_a and (x // (-i)) ^ h in st_b:
+                print("YES")
+                f = True
+                break
+            if i ^ h in st_b and (x // i) ^ h in st_a:
+                print("YES")
+                f = True
+                break
+            if (-i) ^ h in st_b and (x // (-i)) ^ h in st_a:
+                print("YES")
+                f = True
+                break
+        if f:
+            vis[x] = 1
+        else:
+            vis[x] = -1
+            print("NO")
 
     return
