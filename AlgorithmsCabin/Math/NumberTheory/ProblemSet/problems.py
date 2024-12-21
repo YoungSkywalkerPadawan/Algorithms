@@ -157,3 +157,44 @@ def cf1753B():
     else:
         print('No')
     return
+
+
+def cf1513D():
+    n, p = mint()
+    a = ints()
+    isConnected = [False] * n
+    vals = []
+    for i, x in enumerate(a):
+        vals.append((x, i))
+    vals.sort()
+    ans = 0
+    for x, idx in vals:
+        if x >= p:
+            break
+        i = idx
+        while i > 0:
+            if isConnected[i - 1]:
+                break
+            if a[i - 1] % x == 0:
+                isConnected[i - 1] = True
+                ans += x
+                i -= 1
+            else:
+                break
+
+        i = idx
+        while i < n - 1:
+            if isConnected[i]:
+                break
+            if a[i+1] % x == 0:
+                isConnected[i] = True
+                ans += x
+                i += 1
+            else:
+                break
+
+    for i in range(n-1):
+        if not isConnected[i]:
+            ans += p
+    print(ans)
+    return
