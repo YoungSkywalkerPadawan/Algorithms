@@ -3,9 +3,11 @@ from functools import cache
 from math import inf
 from typing import List
 
-
 # lc1815 得到新鲜甜甜圈的最多组数
 # 状态压缩，相同余数的一起考虑
+from AlgorithmsCabin.Math.Util.utils import mint
+
+
 def maxHappyGroups(batchSize: int, groups: List[int]) -> int:
     @cache
     def dfs(x: int, y: int) -> int:
@@ -135,4 +137,51 @@ def P5369():
     for i in range(1, N):
         ans = (ans + s[i] * f[i] * g[(N - 1) ^ i]) % MOD
     print(ans % MOD)
+    return
+
+
+def cf1391D():
+    n, m = mint()
+    g = [input() for _ in range(n)]
+    if min(n, m) > 3:
+        print(-1)
+        return
+    cnt = [0, 1, 1, 2, 1, 2, 2, 3]
+    res = []
+    if m > 3:
+        for i in range(m):
+            cur = 0
+            for j in range(n):
+                if g[j][i] == '1':
+                    cur += 1 << j
+            res.append(cur)
+    else:
+        for i in range(n):
+            cur = 0
+            for j in range(m):
+                if g[i][j] == '1':
+                    cur += 1 << j
+            res.append(cur)
+    if m > n:
+        n, m = m, n
+    # 开始状压DP
+    dp = [cnt[i ^ res[0]] for i in range(1 << m)]
+    for i in range(1, n):
+        ndp = [inf] * (1 << m)
+        for pre in range(1 << m):
+            for nxt in range(1 << m):
+                f = False
+                for j in range(m - 1):
+                    # 统计各偶数个数时1个数
+                    v1 = pre >> j & 3
+                    v2 = nxt >> j & 3
+                    if (cnt[v1] + cnt[v2]) % 2 == 0:
+                        f = True
+                        break
+                if not f:
+                    if dp[pre] + cnt[res[i] ^ nxt] < ndp[nxt]:
+                        ndp[nxt] = dp[pre] + cnt[res[i] ^ nxt]
+        dp = ndp
+    print(min(dp))
+
     return
