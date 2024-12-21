@@ -326,3 +326,34 @@ def cf2037F():
     print(ans if ans < 10 ** 10 else -1)
 
     return
+
+
+def cf2044H():
+    n, q = mint()
+    g = [ints() for _ in range(n)]
+    pre = [[0] * (n+1) for _ in range(n+1)]
+    pre_i = [[0] * (n+1) for _ in range(n + 1)]
+    pre_j = [[0] * (n+1) for _ in range(n + 1)]
+
+    for i in range(1, n+1):
+        for j in range(1, n+1):
+            pre[i][j] = g[i-1][j-1]
+            pre_i[i][j] = i * g[i-1][j-1]
+            pre_j[i][j] = j * g[i-1][j-1]
+
+            pre[i][j] += pre[i-1][j] + pre[i][j-1] - pre[i-1][j-1]
+            pre_i[i][j] += pre_i[i - 1][j] + pre_i[i][j - 1] - pre_i[i - 1][j - 1]
+            pre_j[i][j] += pre_j[i - 1][j] + pre_j[i][j - 1] - pre_j[i - 1][j - 1]
+
+    ans = []
+    for _ in range(q):
+        x1, y1, x2, y2 = mint()
+        x1 -= 1
+        y1 -= 1
+        s1 = pre[x2][y2] - pre[x2][y1] - pre[x1][y2] + pre[x1][y1]
+        s2 = pre_i[x2][y2] - pre_i[x2][y1] - pre_i[x1][y2] + pre_i[x1][y1]
+        s3 = pre_j[x2][y2] - pre_j[x2][y1] - pre_j[x1][y2] + pre_j[x1][y1]
+        cur = s2 * (y2 - y1) + s3 + s1 * ((-x1 - 1) * (y2 - y1) - y1)
+        ans.append(cur)
+    print(*ans)
+    return
