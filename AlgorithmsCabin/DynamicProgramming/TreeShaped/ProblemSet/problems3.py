@@ -580,3 +580,26 @@ def cf2050G():
     dfs(0, -1)
     print(ans)
     return
+
+
+def cf461B():
+    mod = 10 ** 9 + 7
+    n = sint()
+    parent = [-1] + ints()
+    color = ints()
+    dp0 = [1] * n  # 以顶点v为根的子树中没有黑点的路径数
+    dp1 = [0] * n  # 以顶点v为根的子树中有黑点的路径数
+    for i in range(n - 1, 0, -1):
+        # 黑色,有黑色的路径数等于没有黑色路径数
+        if color[i]:
+            dp1[i] = dp0[i]
+        # 白色，合并黑色
+        else:
+            dp0[i] += dp1[i]
+        p = parent[i]
+        dp1[p] = (dp1[p] * dp0[i] + dp0[p] * dp1[i]) % mod
+        dp0[p] = dp0[p] * dp0[i] % mod
+
+    print(dp0[0] if color[0] else dp1[0])
+
+    return
