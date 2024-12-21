@@ -183,3 +183,51 @@ def cf379F():
         cur += 2
 
     return
+
+
+def cf1304E():
+    n = sint()
+    g = [[] for _ in range(n)]
+    for _ in range(n - 1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    parent = [-1] * n
+    # 默认都加1
+    depth = [0] * n
+
+    dq = [0]
+
+    while dq:
+        u = dq.pop()
+        if u >= 0:
+            dq.append(~u)
+            for v in g[u]:
+                if parent[u] != v:
+                    parent[v] = u
+                    depth[v] = depth[u] + 1
+                    dq.append(v)
+    lca = LCA(depth, parent)
+    q = sint()
+    for _ in range(q):
+        a, b, x, y, k = mint()
+        a -= 1
+        b -= 1
+        x -= 1
+        y -= 1
+        if (depth[x] + depth[y] - k) % 2 == 0:
+            if lca.getDis(x, y) <= k:
+                print("YES")
+                continue
+        if (depth[x] + depth[y] + depth[a] + depth[b] + 1 - k) % 2 == 0:
+            if lca.getDis(x, a) + lca.getDis(y, b) + 1 <= k:
+                print("YES")
+                continue
+            if lca.getDis(x, b) + lca.getDis(y, a) + 1 <= k:
+                print("YES")
+                continue
+        print("NO")
+    return
