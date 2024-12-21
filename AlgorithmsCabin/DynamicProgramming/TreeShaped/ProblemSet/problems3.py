@@ -1,4 +1,6 @@
 import math
+from collections import defaultdict
+from heapq import heapify, heappop
 from types import GeneratorType
 
 from AlgorithmsCabin.Math.Util.utils import sint, mint, ints
@@ -602,4 +604,55 @@ def cf461B():
 
     print(dp0[0] if color[0] else dp1[0])
 
+    return
+
+
+def cf1399E():
+    n, s = mint()
+    g = [[] for _ in range(n)]
+    dt = defaultdict()
+    for _ in range(n - 1):
+        u, v, w = mint()
+        u -= 1
+        v -= 1
+        if u > v:
+            u, v = v, u
+        g[u].append(v)
+        g[v].append(u)
+        dt[(u, v)] = w
+
+    siz = [0] * n
+    h = []
+    res = 0
+
+    @bootstrap
+    def dfs(x: int, f: int) -> None:
+        nonlocal res
+        c = 0
+        for y in g[x]:
+            if y == f:
+                continue
+            yield dfs(y, x)
+            c += siz[y]
+
+        if c == 0:
+            c = 1
+        siz[x] = c
+        if f >= 0:
+            w_e = dt[(min(x, f), max(x, f))]
+            res += w_e * c
+            while w_e > 0:
+                cur = c * (w_e - w_e // 2)
+                h.append(-cur)
+                w_e //= 2
+        yield
+
+    dfs(0, -1)
+    heapify(h)
+    ans = 0
+    while res > s:
+        res += heappop(h)
+        ans += 1
+
+    print(ans)
     return
