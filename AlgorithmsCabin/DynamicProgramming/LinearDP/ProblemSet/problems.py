@@ -284,3 +284,32 @@ def cf1716D():
         k += 1
     print(*ans)
     return
+
+
+def cf1427C():
+    r, n = mint()
+    dp = [-inf] * (n + 1)
+    f = [-inf] * (n + 1)
+    dp[0] = f[0] = 0
+
+    pos = [0]
+    xs = [1]
+    ys = [1]
+    for _ in range(n):
+        t, x, y = mint()
+        pos.append(t)
+        xs.append(x)
+        ys.append(y)
+
+    for i in range(1, n + 1):
+        j = i - 1
+        while j >= 0 and pos[j] + 2 * (r - 1) > pos[i]:
+            if dp[j] + 1 > dp[i] and pos[j] + abs(xs[j] - xs[i]) + abs(ys[j] - ys[i]) <= pos[i]:
+                dp[i] = dp[j] + 1
+            j -= 1
+        # 能从上一次转移过来
+        if j >= 0 and f[j] + 1 > dp[i]:
+            dp[i] = f[j] + 1
+        f[i] = dp[i] if dp[i] > f[i - 1] else f[i - 1]
+    print(f[-1])
+    return
