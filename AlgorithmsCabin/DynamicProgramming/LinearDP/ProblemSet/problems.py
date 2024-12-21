@@ -263,3 +263,24 @@ def cf478D():
     ans %= mod
     print(ans)
     return
+
+
+def cf1716D():
+    MOD = 998244353
+    n, k = mint()
+    mn = 0
+    dp = [0] * (n + 1)
+    ndp = [0] * (n + 1)
+    dp[0] = 1
+    ans = [0] * n
+    while mn + k <= n:
+        for i in range(mn, mn + k):
+            ndp[i] = 0
+        for i in range(mn, n + 1 - k):
+            ndp[i + k] = (dp[i] + ndp[i]) % MOD
+            ans[i + k - 1] = (ans[i + k - 1] + ndp[i + k]) % MOD
+        dp, ndp = ndp, dp
+        mn += k
+        k += 1
+    print(*ans)
+    return
