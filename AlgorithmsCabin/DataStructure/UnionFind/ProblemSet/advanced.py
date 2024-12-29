@@ -330,3 +330,32 @@ def cf920F():
             print(bit.range_sm(l, r+1))
 
     return
+
+
+def cf776D():
+    n, m = mint()
+    a = ints()
+    # uf = UnionFind(n)
+    g = [[] for _ in range(n)]
+    for i in range(m):
+        r = ints()
+        for j in range(1, r[0] + 1):
+            x = r[j] - 1
+            g[x].append(i)
+
+    uf = UnionFind(m * 2)
+    for i in range(n):
+        u, v = g[i]
+        if a[i]:
+            uf.union(u, v)
+            uf.union(u + m, v + m)
+        else:
+            uf.union(u, v + m)
+            uf.union(u + m, v)
+
+    if any(uf.find(i) == uf.find(i + m) for i in range(m)):
+        print('NO')
+    else:
+        print('YES')
+
+    return
