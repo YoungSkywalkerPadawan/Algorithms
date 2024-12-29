@@ -1,7 +1,7 @@
 from collections import deque
 from math import inf
 
-from AlgorithmsCabin.Math.Util.utils import sint, ints, fac, ifac
+from AlgorithmsCabin.Math.Util.utils import sint, ints, fac, ifac, mint
 
 MOD = 998244353
 
@@ -338,4 +338,25 @@ def cf1525D():
             if j > 0:
                 dp[i][j] = min(dp[i][j], dp[i - 1][j - 1] + abs(res0[i - 1] - res1[j - 1]))
     print(dp[-1][-1])
+    return
+
+
+def cf2049D():
+    n, m, K = mint()
+    g = [ints() for _ in range(n)]
+    dp = [inf] * m
+    dp[0] = 0
+    for i in range(n):
+        ndp = [inf] * m
+        for j in range(m):
+            f = dp.copy()
+            for k in range(m):
+                if k:
+                    if f[k-1] < f[k]:
+                        f[k] = f[k-1]
+                f[k] += g[i][(j + k) % m]
+                ndp[k] = min(ndp[k], f[k] + j * K)
+
+        dp = ndp
+    print(dp[-1])
     return
