@@ -4,6 +4,8 @@
 # 这个定理的理解可以是这样的:对于一个偏序集来说，最大反链的元素个数等于划分成全序集最小个数.
 import sys
 
+from AlgorithmsCabin.Math.Util.utils import mint
+
 
 def myPrint(s):
     sys.stdout.write(s + '\n')
@@ -70,4 +72,19 @@ def cf1977E():
     for x in res1:
         ans[x] = 1
     query(1, ans)
+    return
+
+
+def cf2048E():
+    n, m = mint()
+    if m >= 2 * n:
+        print("NO")
+        return
+    print("YES")
+    for i in range(2 * n):
+        res = []
+        for j in range(m):
+            res.append(((i + j) % (2 * n)) // 2 + 1)
+        print(*res)
+
     return
