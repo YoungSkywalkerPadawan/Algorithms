@@ -143,7 +143,7 @@ def cf1899G():
     bit = BIT(n)
     for i in range(n):
         bit.add(pos[order[i]], 1)
-        for x in tmp[i+1]:
+        for x in tmp[i + 1]:
             if x >= 0:
                 ans[x] += bit.range_sm(ql[x], qr[x] + 1)
             else:
@@ -152,4 +152,23 @@ def cf1899G():
     for x in ans:
         print("YES" if x else "NO")
     print()
+    return
+
+
+def cf2045I():
+    n, m = mint()
+    a = ints()
+    bit = BIT(n)
+    pre = [-1] * m
+    ans = 0
+    for i, x in enumerate(a):
+        x -= 1
+        if pre[x] == -1:
+            ans += m - 1
+        else:
+            ans += bit.range_sm(pre[x] + 1, i)
+            bit.add(pre[x], -1)
+        bit.add(i, 1)
+        pre[x] = i
+    print(ans)
     return
