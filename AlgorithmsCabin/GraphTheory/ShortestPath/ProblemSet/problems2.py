@@ -2,7 +2,7 @@ from heapq import heapify, heappop, heappush
 from math import inf
 
 from AlgorithmsCabin.GraphTheory.ShortestPath.Dijstra2 import dijstra
-from AlgorithmsCabin.Math.Util.utils import mint, ints2
+from AlgorithmsCabin.Math.Util.utils import mint, ints2, sint, ints
 
 
 def cf449B():
@@ -72,4 +72,37 @@ def cf337D():
             ans += 1
 
     print(ans)
+    return
+
+
+def cf25C():
+    n = sint()
+    g = [ints() for _ in range(n)]
+    cur = 0
+    for i in range(n):
+        for j in range(i):
+            cur += g[i][j]
+
+    k = sint()
+    ans = []
+    for _ in range(k):
+        u, v, w = mint()
+        u -= 1
+        v -= 1
+        if g[u][v] > w:
+            cur += w - g[u][v]
+            g[u][v] = g[v][u] = w
+            for i in range(n):
+                for j in range(i):
+                    if g[i][u] + w + g[v][j] < g[i][j]:
+                        cur += g[i][u] + w + g[v][j] - g[i][j]
+                        g[i][j] = g[j][i] = g[i][u] + w + g[v][j]
+            u, v = v, u
+            for i in range(n):
+                for j in range(i):
+                    if g[i][u] + w + g[v][j] < g[i][j]:
+                        cur += g[i][u] + w + g[v][j] - g[i][j]
+                        g[i][j] = g[j][i] = g[i][u] + w + g[v][j]
+        ans.append(cur)
+    print(*ans)
     return
