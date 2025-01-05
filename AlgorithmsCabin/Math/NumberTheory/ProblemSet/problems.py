@@ -201,7 +201,7 @@ def cf1513D():
     return
 
 
-def cf1572A():
+def cf1470B():
     # n = sint()
     N = 10 ** 6 + 1
     # 统计 N以内所有的数除去平方因子后剩下的值
