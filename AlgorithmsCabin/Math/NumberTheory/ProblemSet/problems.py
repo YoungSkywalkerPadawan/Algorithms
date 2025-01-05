@@ -3,9 +3,10 @@ import math
 # 费马平方和定理
 # 一个非负整数 ccc 如果能够表示为两个整数的平方和，当且仅当 ccc 的所有形如4k+3的质因子的幂均为偶数。
 # lc633 平方数之和
-from collections import defaultdict
+import random
+from collections import defaultdict, Counter
 
-from AlgorithmsCabin.Math.Util.utils import phi, mint, ints
+from AlgorithmsCabin.Math.Util.utils import phi, mint, ints, sint
 
 
 def judgeSquareSum(c: int) -> bool:
@@ -186,15 +187,46 @@ def cf1513D():
         while i < n - 1:
             if isConnected[i]:
                 break
-            if a[i+1] % x == 0:
+            if a[i + 1] % x == 0:
                 isConnected[i] = True
                 ans += x
                 i += 1
             else:
                 break
 
-    for i in range(n-1):
+    for i in range(n - 1):
         if not isConnected[i]:
             ans += p
     print(ans)
+    return
+
+
+def cf1572A():
+    # n = sint()
+    N = 10 ** 6 + 1
+    # 统计 N以内所有的数除去平方因子后剩下的值
+    sub = list(range(N))
+    for i in range(2, 1000):
+        cur = i * i
+        if sub[cur] == cur:
+            for j in range(cur, N + 1, cur):
+                while sub[j] % cur == 0:
+                    sub[j] //= cur
+    a = ints()
+    res = [sub[x] for x in a]
+    random.shuffle(res)
+    cnt = Counter(res)
+    ans0 = max(cnt.values())
+
+    cnt2 = Counter()
+    for k, v in cnt.items():
+        if v % 2 == 0:
+            cnt2[1] += v
+        else:
+            cnt2[k] += v
+    ans2 = max(cnt2.values())
+    q = sint()
+    for _ in range(q):
+        x = sint()
+        print(ans0 if x == 0 else ans2)
     return
