@@ -656,3 +656,58 @@ def cf1399E():
 
     print(ans)
     return
+
+
+def cf2053E():
+    n = sint()
+    g = [[] for _ in range(n)]
+    for _ in range(n - 1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    # 统计三类点，一类叶子，一类和叶子相邻，剩下的
+    # 统计叶子数
+    tp = [2] * n
+    for i in range(n):
+        if len(g[i]) == 1:
+            tp[i] = 0
+            for j in g[i]:
+                if tp[j] == 2:
+                    tp[j] = 1
+
+    t0 = 0
+    t2 = 0
+    for i, v in enumerate(tp):
+        if v == 0:
+            t0 += 1
+        if v == 2:
+            t2 += 1
+    ans = 0
+    # 统计子树相邻叶子数
+    # 统计符合要求数
+    siz = [0] * n
+    ans = t0 * (n - t0)
+
+    @bootstrap
+    def dfs(x: int, f: int) -> None:
+        nonlocal ans
+        siz[x] = int(tp[x] == 2)
+        for y in g[x]:
+            if y == f:
+                continue
+            yield dfs(y, x)
+            if tp[x] != 0 and tp[y] == 1:
+                ans += siz[y]  # x 可以作为尾巴
+
+            if tp[y] != 0 and tp[x] == 1:
+                ans += t2 - siz[y]  # y 作为尾巴
+            siz[x] += siz[y]
+
+        yield
+
+    dfs(0, -1)
+    print(ans)
+    return
