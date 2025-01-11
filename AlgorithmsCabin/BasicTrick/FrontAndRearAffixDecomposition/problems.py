@@ -368,3 +368,45 @@ def cf446A():
                 ans = max(ans, 1 + pre[i + 1], 1 + suf[i - 1])
     print(ans)
     return
+
+
+def cf1473D():
+    n, m = mint()
+    s = input()
+    a = [0] * (n + 1)
+    for i, x in enumerate(s, 1):
+        if x == '+':
+            a[i] = 1
+        else:
+            a[i] = -1
+    pre = list(accumulate(a))
+    b = [0] * (n + 1)
+    for i in range(n - 1, -1, -1):
+        x = s[i]
+        if x == '+':
+            b[n - i] = 1
+        else:
+            b[n - i] = -1
+    # 前后缀分解
+    suf_mn = [0] * (n + 1)
+    suf_mx = [0] * (n + 1)
+    for i in range(n - 1, -1, -1):
+        suf_mn[i] = min(0, suf_mn[i + 1] + b[n - i])
+        suf_mx[i] = max(0, suf_mx[i + 1] + b[n - i])
+
+    pre_mn = [0] * (n + 1)
+    pre_mx = [0] * (n + 1)
+    for i in range(1, n):
+        pre_mn[i] = min(pre_mn[i - 1], pre[i])
+        pre_mx[i] = max(pre_mx[i - 1], pre[i])
+
+    for _ in range(m):
+        l, r = mint()
+        mn1 = pre_mn[l - 1]
+        mn2 = pre[l - 1] + suf_mn[r]
+
+        mx1 = pre_mx[l - 1]
+        mx2 = pre[l - 1] + suf_mx[r]
+        print(max(mx2, mx1) - min(mn1, mn2) + 1)
+
+    return
