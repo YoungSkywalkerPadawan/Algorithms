@@ -4,7 +4,6 @@ from itertools import accumulate
 from math import inf
 from typing import List
 
-
 # lc1140 石子游戏II
 from AlgorithmsCabin.Math.Util.utils import mint, ints
 
@@ -147,10 +146,50 @@ def cf2002A():
             for j in range(1, m + 1):
                 diff[i][j] += diff[i - 1][j] + diff[i][j - 1] - diff[i - 1][j - 1]
                 if diff[i][j]:
-                    f[i-1][j-1] = False
+                    f[i - 1][j - 1] = False
                 else:
-                    f[i-1][j-1] = True
+                    f[i - 1][j - 1] = True
         if k == 0:
             print("T" if flag else "N")
+
+    return
+
+
+def cf1728D():
+    s = input()
+
+    def comp(c, d) -> int:
+        if c == d:
+            return 0
+        return -1 if c < d else 1
+        # 动态规划
+
+    n = len(s)
+    dp = [[0] * (n + 1) for _ in range(n + 1)]
+    for k in range(2, n + 1, 2):
+        for l in range(n - k + 1):
+            r = l + k
+            dp[l][r] = 1
+            # Alice 尽量要使得结果小
+            # Alice选l
+            # Bob 要尽量大，Bob两种选择l+1, r-1
+            res1 = dp[l + 1][r - 1] if dp[l + 1][r - 1] != 0 else comp(s[l], s[r - 1])
+            res2 = dp[l + 2][r] if dp[l + 2][r] != 0 else comp(s[l], s[l + 1])
+            res = res1 if res1 > res2 else res2
+            if res < dp[l][r]:
+                dp[l][r] = res
+            # Alice选r-1
+            # Bob 要尽量大，Bob两种选择l, r-2
+            res1 = dp[l + 1][r - 1] if dp[l + 1][r - 1] != 0 else comp(s[r - 1], s[l])
+            res2 = dp[l][r - 2] if dp[l][r - 2] != 0 else comp(s[r - 1], s[r - 2])
+            res = res1 if res1 > res2 else res2
+            if res < dp[l][r]:
+                dp[l][r] = res
+    if dp[0][n] == -1:
+        print("Alice")
+    elif dp[0][n] == 0:
+        print("Draw")
+    else:
+        print("Bob")
 
     return
