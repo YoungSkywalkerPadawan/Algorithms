@@ -117,7 +117,7 @@ def cf633F():
 def cf1822F():
     n, k, c = mint()
     g = [[] for _ in range(n)]
-    for _ in range(n-1):
+    for _ in range(n - 1):
         u, v = mint()
         u -= 1
         v -= 1
@@ -132,7 +132,7 @@ def cf1822F():
         d[x] = z
         for y in g[x]:
             if y != fa:
-                yield dfs(y, x, z+1)
+                yield dfs(y, x, z + 1)
                 cur = 1 + dep[y][0][0]
                 if cur > dep[x][0][0]:
                     dep[x][1] = dep[x][0]
@@ -223,7 +223,7 @@ def cf527F():
     a = ints()
     tot = sum(a)
     g = [[] for _ in range(n)]
-    for _ in range(n-1):
+    for _ in range(n - 1):
         u, v = mint()
         u -= 1
         v -= 1
@@ -262,7 +262,64 @@ def cf527F():
             cost[y] = cost[x] - res[y] + (tot - res[y])
             yield dfs2(y)
         yield
+
     dfs2(0)
     ans = max(cost)
     print(ans)
+    return
+
+
+def cf219D():
+    n = sint()
+    st = set()
+    g = [[] for _ in range(n)]
+    for _ in range(n - 1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+        st.add((u, v))
+
+    # 换根DP
+    # 第一次dfs确定每个节点到其子节点要转换几次
+    cnt = [0] * n
+
+    @bootstrap
+    def dfs(x: int, f: int) -> None:
+        c = 0
+        for y in g[x]:
+            if y != f:
+                yield dfs(y, x)
+                c += cnt[y]
+                if (y, x) in st:
+                    c += 1
+        cnt[x] = c
+        yield
+
+    dfs(0, -1)
+
+    # 开始换根DP
+    @bootstrap
+    def dfs2(x: int, f: int) -> None:
+        for y in g[x]:
+            if y != f:
+                c = cnt[x] - cnt[y] + cnt[y]
+                if (y, x) in st:
+                    c -= 1
+                else:
+                    c += 1
+                cnt[y] = c
+                yield dfs2(y, x)
+        yield
+
+    dfs2(0, -1)
+    mn = min(cnt)
+    ans = []
+    for i, v in enumerate(cnt):
+        if v == mn:
+            ans.append(i + 1)
+    print(mn)
+    print(*ans)
+
     return
