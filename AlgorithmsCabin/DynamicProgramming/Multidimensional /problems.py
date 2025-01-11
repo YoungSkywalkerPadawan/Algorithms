@@ -168,3 +168,37 @@ def cf505C():
                         dp[new_j][new_i] = max(dp[new_j][new_i], dp[j][i] + cnt[new_i])
     print(max(max(x) for x in dp))
     return
+
+
+def cf1183H():
+    n, k = mint()
+    s = input()
+    a = [0] * n
+    for i, v in enumerate(s):
+        a[i] = ord(v) - ord('a')
+
+    # 字母的最新位置索引
+    p = [-1] * 26
+    pre = [-1] * n
+    for i, x in enumerate(a):
+        pre[i] = p[x]
+        p[x] = i
+    # dp[i][j] # 前i个数 选长度为j的个数 等于 前i-1个数选j个，自己不选，或者前i-1个选j-1个，自己选
+    # 注意，去掉重复的，如果前i-1个选j-1之前出现过
+    dp = [[0] * (n + 1) for _ in range(n + 1)]
+    dp[0][0] = 1
+    for i in range(n):
+        dp[i + 1][0] = dp[i][0]
+        for j in range(1, i + 2):
+            dp[i + 1][j] = dp[i][j] + dp[i][j - 1]
+            if pre[i] != -1:
+                dp[i + 1][j] -= dp[pre[i]][j - 1]
+    ans = 0
+    for j in range(n, -1, -1):
+        x = min(k, dp[n][j])
+        ans += x * (n - j)
+        k -= x
+        if k == 0:
+            break
+    print(ans if not k else -1)
+    return
