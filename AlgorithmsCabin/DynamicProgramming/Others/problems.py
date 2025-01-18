@@ -1,4 +1,4 @@
-from collections import deque
+from collections import deque, defaultdict
 from math import inf
 
 from AlgorithmsCabin.Math.Util.utils import sint, ints, fac, ifac, mint
@@ -352,11 +352,46 @@ def cf2049D():
             f = dp.copy()
             for k in range(m):
                 if k:
-                    if f[k-1] < f[k]:
-                        f[k] = f[k-1]
+                    if f[k - 1] < f[k]:
+                        f[k] = f[k - 1]
                 f[k] += g[i][(j + k) % m]
                 ndp[k] = min(ndp[k], f[k] + j * K)
 
         dp = ndp
     print(dp[-1])
+    return
+
+
+def cf1082E():
+    n, c = mint()
+    a = ints()
+    # 前后缀分解
+    pre = [0] * (n + 1)
+    suf = [0] * (n + 1)
+    for i, x in enumerate(a):
+        pre[i + 1] = pre[i]
+        if x == c:
+            pre[i + 1] += 1
+
+    for i in range(n - 1, -1, -1):
+        suf[i] = suf[i + 1]
+        if a[i] == c:
+            suf[i] += 1
+
+    dp_pre = [0] * n
+    ans = 0
+    # 记录当前数字之前的索引
+    pos = defaultdict(lambda: -1)
+    for i, x in enumerate(a):
+        # 选择只变x, 前缀1 + 当前变
+        dp_pre[i] = pre[i] + 1
+        lst = pos[x]
+        if lst >= 0:
+            # 从上一个变的位置接着变
+            dp_pre[i] = max(dp_pre[i], dp_pre[lst] + 1)
+        pos[x] = i
+        ans = max(ans, dp_pre[i] + suf[i + 1])
+
+    print(ans)
+
     return
