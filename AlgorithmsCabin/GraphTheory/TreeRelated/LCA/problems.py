@@ -1,9 +1,11 @@
+from functools import reduce
 from operator import add
 
 from AlgorithmsCabin.DataStructure.SegmentTree.LazySegTree import LazySegTree
+from AlgorithmsCabin.DynamicProgramming.TreeShaped.ProblemSet.ReplaceRoot2 import bootstrap
 from AlgorithmsCabin.GraphTheory.TreeRelated.LCA.HLD import HLD
 from AlgorithmsCabin.GraphTheory.TreeRelated.LCA.LCA import LCA
-from AlgorithmsCabin.Math.Util.utils import mint, sint
+from AlgorithmsCabin.Math.Util.utils import mint, sint, ints2
 
 
 def cf2002D():
@@ -230,4 +232,54 @@ def cf1304E():
                 print("YES")
                 continue
         print("NO")
+    return
+
+
+def cf1702G():
+    n = sint()
+    g = [[] for _ in range(n)]
+    for _ in range(n - 1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    dis = [0] * n
+    fa = [-1] * n
+
+    @bootstrap
+    def dfs(x: int) -> None:
+        for y in g[x]:
+            if y != fa[x]:
+                fa[y] = x
+                dis[y] = dis[x] + 1
+                yield dfs(y)
+        yield
+
+    dfs(0)
+    lca = LCA(dis, fa)
+    q = sint()
+    for _ in range(q):
+        k = sint()
+        a = ints2()
+        a.sort(key=lambda x: -dis[x])
+        vis = [0] * k
+        vis[0] = 1
+        for i in range(1, k):
+            if lca.getLCA(a[i], a[0]) == a[i]:
+                vis[i] = 1
+
+        root = reduce(lca.getLCA, a)
+        cur = -1
+        for i in range(1, k):
+            if cur < 0:
+                if vis[i] == 0 and lca.getLCA(a[0], a[i]) == root:
+                    cur = i
+                    vis[i] = 1
+            else:
+                if lca.getLCA(a[i], a[cur]) == a[i] and lca.getLCA(a[0], a[i]) == root:
+                    vis[i] = 1
+        print("YES" if sum(vis) == k else "NO")
+
     return
