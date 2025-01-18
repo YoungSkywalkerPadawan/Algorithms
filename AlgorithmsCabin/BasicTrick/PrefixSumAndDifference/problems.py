@@ -357,3 +357,32 @@ def cf2044H():
         ans.append(cur)
     print(*ans)
     return
+
+
+def cf2056D():
+    n = sint()
+    a = ints()
+    ans = 0
+    for x in range(1, 11):
+        b = [0] * n
+        for i in range(n):
+            b[i] = 1 if a[i] > x else -1
+
+        sm = n
+        pre = [0] * n
+        for i in range(n):
+            pre[i] = sm
+            sm += b[i]
+
+        cnt = [0] * (2 * n + 1)
+        sm = n
+        j = 0
+        for i in range(n):
+            if a[i] == x:
+                while j <= i:
+                    cnt[pre[j]] += 1
+                    j += 1
+            sm += b[i]
+            ans += cnt[sm]
+    print(n * (n + 1) // 2 - ans)
+    return
