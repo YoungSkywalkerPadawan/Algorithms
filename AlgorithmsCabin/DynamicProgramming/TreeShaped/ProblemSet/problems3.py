@@ -1,8 +1,9 @@
 import math
-from collections import defaultdict
+from collections import defaultdict, Counter
 from heapq import heapify, heappop
 from types import GeneratorType
 
+from AlgorithmsCabin.Math.NumberTheory.GCD.PrimeTable import PrimeTable
 from AlgorithmsCabin.Math.Util.utils import sint, mint, ints
 
 
@@ -706,6 +707,57 @@ def cf2053E():
                 ans += t2 - siz[y]  # y 作为尾巴
             siz[x] += siz[y]
 
+        yield
+
+    dfs(0, -1)
+    print(ans)
+    return
+
+
+def cf1101D():
+    n = sint()
+    a = ints()
+    g = [[] for _ in range(n)]
+    for _ in range(n - 1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        g[u].append(v)
+        g[v].append(u)
+
+    pt = PrimeTable(2 * 10 ** 5)
+
+    def prime_factors(num):
+        res = set()
+        for p, c in pt.prime_factorization(num):
+            res.add(p)
+        return res
+
+    primes = [prime_factors(x) for x in a]
+    ans = 0
+    cnt = [None] * n
+
+    @bootstrap
+    def dfs(x: int, f: int):
+        nonlocal ans
+        mx1 = defaultdict(int)
+        mx2 = defaultdict(int)
+        for y in g[x]:
+            if y != f:
+                yield dfs(y, x)
+                for num in primes[x]:
+                    cur = cnt[y][num]
+                    if cur >= mx1[num]:
+                        mx2[num] = mx1[num]
+                        mx1[num] = cur
+                    elif cur >= mx2[num]:
+                        mx2[num] = cur
+        nxt = Counter()
+        for num in primes[x]:
+            ans = max(ans, mx1[num] + mx2[num] + 1)
+            nxt[num] = mx1[num] + 1
+
+        cnt[x] = nxt
         yield
 
     dfs(0, -1)
