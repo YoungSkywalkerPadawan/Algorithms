@@ -1,3 +1,4 @@
+import math
 from collections import defaultdict
 from heapq import heappop, heappush
 from random import getrandbits
@@ -302,4 +303,43 @@ def cf1906H():
 
     ans = ans * sum(f) % mod
     print(ans)
+    return
+
+
+def cf2060F():
+    fac = Factorial(10000, 998244353)
+    MX_K = 10 ** 5 + 1
+    lpf = [0] * MX_K  # i 的最小质因子是 lpf[i]
+    for i in range(2, MX_K):
+        if lpf[i] == 0:  # i 是质数
+            for j in range(i, MX_K, i):
+                if lpf[j] == 0:
+                    lpf[j] = i  # j 的最小质因子是 i
+    k, n = mint()
+    d = int(math.log2(k)) + 1
+    dp = [[0] * (k + 1) for _ in range(d)]
+    for j in range(2, k + 1):
+        dp[1][j] = 1
+    for j in range(1, d - 1):
+        for x in range(1, k + 1):
+            for y in range(2, k // x + 1):
+                dp[j + 1][x * y] += dp[j][x]
+                dp[j + 1][x * y] %= mod
+    ans = []
+    for x in range(1, k + 1):
+        if x == 1:
+            ans.append(n)
+            continue
+        cur = 0
+        mx = min(n, d - 1)
+        for i in range(1, mx + 1):
+            res = dp[i][x]
+            for j in range(i + 1):
+                res *= n + 1 - j
+                res %= mod
+            res *= fac.fac_inv(i + 1)
+            res %= mod
+            cur += res
+        ans.append(cur % mod)
+    print(*ans)
     return
