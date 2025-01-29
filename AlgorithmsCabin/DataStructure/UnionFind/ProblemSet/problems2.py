@@ -60,3 +60,32 @@ def cf1095F():
     print(ans)
 
     return
+
+
+def cf2060E():
+    n, m1, m2 = mint()
+    edges = []
+    for _ in range(m1):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        edges.append((u, v))
+
+    uf1 = UnionFind(n)
+    for _ in range(m2):
+        u, v = mint()
+        u -= 1
+        v -= 1
+        uf1.union(u, v)
+
+    uf2 = UnionFind(n)
+    ans = 0
+    for x, y in edges:
+        if uf1.find(x) != uf1.find(y):
+            ans += 1
+        else:
+            uf2.union(x, y)
+    ans += uf2.part - uf1.part
+    print(ans)
+
+    return
