@@ -5,7 +5,7 @@ from typing import List
 
 # lc1815 得到新鲜甜甜圈的最多组数
 # 状态压缩，相同余数的一起考虑
-from AlgorithmsCabin.Math.Util.utils import mint
+from AlgorithmsCabin.Math.Util.utils import mint, ints
 
 
 def maxHappyGroups(batchSize: int, groups: List[int]) -> int:
@@ -183,5 +183,42 @@ def cf1391D():
                         ndp[nxt] = dp[pre] + cnt[res[i] ^ nxt]
         dp = ndp
     print(min(dp))
+
+    return
+
+
+def cf2061E():
+    n, m, k = mint()
+    a = ints()
+    b = ints()
+    ans = sum(a)
+    f = [0] * (1 << m)
+    # 对b的各项排列进行状态压缩，计算&
+    f[0] = (1 << 30) - 1
+    bit_count = [0] * (1 << m)
+    for msk in range(1, 1 << m):
+        bit_count[msk] = msk.bit_count()
+    for i in range(m):
+        msk = 1 << i
+        for j in range(msk):
+            f[j | msk] = f[j] & b[i]
+
+    # 对a运用每一种b，看变化量
+    res = []
+    for x in a:
+        # 下标操作次数，对应具体减少的值
+        loss = [0] * (m + 1)
+        for msk in range(1 << m):
+            c = bit_count[msk]
+            cur = x - (x & f[msk])
+            if cur > loss[c]:
+                loss[c] = cur
+        for i in range(m):
+            res.append(loss[i + 1] - loss[i])
+
+    res.sort(reverse=True)
+    i = min(k, len(res))
+    ans -= sum(res[:i])
+    print(ans)
 
     return
