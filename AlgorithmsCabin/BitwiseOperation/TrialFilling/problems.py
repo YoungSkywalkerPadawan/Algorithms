@@ -1,6 +1,9 @@
 from collections import defaultdict, Counter
 from typing import List
 
+from AlgorithmsCabin.DataStructure.UnionFind.UnionFind2 import UnionFind
+from AlgorithmsCabin.Math.Util.utils import mint
+
 MOD = 10 ** 9 + 7
 
 
@@ -96,3 +99,30 @@ def minOrAfterOperations(nums: List[int], k: int) -> int:
             ans |= 1 << b
             mask ^= 1 << b
     return ans
+
+
+def cf1624G():
+    input()
+    n, m = mint()
+    edges = []
+    for _ in range(m):
+        u, v, w = mint()
+        u -= 1
+        v -= 1
+        edges.append((u, v, w))
+
+    ans = 0
+    msk = 0
+    for i in range(29, -1, -1):
+        uf = UnionFind(n)
+        for u, v, w in edges:
+            if ((msk | (1 << i)) & w) == 0:
+                uf.union(u, v)
+
+        if uf.part != 1:
+            ans |= 1 << i
+        else:
+            msk |= 1 << i
+
+    print(ans)
+    return
