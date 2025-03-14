@@ -7,7 +7,7 @@ from sortedcontainers import SortedList
 from AlgorithmsCabin.DataStructure.UnionFind.UnionFind import UnionFind
 
 
-# lc1847 最近的房间
+# lc1847 最近的房间ls
 def closestRoom(rooms: List[List[int]], queries: List[List[int]]) -> List[int]:
     # 离线查询
     n = len(rooms)
