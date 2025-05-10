@@ -202,3 +202,27 @@ def cf1183H():
             break
     print(ans if not k else -1)
     return
+
+
+def cf2104E():
+    n, k = mint()
+    s = input()
+    nxt = [[n+1] * (n + 2) for _ in range(k)]
+    for i in range(k):
+        for j in range(n-1, -1, -1):
+            nxt[i][j] = j + 1 if ord(s[j]) - ord('a') == i else nxt[i][j+1]
+
+    dp = [inf] * (n + 2)
+    dp[-1] = 0
+    for i in range(n, -1, -1):
+        for j in range(k):
+            dp[i] = min(dp[i], 1 + dp[nxt[j][i]])
+
+    q = sint()
+    for _ in range(q):
+        t = input()
+        i = 0
+        for x in t:
+            i = nxt[ord(x) - ord('a')][i]
+        print(dp[i])
+    return
