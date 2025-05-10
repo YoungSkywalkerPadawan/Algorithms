@@ -2,9 +2,12 @@ from itertools import count
 from math import isqrt
 from typing import List
 
-
 # core(n) 为 n 除去完全平方因子后的剩余结果
 # 计算方式同质因数分解，把 n 的所有出现次数为奇数的质因子相乘，即为core(n)
+from AlgorithmsCabin.Math.NumberTheory.GCD.PrimeTable import PrimeTable
+from AlgorithmsCabin.Math.Util.utils import sint, ints
+
+
 def core(n: int) -> int:
     res = 1
     for i in range(2, isqrt(n) + 1):
@@ -65,3 +68,23 @@ def maximumScore(nums: List[int], k: int) -> int:
         ans = ans * pow(v, tot, MOD) % MOD
         k -= tot  # 更新剩余操作次数
     return ans
+
+
+pr = PrimeTable(10 ** 6 * 7).primes
+
+
+def cf1572A():
+    n = sint()
+    a = ints()
+    a.sort()
+    sm = sum(a)
+    res = sum(pr[i] for i in range(n))
+    ans = -1
+    for i in range(n):
+        if sm >= res:
+            ans = i
+            break
+        sm -= a[i]
+        res -= pr[n - 1 - i]
+    print(ans)
+    return
