@@ -313,3 +313,44 @@ def cf1427C():
         f[i] = dp[i] if dp[i] > f[i - 1] else f[i - 1]
     print(f[-1])
     return
+
+
+def cf2096C():
+    n = sint()
+    g = [ints() for _ in range(n)]
+    a = ints()
+    b = ints()
+    dp = [0, a[0]]
+    ans = 0
+    for i in range(1, n):
+        ndp = [inf] * 2
+        for pre in range(2):
+            for cur in range(2):
+                f = False
+                for j in range(n):
+                    if g[i-1][j] + pre == g[i][j] + cur:
+                        f = True
+                        break
+                if not f:
+                    ndp[cur] = min(ndp[cur], dp[pre] + cur * a[i])
+        dp = ndp
+    ans += min(dp)
+    dp = [0, b[0]]
+
+    for i in range(1, n):
+        ndp = [inf] * 2
+
+        for pre in range(2):
+            for cur in range(2):
+                f = False
+                for j in range(n):
+                    if g[j][i - 1] + pre == g[j][i] + cur:
+                        f = True
+                        break
+                if not f:
+                    ndp[cur] = min(ndp[cur], dp[pre] + cur * b[i])
+        dp = ndp
+
+    ans += min(dp)
+    print(ans if ans < inf else -1)
+    return
