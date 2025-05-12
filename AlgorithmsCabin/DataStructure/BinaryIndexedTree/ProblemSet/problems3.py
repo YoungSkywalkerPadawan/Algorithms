@@ -1,8 +1,9 @@
 from bisect import bisect_right, bisect_left
 from collections import defaultdict
+from typing import List
 
 from AlgorithmsCabin.DataStructure.BinaryIndexedTree.BIT2 import BIT
-from AlgorithmsCabin.Math.Util.utils import mint, ints, ints2
+from AlgorithmsCabin.Math.Util.utils import mint, ints, ints2, sint
 
 
 def cf383C():
@@ -170,5 +171,77 @@ def cf2045I():
             bit.add(pre[x], -1)
         bit.add(i, 1)
         pre[x] = i
+    print(ans)
+    return
+
+
+def reversePairs(record: List[int]) -> int:
+    # 先进行数据离散化
+    nums = sorted(set(record))
+    mx = len(nums)
+    b = BIT(mx + 1)
+    ans = 0
+    for i, x in enumerate(record):
+        j = bisect_left(nums, x) + 1
+        ans += (i - b.sm(j + 1))
+        b.add(j, 1)
+    return ans
+
+
+def cf3102D():
+    # n = sint()
+    a = ints()
+    c1 = reversePairs(a)
+    # 获取奇数下标和偶数下标的元素
+    even_indices = a[::2]  # 偶数下标（0, 2, 4, ...）
+    odd_indices = a[1::2]  # 奇数下标（1, 3, 5, ...）
+
+    # 分别排序
+    even_indices_sorted = sorted(even_indices)
+    odd_indices_sorted = sorted(odd_indices)
+
+    # 合并回原列表
+    a[::2] = even_indices_sorted
+    a[1::2] = odd_indices_sorted
+    c2 = reversePairs(a)
+    if (c2 - c1) % 2 == 0:
+        print(*a)
+    else:
+        a[-1], a[-3] = a[-3], a[-1]
+        print(*a)
+    return
+
+
+def cf2102E():
+    n = sint()
+    a = ints()
+
+    res = [[], []]
+    for rot in range(2):
+        bit = BIT(n)
+        # 初始全部位置可用
+        for i in range(n):
+            bit.add(i, 1)
+
+        for i, v in enumerate(a):
+            # 看看 < v 的可用点有多少
+            cnt = bit.sm(v)
+            if cnt > 0:
+                # 第 cnt 个可用点就是我们要的最大下标
+                k = bit.select(cnt - 1)
+                # 删除该下标
+                bit.add(k, -1)
+                res[rot].append(i)
+
+        # 为第二轮做反转
+        a.reverse()
+
+    # 汇总答案
+    ans = 0
+    for i0, i1 in zip(res[0], res[1]):
+        # i1 在翻转后，下标对应原来 n-1-i1
+        dist = (n - 1 - i1) - i0
+        if dist > 0:
+            ans += dist
     print(ans)
     return
